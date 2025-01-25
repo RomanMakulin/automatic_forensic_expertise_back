@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
                     .clientId(keycloakConsts.getResource())
                     .clientSecret(keycloakConsts.getSecret())
                     .grantType(OAuth2Constants.PASSWORD)
-                    .username(request.getUsername())
+                    .username(request.getEmail())
                     .password(request.getPassword())
                     .build();
 

@@ -3,18 +3,18 @@ package com.example.auth.controller;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.service.AuthService;
+import exceptions.UserAlreadyExistsException;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Контроллер для регистрации и аутентификации пользователей.
  */
 @RestController
-@RequestMapping("/public/auth")
-public class RegistrationController {
+@RequestMapping("/api/auth")
+public class AuthController {
 
     /**
      * Сервис для аутентификации пользователей.
@@ -26,7 +26,7 @@ public class RegistrationController {
      *
      * @param authService сервис для аутентификации пользователей
      */
-    public RegistrationController(AuthService authService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
@@ -36,10 +36,16 @@ public class RegistrationController {
      * @param request запрос на регистрацию, содержащий информацию о пользователе
      * @return ответ сервера, содержащий результат регистрации
      */
-    @GetMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegistrationRequest request) {
-        authService.register(request);
-        return ResponseEntity.ok().build();
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrationRequest request) {
+        try {
+            authService.register(request);
+            return ResponseEntity.ok("User registered successfully.");
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed: " + e.getMessage());
+        }
     }
 
     /**
@@ -49,7 +55,7 @@ public class RegistrationController {
      * @return ответ сервера, содержащий результат аутентификации
      */
     @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
     }
 

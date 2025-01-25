@@ -6,6 +6,7 @@ import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.RegistrationService;
+import exceptions.UserAlreadyExistsException;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -13,6 +14,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,14 +40,37 @@ public class RegistrationServiceImpl implements RegistrationService {
     /**
      * Конструктор класса RegistrationServiceImpl.
      *
-     * @param userRepository   репозиторий для работы с пользователями
-     * @param roleRepository   репозиторий для работы с ролями
-     * @param keycloak         клиент Keycloak
+     * @param userRepository репозиторий для работы с пользователями
+     * @param roleRepository репозиторий для работы с ролями
+     * @param keycloak       клиент Keycloak
      */
     public RegistrationServiceImpl(UserRepository userRepository, RoleRepository roleRepository, Keycloak keycloak) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.keycloak = keycloak;
+    }
+
+    /**
+     * Регистрация пользователя в системе (синхронизация таблицы пользователей Keycloak + базовая таблица user в БД).
+     *
+     * @param request данные о пользователе
+     */
+    @Transactional
+    @Override
+    public void register(RegistrationRequest request) {
+
+        // Создаём объект пользователя для Keycloak
+        UserRepresentation userRepresentation = createKeycloakUser(request);
+
+        // Вызываем Admin API для создания пользователя
+        UsersResource usersResource = checkResponseRegistration(userRepresentation);
+
+        // Нужно узнать ID созданного пользователя (чтобы связать с локальной БД).
+        String keycloakUserId = getKeycloakUserId(usersResource, request.getEmail());
+
+        // Сохраняем локально в нашей таблице user
+        User user = createUserMainTable(request, keycloakUserId);
+        log.info("User successfully created: {}", user);
     }
 
     /**
@@ -84,13 +109,18 @@ public class RegistrationServiceImpl implements RegistrationService {
         UsersResource usersResource = keycloak.realm(realmName).users();
         Response response = usersResource.create(userRepresentation);
 
-        if (response.getStatus() != 201) {
-            // Ошибка: Keycloak не создал пользователя
-            response.close(); // закрываем Response
-            throw new RuntimeException("Keycloak user creation failed. Status: " + response.getStatus());
-        }
+        int status = response.getStatus();
         response.close();
-        return usersResource;
+
+        if (status == 201) {
+            log.info("User successfully created in Keycloak table: {}", userRepresentation);
+            return usersResource;
+        } else if (status == 409) {
+            log.error("User already exists in Keycloak table: {}", userRepresentation);
+            throw new UserAlreadyExistsException("User already exists (409).");
+        } else {
+            throw new RuntimeException("Keycloak user creation failed. Status: " + status);
+        }
     }
 
     /**
@@ -106,29 +136,6 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new RuntimeException("Keycloak user not found. Email: " + email);
         }
         return found.getFirst().getId();
-    }
-
-    /**
-     * Регистрация пользователя в системе (синхронизация таблицы пользователей Keycloak + базовая таблица user в БД).
-     *
-     * @param request данные о пользователе
-     */
-    @Transactional
-    @Override
-    public void register(RegistrationRequest request) {
-
-        // Создаём объект пользователя для Keycloak
-        UserRepresentation userRepresentation = createKeycloakUser(request);
-
-        // Вызываем Admin API для создания пользователя
-        UsersResource usersResource = checkResponseRegistration(userRepresentation);
-
-        // 2. Нужно узнать ID созданного пользователя (чтобы связать с локальной БД).
-        String keycloakUserId = getKeycloakUserId(usersResource, request.getEmail());
-
-        // 3. Сохраняем локально в нашей таблице user
-        User user = createUserMainTable(request, keycloakUserId);
-        log.info("User successfully created: {}", user);
     }
 
     /**

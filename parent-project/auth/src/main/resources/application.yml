@@ -3,7 +3,7 @@ keycloak:
   realm: demo
   resource: spring-app
   credentials:
-    secret: Iz7VgXRx9udwlbpurBD4R3Wf3YMToNsQ
+    secret: aB5hkZVuTYa9h96dxx1oeabUXR47jYKw
   bearer-only: true
   use-resource-role-mappings: true
   main:
