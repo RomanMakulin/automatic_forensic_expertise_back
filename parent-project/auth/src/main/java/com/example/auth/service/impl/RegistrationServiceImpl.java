@@ -1,10 +1,11 @@
-package com.example.auth.service;
+package com.example.auth.service.impl;
 
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.service.RegistrationService;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -12,7 +13,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +20,11 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Сервис для регистрации пользователей.
+ */
 @Service
-public class RegistrationServiceImpl implements RegistrationService{
+public class RegistrationServiceImpl implements RegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
 
@@ -32,6 +35,13 @@ public class RegistrationServiceImpl implements RegistrationService{
     private final RoleRepository roleRepository;
     private final Keycloak keycloak;
 
+    /**
+     * Конструктор класса RegistrationServiceImpl.
+     *
+     * @param userRepository   репозиторий для работы с пользователями
+     * @param roleRepository   репозиторий для работы с ролями
+     * @param keycloak         клиент Keycloak
+     */
     public RegistrationServiceImpl(UserRepository userRepository, RoleRepository roleRepository, Keycloak keycloak) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -39,7 +49,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     /**
-     * Создание пользователя в Keycloak
+     * Создание пользователя в Keycloak.
      *
      * @param request запрос на регистрацию (DTO)
      * @return созданный пользователь в Keycloak (UserRepresentation)
@@ -61,12 +71,11 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         userRepresentation.setCredentials(List.of(cred));
 
-
         return userRepresentation;
     }
 
     /**
-     * Вызываем Admin API для создания пользователя в Keycloak (отправляем запрос)
+     * Вызываем Admin API для создания пользователя в Keycloak (отправляем запрос).
      *
      * @param userRepresentation данные о пользователе в Keycloak
      * @return интерфейс управления пользователем в Keycloak
@@ -85,7 +94,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     /**
-     * Получаем ID пользователя в Keycloak по email
+     * Получаем ID пользователя в Keycloak по email.
      *
      * @param usersResource интерфейс управления пользователем в Keycloak
      * @param email         email пользователя
@@ -100,10 +109,9 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     /**
-     * Регистрация пользователя в системе (синхронизация таблицы пользователей Keycloak + базовая таблица user в БД)
+     * Регистрация пользователя в системе (синхронизация таблицы пользователей Keycloak + базовая таблица user в БД).
      *
      * @param request данные о пользователе
-     * @return статус успешной регистрации
      */
     @Transactional
     @Override
@@ -124,7 +132,7 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
     /**
-     * Создание пользователя в нашей базе данных user (синхронизация с таблицей пользователей Keycloak)
+     * Создание пользователя в нашей базе данных user (синхронизация с таблицей пользователей Keycloak).
      *
      * @param request        данные о пользователе
      * @param keycloakUserId ID уже созданного пользователя в Keycloak
@@ -134,7 +142,6 @@ public class RegistrationServiceImpl implements RegistrationService{
 
         Role role = roleRepository.findByName("Expert")
                 .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
-
 
         localUser.setFullName(request.getFirstName() + " " + request.getLastName());
         localUser.setEmail(request.getEmail());
@@ -146,3 +153,4 @@ public class RegistrationServiceImpl implements RegistrationService{
     }
 
 }
+

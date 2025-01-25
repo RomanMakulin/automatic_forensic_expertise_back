@@ -6,9 +6,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * Интерфейс репозитория для работы с пользователями.
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
+    /**
+     * Проверяет, существует ли пользователь с указанным email.
+     *
+     * @param email email пользователя
+     * @return true, если пользователь с указанным email существует, иначе false
+     */
     boolean existsByEmail(String email);
 
 }
