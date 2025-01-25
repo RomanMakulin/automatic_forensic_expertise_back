@@ -1,0 +1,33 @@
+services:
+  keycloak_web:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/flm_project
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: 1
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8081
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports:
+      - 8081:8080
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: flm_project
+    ports:
+      - 5432:5432
