@@ -14,15 +14,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RegistrationServiceImpl {
+public class RegistrationServiceImpl implements RegistrationService{
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationServiceImpl.class);
+
     @Value("${keycloak.realm}")
     String realmName;
 
@@ -97,7 +99,15 @@ public class RegistrationServiceImpl {
         return found.getFirst().getId();
     }
 
-    public ResponseEntity<String> register(RegistrationRequest request) {
+    /**
+     * Регистрация пользователя в системе (синхронизация таблицы пользователей Keycloak + базовая таблица user в БД)
+     *
+     * @param request данные о пользователе
+     * @return статус успешной регистрации
+     */
+    @Transactional
+    @Override
+    public void register(RegistrationRequest request) {
 
         // Создаём объект пользователя для Keycloak
         UserRepresentation userRepresentation = createKeycloakUser(request);
@@ -109,10 +119,21 @@ public class RegistrationServiceImpl {
         String keycloakUserId = getKeycloakUserId(usersResource, request.getEmail());
 
         // 3. Сохраняем локально в нашей таблице user
+        User user = createUserMainTable(request, keycloakUserId);
+        log.info("User successfully created: {}", user);
+    }
+
+    /**
+     * Создание пользователя в нашей базе данных user (синхронизация с таблицей пользователей Keycloak)
+     *
+     * @param request        данные о пользователе
+     * @param keycloakUserId ID уже созданного пользователя в Keycloak
+     */
+    private User createUserMainTable(RegistrationRequest request, String keycloakUserId) {
         User localUser = new User();
 
         Role role = roleRepository.findByName("Expert")
-                .orElseThrow(() -> new RuntimeException("Не найден роль ROLE_USER")); // потом убрать
+                .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
 
 
         localUser.setFullName(request.getFirstName() + " " + request.getLastName());
@@ -121,9 +142,7 @@ public class RegistrationServiceImpl {
         localUser.setRole(role);
         localUser.setKeycloakId(keycloakUserId);
 
-        userRepository.save(localUser);
-
-        return ResponseEntity.ok("Пользователь успешно зарегистрирован. KeycloakId = " + keycloakUserId);
+        return userRepository.save(localUser);
     }
 
 }

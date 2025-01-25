@@ -6,6 +6,7 @@ import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.service.AuthService;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -28,66 +29,16 @@ import java.util.List;
 @RequestMapping("/public/auth")
 public class RegistrationController {
 
+    private final AuthService authService;
+
+    public RegistrationController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @GetMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegistrationRequest request) {
-
-        // 1. Создаём пользователя в Keycloak
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername(request.getEmail());  // можно username = email
-        userRepresentation.setEmail(request.getEmail());
-        userRepresentation.setFirstName(request.getFirstName());
-        userRepresentation.setLastName(request.getLastName());
-        userRepresentation.setEnabled(true);
-
-;
-        // Установим пароль
-        CredentialRepresentation cred = new CredentialRepresentation();
-        cred.setType(CredentialRepresentation.PASSWORD);
-        cred.setTemporary(false);
-        cred.setValue(request.getPassword());
-
-        userRepresentation.setCredentials(List.of(cred));
-
-        // Вызываем Admin API для создания пользователя
-        UsersResource usersResource = keycloak.realm(realmName).users();
-        Response response = usersResource.create(userRepresentation);
-
-        if (response.getStatus() != 201) {
-            // Ошибка: Keycloak не создал пользователя
-            String error = "Не удалось создать пользователя в Keycloak. Статус: " + response.getStatus();
-            response.close(); // закрываем Response
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
-        response.close();
-
-
-        // 2. Нужно узнать ID созданного пользователя (чтобы связать с локальной БД).
-        // Обычно ищем по username/email. Или Keycloak вернёт Location с /{uid}
-        List<UserRepresentation> found = usersResource.search(request.getEmail());
-        if (found.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Пользователь создан, но не найден при поиске");
-        }
-
-        String keycloakUserId = found.get(0).getId();
-
-        // 3. Сохраняем локально в нашей таблице user
-        User localUser = new User();
-
-        Role role = roleRepository.findByName("Expert")
-                .orElseThrow(() -> new RuntimeException("Не найден роль ROLE_USER")); // потом убрать
-
-
-        localUser.setFullName(request.getFirstName() + " " + request.getLastName());
-        localUser.setEmail(request.getEmail());
-        localUser.setRegistrationDate(LocalDateTime.now());
-        localUser.setRole(role);
-        localUser.setKeycloakId(keycloakUserId);
-
-        userRepository.save(localUser);
-
-        return ResponseEntity.ok("Пользователь успешно зарегистрирован. KeycloakId = " + keycloakUserId);
+    public ResponseEntity<Void> register(@RequestBody RegistrationRequest request) {
+        authService.register(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/login")
