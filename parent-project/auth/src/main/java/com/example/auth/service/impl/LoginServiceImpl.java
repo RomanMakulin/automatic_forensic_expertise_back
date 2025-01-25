@@ -2,6 +2,7 @@ package com.example.auth.service.impl;
 
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.service.LoginService;
+import com.example.auth.util.KeycloakConsts;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -10,23 +11,46 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для аутентификации пользователей.
+ */
 @Service
 public class LoginServiceImpl implements LoginService {
 
+    /**
+     * Константы Keycloak.
+     */
+    private final KeycloakConsts keycloakConsts;
+
+    /**
+     * Конструктор класса LoginServiceImpl.
+     *
+     * @param keycloakConsts константы Keycloak
+     */
+    public LoginServiceImpl(KeycloakConsts keycloakConsts) {
+        this.keycloakConsts = keycloakConsts;
+    }
+
+    /**
+     * Аутентификация пользователя.
+     *
+     * @param request запрос на аутентификацию, содержащий информацию о пользователе
+     * @return ответ сервера, содержащий результат аутентификации
+     */
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
         try {
             Keycloak keycloakForLogin = KeycloakBuilder.builder()
-                    .serverUrl("http://localhost:8081")
-                    .realm("demo")
-                    .clientId("spring-app")
-                    .clientSecret("Iz7VgXRx9udwlbpurBD4R3Wf3YMToNsQ")
+                    .serverUrl(keycloakConsts.getAuthServerUrl())
+                    .realm(keycloakConsts.getRealm())
+                    .clientId(keycloakConsts.getResource())
+                    .clientSecret(keycloakConsts.getSecret())
                     .grantType(OAuth2Constants.PASSWORD)
                     .username(request.getUsername())
                     .password(request.getPassword())
                     .build();
 
-            // 2) Делаем запрос токена
+            // Делаем запрос токена
             AccessTokenResponse tokenResponse = keycloakForLogin.tokenManager().getAccessToken();
 
             // Возвращаем токен

@@ -3,6 +3,7 @@ package com.example.auth.service.impl;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.service.AuthService;
+import com.example.auth.service.LoginService;
 import com.example.auth.service.RegistrationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Сервис для аутентификации пользователей.
      */
-    private final AuthService authService;
+    private final LoginService loginService;
 
     /**
      * Конструктор класса AuthServiceImpl.
@@ -29,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
      * @param registrationService сервис для регистрации пользователей
      */
     public AuthServiceImpl(RegistrationService registrationService,
-                           AuthService authService) {
+                           LoginService loginService) {
         this.registrationService = registrationService;
-        this.authService = authService;
+        this.loginService = loginService;
     }
 
     /**
@@ -43,9 +44,15 @@ public class AuthServiceImpl implements AuthService {
         registrationService.register(request);
     }
 
+    /**
+     * Аутентификация пользователя.
+     *
+     * @param request запрос на аутентификацию, содержащий информацию о пользователе
+     * @return ответ сервера, содержащий результат аутентификации
+     */
     @Override
     public ResponseEntity<?> login(LoginRequest request) {
-        return authService.login(request);
+        return loginService.login(request);
     }
 
 }
