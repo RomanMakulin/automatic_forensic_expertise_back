@@ -5,6 +5,7 @@ import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.service.AuthService;
 import com.example.auth.service.LoginService;
 import com.example.auth.service.RegistrationService;
+import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -48,10 +49,10 @@ public class AuthServiceImpl implements AuthService {
      * Аутентификация пользователя.
      *
      * @param request запрос на аутентификацию, содержащий информацию о пользователе
-     * @return ответ сервера, содержащий результат аутентификации
+     * @return токен пользователя
      */
     @Override
-    public ResponseEntity<?> login(LoginRequest request) {
+    public AccessTokenResponse login(LoginRequest request) {
         return loginService.login(request);
     }
 

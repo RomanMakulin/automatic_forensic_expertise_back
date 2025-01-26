@@ -38,27 +38,23 @@ public class LoginServiceImpl implements LoginService {
      * @return ответ сервера, содержащий результат аутентификации
      */
     @Override
-    public ResponseEntity<?> login(LoginRequest request) {
-        try {
-            Keycloak keycloakForLogin = KeycloakBuilder.builder()
-                    .serverUrl(keycloakConsts.getAuthServerUrl())
-                    .realm(keycloakConsts.getRealm())
-                    .clientId(keycloakConsts.getResource())
-                    .clientSecret(keycloakConsts.getSecret())
-                    .grantType(OAuth2Constants.PASSWORD)
-                    .username(request.getEmail())
-                    .password(request.getPassword())
-                    .build();
+    public AccessTokenResponse login(LoginRequest request) {
 
-            // Делаем запрос токена
-            AccessTokenResponse tokenResponse = keycloakForLogin.tokenManager().getAccessToken();
+        Keycloak keycloakForLogin = KeycloakBuilder.builder()
+                .serverUrl(keycloakConsts.getAuthServerUrl())
+                .realm(keycloakConsts.getRealm())
+                .clientId(keycloakConsts.getResource())
+                .clientSecret(keycloakConsts.getSecret())
+                .grantType(OAuth2Constants.PASSWORD)
+                .username(request.getEmail())
+                .password(request.getPassword())
+                .build();
 
-            // Возвращаем токен
-            return ResponseEntity.ok(tokenResponse);
+        // Делаем запрос токена
+        AccessTokenResponse tokenResponse = keycloakForLogin.tokenManager().getAccessToken();
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
+        // Возвращаем токен
+        return tokenResponse;
     }
 
 }

@@ -5,20 +5,18 @@ import com.example.auth.model.User;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.service.KeycloakAdminService;
 import com.example.auth.service.RegistrationService;
-import exceptions.UserAlreadyExistsException;
+import jakarta.persistence.EntityManager;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,19 +33,17 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final Keycloak keycloak;
+    private final KeycloakAdminService keycloakAdminService;
+    private final EntityManager entityManager;
 
-    /**
-     * Конструктор класса RegistrationServiceImpl.
-     *
-     * @param userRepository репозиторий для работы с пользователями
-     * @param roleRepository репозиторий для работы с ролями
-     * @param keycloak       клиент Keycloak
-     */
-    public RegistrationServiceImpl(UserRepository userRepository, RoleRepository roleRepository, Keycloak keycloak) {
+    public RegistrationServiceImpl(UserRepository userRepository,
+                                   RoleRepository roleRepository,
+                                   KeycloakAdminService keycloakAdminService,
+                                   EntityManager entityManager) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.keycloak = keycloak;
+        this.keycloakAdminService = keycloakAdminService;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -59,83 +55,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void register(RegistrationRequest request) {
 
-        // Создаём объект пользователя для Keycloak
-        UserRepresentation userRepresentation = createKeycloakUser(request);
-
-        // Вызываем Admin API для создания пользователя
-        UsersResource usersResource = checkResponseRegistration(userRepresentation);
+        // Создаем User в Keycloak БД
+        keycloakAdminService.createKeycloakUser(request);
 
         // Нужно узнать ID созданного пользователя (чтобы связать с локальной БД).
-        String keycloakUserId = getKeycloakUserId(usersResource, request.getEmail());
+        String keycloakUserId = keycloakAdminService.getUserByEmail(request.getEmail()).getId();
 
         // Сохраняем локально в нашей таблице user
-        User user = createUserMainTable(request, keycloakUserId);
-        log.info("User successfully created: {}", user);
-    }
-
-    /**
-     * Создание пользователя в Keycloak.
-     *
-     * @param request запрос на регистрацию (DTO)
-     * @return созданный пользователь в Keycloak (UserRepresentation)
-     */
-    private UserRepresentation createKeycloakUser(RegistrationRequest request) {
-        // Создаём пользователя в Keycloak
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername(request.getEmail());  // так как вход стоит по email
-        userRepresentation.setEmail(request.getEmail());
-        userRepresentation.setFirstName(request.getFirstName());
-        userRepresentation.setLastName(request.getLastName());
-        userRepresentation.setEnabled(true);
-
-        // Установим пароль
-        CredentialRepresentation cred = new CredentialRepresentation();
-        cred.setType(CredentialRepresentation.PASSWORD);
-        cred.setTemporary(false);
-        cred.setValue(request.getPassword());
-
-        userRepresentation.setCredentials(List.of(cred));
-
-        return userRepresentation;
-    }
-
-    /**
-     * Вызываем Admin API для создания пользователя в Keycloak (отправляем запрос).
-     *
-     * @param userRepresentation данные о пользователе в Keycloak
-     * @return интерфейс управления пользователем в Keycloak
-     */
-    private UsersResource checkResponseRegistration(UserRepresentation userRepresentation) {
-        UsersResource usersResource = keycloak.realm(realmName).users();
-        Response response = usersResource.create(userRepresentation);
-
-        int status = response.getStatus();
-        response.close();
-
-        if (status == 201) {
-            log.info("User successfully created in Keycloak table: {}", userRepresentation);
-            return usersResource;
-        } else if (status == 409) {
-            log.error("User already exists in Keycloak table: {}", userRepresentation);
-            throw new UserAlreadyExistsException("User already exists (409).");
-        } else {
-            throw new RuntimeException("Keycloak user creation failed. Status: " + status);
-        }
-    }
-
-    /**
-     * Получаем ID пользователя в Keycloak по email.
-     *
-     * @param usersResource интерфейс управления пользователем в Keycloak
-     * @param email         email пользователя
-     * @return ID пользователя в Keycloak
-     */
-    private String getKeycloakUserId(UsersResource usersResource, String email) {
-        List<UserRepresentation> found = usersResource.search(email);
-        if (found.isEmpty()) {
-            throw new RuntimeException("Keycloak user not found. Email: " + email);
-        }
-        return found.getFirst().getId();
+        createUserMainTable(request, keycloakUserId);
     }
 
     /**
@@ -144,19 +71,27 @@ public class RegistrationServiceImpl implements RegistrationService {
      * @param request        данные о пользователе
      * @param keycloakUserId ID уже созданного пользователя в Keycloak
      */
-    private User createUserMainTable(RegistrationRequest request, String keycloakUserId) {
-        User localUser = new User();
+    private void createUserMainTable(RegistrationRequest request, String keycloakUserId) {
+        try {
+            User localUser = new User();
 
-        Role role = roleRepository.findByName("Expert")
-                .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
+            Role role = roleRepository.findByName("Expert")
+                    .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
 
-        localUser.setFullName(request.getFirstName() + " " + request.getLastName());
-        localUser.setEmail(request.getEmail());
-        localUser.setRegistrationDate(LocalDateTime.now());
-        localUser.setRole(role);
-        localUser.setKeycloakId(keycloakUserId);
+            localUser.setFullName(request.getFirstName() + " " + request.getLastName());
+            localUser.setEmail(request.getEmail());
+            localUser.setRegistrationDate(LocalDateTime.now());
+            localUser.setRole(role);
+            localUser.setKeycloakId(keycloakUserId);
 
-        return userRepository.save(localUser);
+            userRepository.save(localUser);
+            log.info("User successfully created: {}", localUser);
+            entityManager.flush(); // Принудительная фиксация изменений в БД
+        } catch (Exception e) {
+            // При возникновении ошибки удаляем пользователя из Keycloak
+            keycloakAdminService.deleteUserByEmail(request.getEmail());
+            throw new RuntimeException("User not created in local table", e);
+        }
     }
 
 }
