@@ -21,6 +21,20 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      */
     boolean existsByEmail(String email);
 
+    /**
+     * Поиск пользователя по email
+     *
+     * @param email email пользователя
+     * @return юзер, если он существует, иначе Optional.empty()
+     */
     Optional<User> findByEmail(String email);
+
+    /**
+     * Поиск пользователя по keycloakId
+     *
+     * @param keycloakId id пользователя
+     * @return юзер, если он существует, иначе Optional.empty()
+     */
+    Optional<User> findUserByKeycloakId(String keycloakId);
 
 }

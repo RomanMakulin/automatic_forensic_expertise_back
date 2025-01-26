@@ -67,11 +67,9 @@ public interface KeycloakAdminService {
     /**
      * Сбрасывает пароль пользователя.
      *
-     * @param keycloakUserId идентификатор пользователя
-     * @param newPassword    новый пароль
-     * @param temporary      флаг, указывающий, является ли новый пароль временным
+     * @param email почта пользователя
      */
-    void resetPassword(String keycloakUserId, String newPassword, boolean temporary);
+    void resetPassword(String email);
 
     /**
      * Назначает роль пользователя в рамках реалма.

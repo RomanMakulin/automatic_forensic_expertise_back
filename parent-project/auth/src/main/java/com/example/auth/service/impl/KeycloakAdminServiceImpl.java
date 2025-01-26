@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -201,27 +202,47 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
      * Сбросить пароль пользователя (установить новый).
      * temporary = true => при следующем входе пользователь должен сменить пароль.
      *
-     * @param keycloakUserId id пользователя
-     * @param newPassword    новый пароль
-     * @param temporary      должен ли пользователь сменить пароль при слеожном входе
+     * @param email почта пользователя
      */
     @Transactional
     @Override
-    public void resetPassword(String keycloakUserId, String newPassword, boolean temporary) {
+    public void resetPassword(String email) {
         try {
             CredentialRepresentation cred = new CredentialRepresentation();
             cred.setType(CredentialRepresentation.PASSWORD);
-            cred.setValue(newPassword);
-            cred.setTemporary(temporary);
+            cred.setValue(generateRandomPassword(10));
+            cred.setTemporary(false);
 
+            UserRepresentation user = getUserByEmail(email);
+
+            // Устанавливаем новый пароль через Keycloak Admin API
             keycloak.realm(keycloakConsts.getRealm())
                     .users()
-                    .get(keycloakUserId)
+                    .get(user.getId()) // ID пользователя
                     .resetPassword(cred);
+
+            log.info("Password reset for user: {}", email);
         } catch (Exception e) {
             log.error("Error updating password (keycloak). Message: {}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Генерирует случайный пароль.
+     *
+     * @return случайный пароль
+     */
+    private String generateRandomPassword(int length) {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return password.toString();
     }
 
     /**

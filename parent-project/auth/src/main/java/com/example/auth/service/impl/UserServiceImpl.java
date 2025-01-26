@@ -1,8 +1,17 @@
 package com.example.auth.service.impl;
 
+import com.example.auth.model.User;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.service.AuthService;
+import com.example.auth.service.KeycloakAdminService;
 import com.example.auth.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Реализация сервиса для работы с пользователем.
@@ -10,38 +19,59 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     /**
      * Репозиторий для работы с пользователями.
      */
     private final UserRepository userRepository;
 
     /**
+     * Сервис для работы с авторизацией.
+     */
+    private final AuthService authService;
+
+
+    /**
      * Конструктор класса UserServiceImpl.
      *
      * @param userRepository репозиторий для работы с пользователями
      */
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           AuthService authService) {
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     /**
-     * Изменяет электронную почту пользователя.
+     * Возвращает всех пользователей.
      *
-     * @param email новая электронная почта пользователя
+     * @return список пользователей
      */
     @Override
-    public void changeEmail(String email) {
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     /**
-     * Изменяет пароль пользователя.
+     * Возвращает пользователя по его идентификатору.
      *
-     * @param password новый пароль пользователя
+     * @param id идентификатор пользователя
+     * @return пользователь
      */
     @Override
-    public void changePassword(String password) {
+    public User getUserById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
+    /**
+     * Возвращает пользователя по его идентификатору в Keycloak.
+     *
+     * @param keycloakId идентификатор пользователя в Keycloak
+     * @return пользователь
+     */
+    @Override
+    public User getUserByKeycloakId(String keycloakId) {
+        return userRepository.findUserByKeycloakId(keycloakId).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     /**

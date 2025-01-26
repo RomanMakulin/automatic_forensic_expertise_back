@@ -1,23 +1,37 @@
 package com.example.auth.service;
 
+import com.example.auth.model.User;
+
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Интерфейс для работы с пользователем.
  */
 public interface UserService {
 
     /**
-     * Изменяет электронную почту пользователя.
+     * Возвращает всех пользователей.
      *
-     * @param email новая электронная почта пользователя
+     * @return список пользователей
      */
-    void changeEmail(String email);
+    List<User> getAllUsers();
 
     /**
-     * Изменяет пароль пользователя.
+     * Возвращает пользователя по его идентификатору.
      *
-     * @param password новый пароль пользователя
+     * @param id идентификатор пользователя
+     * @return пользователь
      */
-    void changePassword(String password);
+    User getUserById(UUID id);
+
+    /**
+     * Возвращает пользователя по его идентификатору в Keycloak.
+     *
+     * @param keycloakId идентификатор пользователя в Keycloak
+     * @return пользователь
+     */
+    User getUserByKeycloakId(String keycloakId);
 
     /**
      * Изменяет имя пользователя.

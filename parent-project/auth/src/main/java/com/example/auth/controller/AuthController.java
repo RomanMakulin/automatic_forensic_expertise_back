@@ -3,6 +3,7 @@ package com.example.auth.controller;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.service.AuthService;
+import com.example.auth.service.KeycloakAdminService;
 import exceptions.UserAlreadyExistsException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,19 @@ public class AuthController {
     private final AuthService authService;
 
     /**
+     * Сервис управления Keycloak.
+     */
+    private final KeycloakAdminService keycloakAdminService;
+
+    /**
      * Конструктор класса RegistrationController.
      *
      * @param authService сервис для аутентификации пользователей
      */
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          KeycloakAdminService keycloakAdminService) {
         this.authService = authService;
+        this.keycloakAdminService = keycloakAdminService;
     }
 
     /**
@@ -66,6 +74,24 @@ public class AuthController {
         } catch (Exception e) {
             System.out.println(e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+    }
+
+    /**
+     * Восстановление пароля пользователя.
+     *
+     * @param email адрес пользователя
+     * @return ответ сервера, содержащий результат восстановления пароля
+     */
+    @PutMapping("/reset-password/{email}")
+    public ResponseEntity<?> resetPassword(@PathVariable String email) {
+        try {
+            keycloakAdminService.resetPassword(email);
+            return ResponseEntity.ok("Password reset successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password reset failed: " + e.getMessage());
+
+
         }
     }
 
