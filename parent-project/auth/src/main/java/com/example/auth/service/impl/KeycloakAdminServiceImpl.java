@@ -294,4 +294,23 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
                 .listAll();
     }
 
+    /**
+     * Выход пользователя из системы.
+     *
+     * @param keycloakUserId идентификатор пользователя
+     */
+    @Transactional
+    @Override
+    public void logoutUserById(String keycloakUserId) {
+        try {
+            keycloak.realm(keycloakConsts.getRealm())
+                    .users()
+                    .get(keycloakUserId)
+                    .logout();
+            log.info("User {} logged out", keycloakUserId);
+        } catch (Exception e) {
+            log.error("Error logging out user (keycloak). Message: {}", e.getMessage());
+        }
+    }
+
 }

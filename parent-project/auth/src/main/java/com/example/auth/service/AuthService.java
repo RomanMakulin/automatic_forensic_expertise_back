@@ -1,5 +1,6 @@
 package com.example.auth.service;
 
+import com.example.auth.model.User;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import org.keycloak.representations.AccessTokenResponse;
@@ -24,5 +25,17 @@ public interface AuthService {
      * @return токен пользователя
      */
     AccessTokenResponse login(LoginRequest request);
+
+    /**
+     * Выходит из системы текущего пользователя.
+     */
+    void logout();
+
+    /**
+     * Получить текущего авторизованного пользователя.
+     *
+     * @return текущий авторизованный пользователь
+     */
+    User getAuthenticatedUser();
 
 }

@@ -96,4 +96,11 @@ public interface KeycloakAdminService {
      * @return список представлений ролей
      */
     List<RoleRepresentation> getUserRealmRoles(String keycloakUserId);
+
+    /**
+     * Выход пользователя из системы.
+     *
+     * @param keycloakUserId идентификатор пользователя
+     */
+    void logoutUserById(String keycloakUserId);
 }

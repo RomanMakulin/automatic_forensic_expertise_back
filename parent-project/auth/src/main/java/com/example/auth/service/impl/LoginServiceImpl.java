@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService {
     public AccessTokenResponse login(LoginRequest request) {
 
         Keycloak keycloakForLogin = KeycloakBuilder.builder()
-                .serverUrl(keycloakConsts.getAuthServerUrl())
+                .serverUrl(keycloakConsts.getAuthServerUrlAdmin())
                 .realm(keycloakConsts.getRealm())
                 .clientId(keycloakConsts.getResource())
                 .clientSecret(keycloakConsts.getSecret())
@@ -50,11 +50,8 @@ public class LoginServiceImpl implements LoginService {
                 .password(request.getPassword())
                 .build();
 
-        // Делаем запрос токена
-        AccessTokenResponse tokenResponse = keycloakForLogin.tokenManager().getAccessToken();
-
-        // Возвращаем токен
-        return tokenResponse;
+        // Делаем запрос токена и возвращаем его
+        return keycloakForLogin.tokenManager().getAccessToken();
     }
 
 }
