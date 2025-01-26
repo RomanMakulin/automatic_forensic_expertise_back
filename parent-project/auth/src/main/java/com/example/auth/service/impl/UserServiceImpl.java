@@ -3,13 +3,11 @@ package com.example.auth.service.impl;
 import com.example.auth.model.User;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.AuthService;
-import com.example.auth.service.KeycloakAdminService;
 import com.example.auth.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.UUID;
 

@@ -8,9 +8,6 @@ import com.example.auth.repository.UserRepository;
 import com.example.auth.service.KeycloakAdminService;
 import com.example.auth.service.RegistrationService;
 import jakarta.persistence.EntityManager;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Сервис для регистрации пользователей.
