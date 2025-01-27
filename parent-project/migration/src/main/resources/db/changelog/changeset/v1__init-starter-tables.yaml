@@ -1,0 +1,429 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Role
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: AppUser
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: registration_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: keycloak_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: AppUser
+            baseColumnNames: role_id
+            referencedTableName: Role
+            referencedColumnNames: id
+            constraintName: fk_appuser_role
+
+  - changeSet:
+      id: 3
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Status
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 4
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Location
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: country
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: region
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 5
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Profile_Status
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: verification_result
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: activity_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Profile
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: photo
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(15)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_login
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: Profile
+            baseColumnNames: user_id
+            referencedTableName: AppUser
+            referencedColumnNames: id
+            constraintName: fk_profile_user
+        - addForeignKeyConstraint:
+            baseTableName: Profile
+            baseColumnNames: location_id
+            referencedTableName: Location
+            referencedColumnNames: id
+            constraintName: fk_profile_location
+        - addForeignKeyConstraint:
+            baseTableName: Profile
+            baseColumnNames: status_id
+            referencedTableName: Profile_Status
+            referencedColumnNames: id
+            constraintName: fk_profile_status
+
+  - changeSet:
+      id: 7
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Direction
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 8
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Profile_Direction
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: profile_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: direction_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: Profile_Direction
+            baseColumnNames: profile_id
+            referencedTableName: Profile
+            referencedColumnNames: id
+            constraintName: fk_profile_direction_profile
+        - addForeignKeyConstraint:
+            baseTableName: Profile_Direction
+            baseColumnNames: direction_id
+            referencedTableName: Direction
+            referencedColumnNames: id
+            constraintName: fk_profile_direction_direction
+
+  - changeSet:
+      id: 9
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: File
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: upload_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 10
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Profile_File
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: profile_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: Profile_File
+            baseColumnNames: profile_id
+            referencedTableName: Profile
+            referencedColumnNames: id
+            constraintName: fk_profile_file_profile
+        - addForeignKeyConstraint:
+            baseTableName: Profile_File
+            baseColumnNames: file_id
+            referencedTableName: File
+            referencedColumnNames: id
+            constraintName: fk_profile_file_file
+
+  - changeSet:
+      id: 11
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Plan
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: storage_limit
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 12
+      author: Roman Makulin
+      changes:
+        - createTable:
+            tableName: Profile_Plan
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: plan_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: profile_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: Profile_Plan
+            baseColumnNames: plan_id
+            referencedTableName: Plan
+            referencedColumnNames: id
+            constraintName: fk_profile_plan_plan
+        - addForeignKeyConstraint:
+            baseTableName: Profile_Plan
+            baseColumnNames: profile_id
+            referencedTableName: Profile
+            referencedColumnNames: id
+            constraintName: fk_profile_plan_profile

@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13
+      author: Roman Makulin
+      changes:
+        - insert:
+            tableName: Role
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: Expert
+        - insert:
+            tableName: Role
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: User
+        - insert:
+            tableName: Role
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: Admin
