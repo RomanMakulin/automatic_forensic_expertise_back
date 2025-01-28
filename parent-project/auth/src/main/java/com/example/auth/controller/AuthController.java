@@ -62,7 +62,7 @@ public class AuthController {
      * @param request запрос на аутентификацию, содержащий информацию о пользователе
      * @return ответ сервера, содержащий результат аутентификации
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             return ResponseEntity.ok(authService.login(request));

@@ -73,10 +73,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
             Role role = roleRepository.findByName("Expert")
                     .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
+            log.info("Role found: {}", role);
 
             localUser.setFullName(request.getFirstName() + " " + request.getLastName());
             localUser.setEmail(request.getEmail());
             localUser.setRegistrationDate(LocalDateTime.now());
+            log.info("test");
             localUser.setRole(role);
             localUser.setKeycloakId(keycloakUserId);
 
@@ -86,6 +88,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         } catch (Exception e) {
             // При возникновении ошибки удаляем пользователя из Keycloak
             keycloakAdminService.deleteUserByEmail(request.getEmail());
+            log.info("User not created in local table", e);
             throw new RuntimeException("User not created in local table", e);
         }
     }

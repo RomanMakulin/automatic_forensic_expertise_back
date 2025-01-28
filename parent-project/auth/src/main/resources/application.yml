@@ -13,8 +13,6 @@ keycloak:
     username: admin
     password: admin
 
-
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/flm_project
@@ -35,3 +33,15 @@ spring:
           issuer-uri: http://localhost:8081/realms/demo
 
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/v1__init-starter-tables.yaml
   - include:
       file: db/changelog/changeset/v1__init-starter-roles.yaml
+  - include:
+      file: db/changelog/changeset/v1__change-names-tables.yaml

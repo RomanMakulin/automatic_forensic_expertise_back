@@ -208,10 +208,13 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
     @Override
     public void resetPassword(String email) {
         try {
+            String pass = generateRandomPassword(10);
             CredentialRepresentation cred = new CredentialRepresentation();
             cred.setType(CredentialRepresentation.PASSWORD);
-            cred.setValue(generateRandomPassword(10));
+            cred.setValue(pass);
             cred.setTemporary(false);
+
+            System.out.println(pass);
 
             UserRepresentation user = getUserByEmail(email);
 
