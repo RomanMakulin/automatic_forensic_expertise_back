@@ -6,7 +6,7 @@ CREATE TABLE Role
 );
 
 -- 2. Таблица AppUser
-CREATE TABLE AppUser
+CREATE TABLE App_User
 (
     id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name         VARCHAR(100)                               NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE AppUser
     registration_date TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     role_id           UUID                                       NOT NULL,
     keycloak_id       VARCHAR(255)                               NOT NULL,
-    CONSTRAINT fk_appuser_role FOREIGN KEY (role_id) REFERENCES Role (id)
+    CONSTRAINT fk_app_user_role FOREIGN KEY (role_id) REFERENCES Role (id)
 );
 
 -- 3. Таблица Status
@@ -53,7 +53,7 @@ CREATE TABLE Profile
     location_id UUID         NOT NULL,
     status_id   UUID         NOT NULL,
     last_login  TIMESTAMP    NOT NULL,
-    CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES AppUser (id),
+    CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES App_User (id),
     CONSTRAINT fk_profile_location FOREIGN KEY (location_id) REFERENCES Location (id),
     CONSTRAINT fk_profile_status FOREIGN KEY (status_id) REFERENCES Profile_Status (id)
 );
