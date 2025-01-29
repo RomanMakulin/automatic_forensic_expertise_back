@@ -1,13 +1,10 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.auth;
 
 import com.example.auth.model.User;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.UserRepository;
-import com.example.auth.service.AuthService;
-import com.example.auth.service.KeycloakAdminService;
-import com.example.auth.service.LoginService;
-import com.example.auth.service.RegistrationService;
+import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;

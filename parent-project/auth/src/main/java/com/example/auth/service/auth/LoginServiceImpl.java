@@ -1,7 +1,6 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.auth;
 
 import com.example.auth.model.dto.LoginRequest;
-import com.example.auth.service.LoginService;
 import com.example.auth.util.KeycloakConsts;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;

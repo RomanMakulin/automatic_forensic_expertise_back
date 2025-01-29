@@ -1,10 +1,9 @@
-package com.example.auth.service;
+package com.example.auth.service.auth;
 
 import com.example.auth.model.User;
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import org.keycloak.representations.AccessTokenResponse;
-import org.springframework.http.ResponseEntity;
 
 /**
  * Интерфейс для сервиса аутентификации.

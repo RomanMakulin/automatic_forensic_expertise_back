@@ -1,8 +1,6 @@
-package com.example.auth.service;
+package com.example.auth.service.auth;
 
 import com.example.auth.model.dto.ResetPassword;
-
-import java.util.UUID;
 
 /**
  * Интерфейс для сервиса сброса пароля.

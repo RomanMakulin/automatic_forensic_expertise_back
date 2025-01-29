@@ -1,7 +1,7 @@
 package com.example.auth.controller;
 
 import com.example.auth.model.dto.ResetPassword;
-import com.example.auth.service.PasswordService;
+import com.example.auth.service.auth.PasswordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

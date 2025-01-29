@@ -2,8 +2,7 @@ package com.example.auth.controller;
 
 import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
-import com.example.auth.service.AuthService;
-import com.example.auth.service.KeycloakAdminService;
+import com.example.auth.service.auth.AuthService;
 import exceptions.UserAlreadyExistsException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,8 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.user;
 
 import com.example.auth.model.User;
 import com.example.auth.repository.UserRepository;
-import com.example.auth.service.AuthService;
-import com.example.auth.service.UserService;
+import com.example.auth.service.auth.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

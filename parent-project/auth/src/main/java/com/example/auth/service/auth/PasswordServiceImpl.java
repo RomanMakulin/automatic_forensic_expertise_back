@@ -1,15 +1,11 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.auth;
 
-import com.example.auth.model.User;
 import com.example.auth.model.dto.MailRequest;
 import com.example.auth.model.dto.ResetPassword;
-import com.example.auth.service.*;
+import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.integrations.mail.MailService;
 import com.example.auth.util.ApiPaths;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class PasswordServiceImpl implements PasswordService {

@@ -1,7 +1,6 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.integrations.keycloak;
 
 import com.example.auth.model.dto.RegistrationRequest;
-import com.example.auth.service.KeycloakAdminService;
 import com.example.auth.util.KeycloakConsts;
 import exceptions.CannotFindKeycloakUserException;
 import exceptions.UserAlreadyExistsException;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

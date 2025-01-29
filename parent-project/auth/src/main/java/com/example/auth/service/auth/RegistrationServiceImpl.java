@@ -1,12 +1,11 @@
-package com.example.auth.service.impl;
+package com.example.auth.service.auth;
 
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
-import com.example.auth.service.KeycloakAdminService;
-import com.example.auth.service.RegistrationService;
+import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
