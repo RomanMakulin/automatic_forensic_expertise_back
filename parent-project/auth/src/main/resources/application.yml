@@ -32,12 +32,10 @@ spring:
         jwt:
           issuer-uri: http://localhost:8081/realms/demo
 
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui
+cors:
+  allowed-origins:
+#    - http://localhost:4200
+    - http://localhost:8082 # Фронт
 
 
 logging:

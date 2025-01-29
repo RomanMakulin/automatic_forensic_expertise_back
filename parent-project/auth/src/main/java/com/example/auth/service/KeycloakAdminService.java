@@ -42,6 +42,14 @@ public interface KeycloakAdminService {
     UserRepresentation getUserById(String keycloakUserId);
 
     /**
+     * Изменить пароль пользователя
+     *
+     * @param keycloakId  идентификатор пользователя
+     * @param newPassword новый пароль
+     */
+    void resetPassword(String keycloakId, String newPassword);
+
+    /**
      * Возвращает список пользователей, соответствующих поисковому запросу.
      *
      * @param searchString поисковый запрос
@@ -63,13 +71,6 @@ public interface KeycloakAdminService {
      * @param user представление пользователя
      */
     void updateUser(UserRepresentation user);
-
-    /**
-     * Сбрасывает пароль пользователя.
-     *
-     * @param email почта пользователя
-     */
-    void resetPassword(String email);
 
     /**
      * Назначает роль пользователя в рамках реалма.

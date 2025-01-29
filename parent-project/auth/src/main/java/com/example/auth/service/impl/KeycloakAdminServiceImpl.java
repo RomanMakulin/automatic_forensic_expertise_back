@@ -141,6 +141,36 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
     }
 
     /**
+     * Сбросить пароль пользователя (установить новый).
+     *
+     * @param keycloakId  идентификатор пользователя
+     * @param newPassword новый пароль
+     */
+    @Transactional
+    @Override
+    public void resetPassword(String keycloakId, String newPassword) {
+        try {
+            CredentialRepresentation cred = new CredentialRepresentation();
+            cred.setType(CredentialRepresentation.PASSWORD);
+            cred.setValue(newPassword);
+            cred.setTemporary(false); // не временный пароль
+
+            UserRepresentation user = getUserById(keycloakId);
+
+            // Устанавливаем новый пароль через Keycloak Admin API
+            keycloak.realm(keycloakConsts.getRealm())
+                    .users()
+                    .get(user.getId()) // ID пользователя
+                    .resetPassword(cred);
+
+            log.info("Password reset for user: {}", user.getEmail());
+        } catch (Exception e) {
+            log.error("Error updating password (keycloak). Message: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Поиск пользователей по подстроке (username, email и т.п.)
      * Например, поиск "test" вернёт всех пользователей, у которых в имени/юзернейме/почте есть "test".
      *
@@ -196,56 +226,6 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
             log.error("Error updating user (keycloak). Message: {}", e.getMessage());
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Сбросить пароль пользователя (установить новый).
-     * temporary = true => при следующем входе пользователь должен сменить пароль.
-     *
-     * @param email почта пользователя
-     */
-    @Transactional
-    @Override
-    public void resetPassword(String email) {
-        try {
-            String pass = generateRandomPassword(10);
-            CredentialRepresentation cred = new CredentialRepresentation();
-            cred.setType(CredentialRepresentation.PASSWORD);
-            cred.setValue(pass);
-            cred.setTemporary(false);
-
-            System.out.println(pass);
-
-            UserRepresentation user = getUserByEmail(email);
-
-            // Устанавливаем новый пароль через Keycloak Admin API
-            keycloak.realm(keycloakConsts.getRealm())
-                    .users()
-                    .get(user.getId()) // ID пользователя
-                    .resetPassword(cred);
-
-            log.info("Password reset for user: {}", email);
-        } catch (Exception e) {
-            log.error("Error updating password (keycloak). Message: {}", e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Генерирует случайный пароль.
-     *
-     * @return случайный пароль
-     */
-    private String generateRandomPassword(int length) {
-        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i < length; i++) {
-            password.append(chars.charAt(random.nextInt(chars.length())));
-        }
-
-        return password.toString();
     }
 
     /**
