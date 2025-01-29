@@ -26,6 +26,14 @@ public interface UserService {
     User getUserById(UUID id);
 
     /**
+     * Возвращает пользователя по его email.
+     *
+     * @param email email пользователя
+     * @return пользователь
+     */
+    User getUserByEmail(String email);
+
+    /**
      * Возвращает пользователя по его идентификатору в Keycloak.
      *
      * @param keycloakId идентификатор пользователя в Keycloak

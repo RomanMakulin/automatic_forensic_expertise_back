@@ -21,20 +21,33 @@ public class User {
     @Column(name="registration_date")
     private LocalDateTime registrationDate;
 
+    @Column(name="verification_email")
+    private boolean verificationEmail;
+
     @OneToOne(cascade=CascadeType.ALL)
     private Role role;
 
     private String keycloakId;
 
-    public User(UUID id, String fullName, String email, LocalDateTime registrationDate, Role role) {
+    public User(UUID id, String fullName, String email, LocalDateTime registrationDate, boolean verificationEmail, Role role, String keycloakId) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.registrationDate = registrationDate;
+        this.verificationEmail = verificationEmail;
         this.role = role;
+        this.keycloakId = keycloakId;
     }
 
     public User() {
+    }
+
+    public boolean isVerificationEmail() {
+        return verificationEmail;
+    }
+
+    public void setVerificationEmail(boolean verificationEmail) {
+        this.verificationEmail = verificationEmail;
     }
 
     public String getKeycloakId() {
@@ -92,6 +105,7 @@ public class User {
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 ", registrationDate=" + registrationDate +
+                ", verificationEmail=" + verificationEmail +
                 ", role=" + role +
                 ", keycloakId='" + keycloakId + '\'' +
                 '}';

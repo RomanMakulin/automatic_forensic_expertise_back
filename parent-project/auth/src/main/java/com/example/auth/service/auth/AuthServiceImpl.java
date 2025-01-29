@@ -5,12 +5,17 @@ import com.example.auth.model.dto.LoginRequest;
 import com.example.auth.model.dto.RegistrationRequest;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
+import com.example.auth.service.user.UserService;
 import org.keycloak.representations.AccessTokenResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Сервис для аутентификации пользователей.
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     /**
      * Сервис для регистрации пользователей.
      */
@@ -39,6 +45,11 @@ public class AuthServiceImpl implements AuthService {
     private final KeycloakAdminService keycloakAdminService;
 
     /**
+     * Сервис для работы с пользователями.
+     */
+    private final UserService userService;
+
+    /**
      * Конструктор класса AuthServiceImpl.
      *
      * @param registrationService сервис для регистрации пользователей
@@ -46,11 +57,13 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(RegistrationService registrationService,
                            LoginService loginService,
                            UserRepository userRepository,
-                           @Lazy KeycloakAdminService keycloakAdminService) {
+                           @Lazy KeycloakAdminService keycloakAdminService,
+                           UserService userService) {
         this.registrationService = registrationService;
         this.loginService = loginService;
         this.userRepository = userRepository;
         this.keycloakAdminService = keycloakAdminService;
+        this.userService = userService;
     }
 
     /**
@@ -71,6 +84,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AccessTokenResponse login(LoginRequest request) {
         return loginService.login(request);
+    }
+
+    @Override
+    public void verifyRegistration(UUID userId) {
+        User user = userService.getUserById(userId);
+        user.setVerificationEmail(true);
+        userRepository.save(user);
+        log.info("Регистрация пользователя {} была успешно проверена (email).", user.getEmail());
     }
 
     /**

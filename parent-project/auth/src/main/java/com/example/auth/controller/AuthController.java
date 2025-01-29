@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 /**
  * Контроллер для регистрации и аутентификации пользователей.
  */
@@ -59,9 +61,14 @@ public class AuthController {
         try {
             return ResponseEntity.ok(authService.login(request));
         } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/verify-email/{userId}")
+    public ResponseEntity<String> verifyEmail(@PathVariable UUID userId) {
+        authService.verifyRegistration(userId);
+        return ResponseEntity.ok("Email verified successfully.");
     }
 
 

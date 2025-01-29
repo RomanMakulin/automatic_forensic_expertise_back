@@ -10,7 +10,8 @@ public class ApiPaths {
 
     public static class AuthService {
         public static final String BASE = "http://localhost:8080";
-        public static final String RESET_REQUEST = AuthService.BASE + "/auth/reset-password";
+        public static final String RESET_REQUEST = AuthService.BASE + "/api/auth/reset-password";
+        public static final String VERIFICATION_REQUEST = AuthService.BASE + "/api/auth/verify-email";
     }
 
     public static class Frontend {

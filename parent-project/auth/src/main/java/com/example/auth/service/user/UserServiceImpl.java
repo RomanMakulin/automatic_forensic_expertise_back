@@ -23,20 +23,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     /**
-     * Сервис для работы с авторизацией.
-     */
-    private final AuthService authService;
-
-
-    /**
      * Конструктор класса UserServiceImpl.
      *
      * @param userRepository репозиторий для работы с пользователями
      */
-    public UserServiceImpl(UserRepository userRepository,
-                           AuthService authService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.authService = authService;
     }
 
     /**
@@ -58,6 +50,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     /**
