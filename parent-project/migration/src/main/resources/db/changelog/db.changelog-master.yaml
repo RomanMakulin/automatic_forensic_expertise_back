@@ -1,7 +1,14 @@
 databaseChangeLog:
-  - include:
-      file: db/changelog/changeset/v1__init-starter-tables.yaml
-  - include:
-      file: db/changelog/changeset/v1__init-starter-roles.yaml
-  - include:
-      file: db/changelog/changeset/v1__change-names-tables.yaml
+  - changeSet:
+      id: 1
+      author: Roman Makulin
+      changes:
+        - sqlFile:
+            path: classpath:db/migrations/001_init.sql
+
+  - changeSet:
+      id: 2
+      author: Roman Makulin
+      changes:
+        - sqlFile:
+            path: classpath:db/migrations/002_insert_roles.sql
