@@ -1,6 +1,6 @@
 package com.example.auth.service.auth;
 
-import com.example.auth.api.dto.RegistrationRequest;
+import com.example.auth.model.dto.RegistrationRequest;
 
 /**
  * Интерфейс для сервиса регистрации пользователей.

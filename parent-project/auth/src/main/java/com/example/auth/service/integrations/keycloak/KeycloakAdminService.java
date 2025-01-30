@@ -1,6 +1,6 @@
 package com.example.auth.service.integrations.keycloak;
 
-import com.example.auth.api.dto.RegistrationRequest;
+import com.example.auth.model.dto.RegistrationRequest;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 

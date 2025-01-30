@@ -19,10 +19,3 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: classpath:db/migrations/003_create-reset-pass-table.sql
-
-  - changeSet:
-      id: 4
-      author: Roman Makulin
-      changes:
-        - sqlFile:
-            path: classpath:db/migrations/004_add_column_user.sql

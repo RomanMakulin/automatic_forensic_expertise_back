@@ -10,5 +10,5 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/flm_project
     username: postgres
-    password: 1
+    password: password
     driver-class-name: org.postgresql.Driver

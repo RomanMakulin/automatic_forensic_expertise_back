@@ -23,12 +23,20 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     /**
+     * Сервис для работы с авторизацией.
+     */
+    private final AuthService authService;
+
+
+    /**
      * Конструктор класса UserServiceImpl.
      *
      * @param userRepository репозиторий для работы с пользователями
      */
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           AuthService authService) {
         this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     /**
@@ -52,11 +60,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @Override
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
     /**
      * Возвращает пользователя по его идентификатору в Keycloak.
      *
@@ -76,44 +79,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changeName(String name) {
 
-    }
-
-    /**
-     * Получает список не прошедших проверку пользователей.
-     */
-    @Override
-    public List<User> getNotVerifiedUsers() {
-        return userRepository.findUnverifiedUsers();
-    }
-
-    /**
-     * Удаляет пользователя по его идентификатору.
-     *
-     * @param id идентификатор пользователя
-     */
-    @Override
-    public void deleteUserById(UUID id) {
-        userRepository.deleteById(id);
-    }
-
-    /**
-     * Удаляет пользователя по его email.
-     *
-     * @param email email пользователя
-     */
-    @Override
-    public void deleteUserByEmail(String email) {
-        userRepository.deleteByEmail(email);
-    }
-
-    /**
-     * Удаляет пользователя.
-     *
-     * @param user пользователь
-     */
-    @Override
-    public void deleteUser(User user) {
-        userRepository.delete(user);
     }
 }
 

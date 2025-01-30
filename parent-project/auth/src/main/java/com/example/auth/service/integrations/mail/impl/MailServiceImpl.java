@@ -1,10 +1,11 @@
 package com.example.auth.service.integrations.mail.impl;
 
-import com.example.auth.config.ApiPathsConfig;
-import com.example.auth.api.dto.MailRequest;
+import com.example.auth.model.dto.MailRequest;
 import com.example.auth.service.integrations.mail.MailService;
+import com.example.auth.util.ApiPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,12 +19,8 @@ public class MailServiceImpl implements MailService {
 
     private final RestTemplate restTemplate;
 
-    private final ApiPathsConfig apiPathsConfig;
-
-    public MailServiceImpl(RestTemplate restTemplate,
-                           ApiPathsConfig apiPathsConfig) {
+    public MailServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.apiPathsConfig = apiPathsConfig;
     }
 
     /**
@@ -34,11 +31,10 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMail(MailRequest mailRequest) {
         try {
-            String mailApi = apiPathsConfig.getNotification().get("send-mail");
-            restTemplate.postForEntity(mailApi, mailRequest, Void.class);
+            restTemplate.postForEntity(ApiPaths.NotificationService.SEND_MAIL, mailRequest, Void.class);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
-            throw new RuntimeException("Registration failed with send email to notification service: " + mailRequest, e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -50,14 +46,10 @@ public class MailServiceImpl implements MailService {
     @Override
     public void publicSendMail(MailRequest mailRequest) {
         try {
-            String mailApi = apiPathsConfig.getNotification().get("public-send-mail");
-
-
-            restTemplate.postForEntity(mailApi, mailRequest, Void.class);
+            restTemplate.postForEntity(ApiPaths.NotificationService.PUBLIC_SEND_MAIL, mailRequest, Void.class);
             log.debug("Email request successfully sent to notification service: {}", mailRequest);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
-            throw new RuntimeException("Registration failed with send email to notification service: " + mailRequest, e);
         }
     }
 

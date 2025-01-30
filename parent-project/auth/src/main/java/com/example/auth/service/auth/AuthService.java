@@ -1,11 +1,9 @@
 package com.example.auth.service.auth;
 
 import com.example.auth.model.User;
-import com.example.auth.api.dto.LoginRequest;
-import com.example.auth.api.dto.RegistrationRequest;
+import com.example.auth.model.dto.LoginRequest;
+import com.example.auth.model.dto.RegistrationRequest;
 import org.keycloak.representations.AccessTokenResponse;
-
-import java.util.UUID;
 
 /**
  * Интерфейс для сервиса аутентификации.
@@ -26,13 +24,6 @@ public interface AuthService {
      * @return токен пользователя
      */
     AccessTokenResponse login(LoginRequest request);
-
-    /**
-     * Подтверждает регистрацию пользователя.
-     *
-     * @param userId идентификатор пользователя
-     */
-    void verifyRegistration(UUID userId);
 
     /**
      * Выходит из системы текущего пользователя.

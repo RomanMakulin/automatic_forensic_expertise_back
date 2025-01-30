@@ -1,10 +1,10 @@
 package com.example.auth.service.auth;
 
-import com.example.auth.config.ApiPathsConfig;
-import com.example.auth.api.dto.MailRequest;
-import com.example.auth.api.dto.ResetPassword;
+import com.example.auth.model.dto.MailRequest;
+import com.example.auth.model.dto.ResetPassword;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.integrations.mail.MailService;
+import com.example.auth.util.ApiPaths;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,25 +20,15 @@ public class PasswordServiceImpl implements PasswordService {
      */
     private final PasswordTokenService passwordTokenService;
 
-    /**
-     * Сервис для работы с админкой Keycloak
-     */
     private final KeycloakAdminService keycloakAdminService;
-
-    /**
-     * Конфигурация путей API
-     */
-    private final ApiPathsConfig apiPathsConfig;
 
 
     public PasswordServiceImpl(MailService mailService,
                                PasswordTokenService passwordTokenService,
-                               KeycloakAdminService keycloakAdminService,
-                               ApiPathsConfig apiPathsConfig) {
+                               KeycloakAdminService keycloakAdminService) {
         this.mailService = mailService;
         this.passwordTokenService = passwordTokenService;
         this.keycloakAdminService = keycloakAdminService;
-        this.apiPathsConfig = apiPathsConfig;
     }
 
     /**
@@ -51,10 +41,8 @@ public class PasswordServiceImpl implements PasswordService {
 
         String token = passwordTokenService.createPasswordResetToken(email);
 
-        String apiPath = apiPathsConfig.getFrontend().get("reset-request");
-
         // Формируем ссылку для восстановления пароля
-        String resetLink = apiPath + "?token=" + token;
+        String resetLink = ApiPaths.Frontend.RESET_REQUEST + "?token=" + token;
 
         // Создаём HTML-письмо с кликабельной ссылкой
         String message = "<p>Для восстановления пароля перейдите по ссылке: " +
