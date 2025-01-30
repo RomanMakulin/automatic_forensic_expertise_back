@@ -41,8 +41,12 @@
     <!-- Список модулей проекта -->
     <modules>
         <module>auth</module>
-        <module>migration</module>
-        <module>mail-notification</module>
+        <module>test</module>
+        <module>profile</module>
+        <!-- Здесь можно добавить другие модули, например:
+             <module>user</module>
+             <module>gateway</module>
+        -->
     </modules>
 
     <build>
