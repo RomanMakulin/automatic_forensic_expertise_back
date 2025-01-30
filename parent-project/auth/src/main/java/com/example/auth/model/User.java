@@ -33,6 +33,15 @@ public class User {
     @OneToOne(cascade=CascadeType.ALL)
     private Role role;
 
+    @Column(name="keycloak_id")
     private String keycloakId;
 
+    public User(String fullName, String email, LocalDateTime registrationDate, boolean verificationEmail, Role role, String keycloakId) {
+        this.fullName = fullName;
+        this.email = email;
+        this.registrationDate = registrationDate;
+        this.verificationEmail = verificationEmail;
+        this.role = role;
+        this.keycloakId = keycloakId;
+    }
 }
