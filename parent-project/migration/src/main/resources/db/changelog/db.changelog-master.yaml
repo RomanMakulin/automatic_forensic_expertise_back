@@ -12,10 +12,3 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: classpath:db/migrations/002_insert_roles.sql
-
-  - changeSet:
-      id: 3
-      author: Roman Makulin
-      changes:
-        - sqlFile:
-            path: classpath:db/migrations/003_create-reset-pass-table.sql
