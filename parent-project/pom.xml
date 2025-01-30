@@ -43,6 +43,7 @@
         <module>auth</module>
         <module>migration</module>
         <module>mail-notification</module>
+        <module>admin-service</module>
     </modules>
 
     <build>

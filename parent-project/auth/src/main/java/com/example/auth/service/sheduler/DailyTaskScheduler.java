@@ -3,13 +3,11 @@ package com.example.auth.service.sheduler;
 import com.example.auth.model.User;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.user.UserService;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,6 +57,5 @@ public class DailyTaskScheduler {
 
         log.info("Удалено неподтвержденных пользователей: {}", users.size());
     }
-
 
 }
