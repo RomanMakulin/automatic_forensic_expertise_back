@@ -1,5 +1,6 @@
 package com.example.auth.service.auth;
 
+import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
 import com.example.auth.model.dto.MailRequest;
@@ -8,7 +9,6 @@ import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.integrations.mail.MailService;
-import com.example.auth.util.ApiPaths;
 import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +29,24 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Value("${keycloak.realm}")
     String realmName;
 
+    /**
+     * Конфигурация путей API
+     */
+    private final ApiPathsConfig apiPathsConfig;
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final KeycloakAdminService keycloakAdminService;
     private final EntityManager entityManager;
     private final MailService mailService;
 
-    public RegistrationServiceImpl(UserRepository userRepository,
+    public RegistrationServiceImpl(ApiPathsConfig apiPathsConfig,
+                                   UserRepository userRepository,
                                    RoleRepository roleRepository,
                                    KeycloakAdminService keycloakAdminService,
                                    EntityManager entityManager,
                                    MailService mailService) {
+        this.apiPathsConfig = apiPathsConfig;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.keycloakAdminService = keycloakAdminService;
@@ -74,7 +81,8 @@ public class RegistrationServiceImpl implements RegistrationService {
      * @param user пользователь
      */
     private void sendVerificationEmail(User user) {
-        String endPointUrl = ApiPaths.AuthService.VERIFICATION_REQUEST + "/" + user.getId();
+        String apiPath = apiPathsConfig.getAuth().get("verification-request");
+        String endPointUrl = apiPath + "/" + user.getId();
 
         String message = "<p>Пожалуйста, подтвердите регистрацию на сайте: " +
                 "<a href='" + endPointUrl + "'>Подтвердить</a></p>";

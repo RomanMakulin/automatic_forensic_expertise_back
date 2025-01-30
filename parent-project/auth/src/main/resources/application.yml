@@ -1,18 +1,3 @@
-keycloak:
-  auth-server-url: http://localhost:8081/realms/demo
-  realm: demo
-  resource: spring-app
-  credentials:
-    secret: 5MBq5j4wVYsPsXlR3outUBVd3lb04PQO
-  bearer-only: true
-  use-resource-role-mappings: true
-  main:
-    server-url: http://localhost:8081
-    realm: master
-    clientId: admin-cli
-    username: admin
-    password: admin
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/flm_project
@@ -32,14 +17,50 @@ spring:
         jwt:
           issuer-uri: http://localhost:8081/realms/demo
 
+# KEYCLOAK CONFIG
+keycloak:
+  auth-server-url: http://localhost:8081/realms/demo
+  realm: demo
+  resource: spring-app
+  credentials:
+    secret: 5MBq5j4wVYsPsXlR3outUBVd3lb04PQO
+  bearer-only: true
+  use-resource-role-mappings: true
+  main:
+    server-url: http://localhost:8081
+    realm: master
+    clientId: admin-cli
+    username: admin
+    password: admin
+
+# CORS CONFIG
 cors:
   allowed-origins:
 #    - http://localhost:4200
     - http://localhost:8082 # Фронт
 
 
+# DEBUG SPRING SECURITY
 logging:
   level:
     org:
       springframework:
         security: DEBUG
+
+
+# SERVICES
+services:
+  notification: http://localhost:8087
+  auth: http://localhost:8080
+  frontend: http://localhost:8082
+
+# SERVICES ENDPOINTS
+paths:
+  notification:
+    send-mail: ${services.notification}/api/notification/send
+    public-send-mail: ${services.notification}/api/public-notification/send
+  auth:
+    reset-request: ${services.auth}/api/auth/reset-password
+    verification-request: ${services.auth}/api/auth/verify-email
+  frontend:
+    reset-request: ${services.frontend}/reset-password
