@@ -77,5 +77,43 @@ public class UserServiceImpl implements UserService {
     public void changeName(String name) {
 
     }
+
+    /**
+     * Получает список не прошедших проверку пользователей.
+     */
+    @Override
+    public List<User> getNotVerifiedUsers() {
+        return userRepository.findUnverifiedUsers();
+    }
+
+    /**
+     * Удаляет пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя
+     */
+    @Override
+    public void deleteUserById(UUID id) {
+        userRepository.deleteById(id);
+    }
+
+    /**
+     * Удаляет пользователя по его email.
+     *
+     * @param email email пользователя
+     */
+    @Override
+    public void deleteUserByEmail(String email) {
+        userRepository.deleteByEmail(email);
+    }
+
+    /**
+     * Удаляет пользователя.
+     *
+     * @param user пользователь
+     */
+    @Override
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+    }
 }
 

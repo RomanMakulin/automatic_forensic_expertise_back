@@ -2,8 +2,10 @@ package com.example.auth.repository;
 
 import com.example.auth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,5 +38,18 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * @return юзер, если он существует, иначе Optional.empty()
      */
     Optional<User> findUserByKeycloakId(String keycloakId);
+
+    /**
+     * Получение всех не подтверждённых пользователей
+     */
+    @Query("SELECT u FROM User u WHERE u.verificationEmail = false")
+    List<User> findUnverifiedUsers();
+
+    /**
+     * Удаление пользователя по email
+     *
+     * @param email email пользователя
+     */
+    void deleteByEmail(String email);
 
 }

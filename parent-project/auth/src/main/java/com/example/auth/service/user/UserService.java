@@ -48,5 +48,31 @@ public interface UserService {
      */
     void changeName(String name);
 
+    /**
+     * Получает список не подтвержденных пользователей.
+     */
+    List<User> getNotVerifiedUsers();
+
+    /**
+     * Удаляет пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя
+     */
+    void deleteUserById(UUID id);
+
+    /**
+     * Удаляет пользователя по его email.
+     *
+     * @param email email пользователя
+     */
+    void deleteUserByEmail(String email);
+
+    /**
+     * Удаляет пользователя.
+     *
+     * @param user пользователь
+     */
+    void deleteUser(User user);
+
 }
 
