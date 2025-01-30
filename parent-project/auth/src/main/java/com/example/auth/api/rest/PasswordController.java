@@ -1,6 +1,6 @@
-package com.example.auth.controller;
+package com.example.auth.api.rest;
 
-import com.example.auth.model.dto.ResetPassword;
+import com.example.auth.api.dto.ResetPassword;
 import com.example.auth.service.auth.PasswordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

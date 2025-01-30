@@ -1,6 +1,6 @@
 package com.example.auth.service.auth;
 
-import com.example.auth.model.dto.ResetPassword;
+import com.example.auth.api.dto.ResetPassword;
 
 /**
  * Интерфейс для сервиса сброса пароля.

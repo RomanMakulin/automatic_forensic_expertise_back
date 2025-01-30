@@ -64,3 +64,4 @@ paths:
     verification-request: ${services.auth}/api/auth/verify-email
   frontend:
     reset-request: ${services.frontend}/reset-password
+    login: ${services.frontend}/login

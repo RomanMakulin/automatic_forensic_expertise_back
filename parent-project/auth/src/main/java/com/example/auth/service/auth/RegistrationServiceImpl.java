@@ -3,8 +3,8 @@ package com.example.auth.service.auth;
 import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
-import com.example.auth.model.dto.MailRequest;
-import com.example.auth.model.dto.RegistrationRequest;
+import com.example.auth.api.dto.MailRequest;
+import com.example.auth.api.dto.RegistrationRequest;
 import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
@@ -59,7 +59,7 @@ public class RegistrationServiceImpl implements RegistrationService {
      *
      * @param request данные о пользователе
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void register(RegistrationRequest request) {
 
@@ -81,15 +81,25 @@ public class RegistrationServiceImpl implements RegistrationService {
      * @param user пользователь
      */
     private void sendVerificationEmail(User user) {
-        String apiPath = apiPathsConfig.getAuth().get("verification-request");
-        String endPointUrl = apiPath + "/" + user.getId();
+        try {
+            String apiPath = apiPathsConfig.getAuth().get("verification-request");
 
-        String message = "<p>Пожалуйста, подтвердите регистрацию на сайте: " +
-                "<a href='" + endPointUrl + "'>Подтвердить</a></p>";
 
-        MailRequest mailRequest = new MailRequest(user.getEmail(), "Подтверждение регистрации", message);
+            String endPointUrl = apiPath + "/" + user.getId();
 
-        mailService.publicSendMail(mailRequest);
+            String message = "<p>Пожалуйста, подтвердите регистрацию на сайте: " +
+                    "<a href='" + endPointUrl + "'>Подтвердить</a></p>";
+
+            MailRequest mailRequest = new MailRequest(user.getEmail(), "Подтверждение регистрации", message);
+
+            mailService.publicSendMail(mailRequest);
+        } catch (Exception e) {
+            log.error("Error sending verification email", e);
+            keycloakAdminService.deleteUserByEmail(user.getEmail()); // удаляем пользователя из Keycloak
+            userRepository.delete(user); // удаляем пользователя из БД
+            throw new RuntimeException("Registration error with sending verification email", e);
+        }
+
     }
 
     /**

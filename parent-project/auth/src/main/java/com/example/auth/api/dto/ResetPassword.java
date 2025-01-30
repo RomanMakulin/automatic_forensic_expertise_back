@@ -1,4 +1,4 @@
-package com.example.auth.model.dto;
+package com.example.auth.api.dto;
 
 /**
  * Объект DTO для смены пароля

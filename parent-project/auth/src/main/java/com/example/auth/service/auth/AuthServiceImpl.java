@@ -1,8 +1,8 @@
 package com.example.auth.service.auth;
 
 import com.example.auth.model.User;
-import com.example.auth.model.dto.LoginRequest;
-import com.example.auth.model.dto.RegistrationRequest;
+import com.example.auth.api.dto.LoginRequest;
+import com.example.auth.api.dto.RegistrationRequest;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.user.UserService;

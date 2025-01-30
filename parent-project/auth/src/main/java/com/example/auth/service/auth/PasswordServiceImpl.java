@@ -1,8 +1,8 @@
 package com.example.auth.service.auth;
 
 import com.example.auth.config.ApiPathsConfig;
-import com.example.auth.model.dto.MailRequest;
-import com.example.auth.model.dto.ResetPassword;
+import com.example.auth.api.dto.MailRequest;
+import com.example.auth.api.dto.ResetPassword;
 import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.integrations.mail.MailService;
 import org.springframework.stereotype.Service;

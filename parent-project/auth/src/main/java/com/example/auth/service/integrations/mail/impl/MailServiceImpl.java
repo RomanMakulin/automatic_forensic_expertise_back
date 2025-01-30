@@ -1,7 +1,7 @@
 package com.example.auth.service.integrations.mail.impl;
 
 import com.example.auth.config.ApiPathsConfig;
-import com.example.auth.model.dto.MailRequest;
+import com.example.auth.api.dto.MailRequest;
 import com.example.auth.service.integrations.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
             restTemplate.postForEntity(mailApi, mailRequest, Void.class);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("Registration failed with send email to notification service: " + mailRequest, e);
         }
     }
 
@@ -51,10 +51,13 @@ public class MailServiceImpl implements MailService {
     public void publicSendMail(MailRequest mailRequest) {
         try {
             String mailApi = apiPathsConfig.getNotification().get("public-send-mail");
+
+
             restTemplate.postForEntity(mailApi, mailRequest, Void.class);
             log.debug("Email request successfully sent to notification service: {}", mailRequest);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
+            throw new RuntimeException("Registration failed with send email to notification service: " + mailRequest, e);
         }
     }
 

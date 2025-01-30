@@ -1,6 +1,6 @@
 package com.example.auth.service.integrations.mail;
 
-import com.example.auth.model.dto.MailRequest;
+import com.example.auth.api.dto.MailRequest;
 
 /**
  * Интерфейс для сервиса отправки писем

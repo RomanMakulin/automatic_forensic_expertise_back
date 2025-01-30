@@ -1,13 +1,15 @@
-package com.example.auth.controller;
+package com.example.auth.api.rest;
 
-import com.example.auth.model.dto.LoginRequest;
-import com.example.auth.model.dto.RegistrationRequest;
+import com.example.auth.config.ApiPathsConfig;
+import com.example.auth.api.dto.LoginRequest;
+import com.example.auth.api.dto.RegistrationRequest;
 import com.example.auth.service.auth.AuthService;
 import exceptions.UserAlreadyExistsException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.UUID;
 
@@ -23,13 +25,17 @@ public class AuthController {
      */
     private final AuthService authService;
 
+    private final ApiPathsConfig apiPathsConfig;
+
     /**
      * Конструктор класса RegistrationController.
      *
      * @param authService сервис для аутентификации пользователей
      */
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          ApiPathsConfig apiPathsConfig) {
         this.authService = authService;
+        this.apiPathsConfig = apiPathsConfig;
     }
 
     /**
@@ -66,10 +72,10 @@ public class AuthController {
     }
 
     @GetMapping("/verify-email/{userId}")
-    public ResponseEntity<String> verifyEmail(@PathVariable UUID userId) {
+    public RedirectView verifyEmail(@PathVariable UUID userId) {
         authService.verifyRegistration(userId);
-        return ResponseEntity.ok("Email verified successfully.");
+        String redirectUrl = apiPathsConfig.getFrontend().get("login");
+        return new RedirectView(redirectUrl);
     }
-
 
 }
