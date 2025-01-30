@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.util.UUID;
 
+/**
+ * DTO: информация статуса профиля эксперта
+ */
 @Getter
 @Setter
 @ToString
@@ -12,11 +15,20 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ProfileStatusDto {
 
+    /**
+     * ID статуса
+     */
     private UUID id;
 
+    /**
+     * Результат проверки профиля администратором
+     */
     @JsonProperty
     private String verificationResult;
 
+    /**
+     * Статус активности эксперта
+     */
     @JsonProperty
     private String activityStatus;
 }

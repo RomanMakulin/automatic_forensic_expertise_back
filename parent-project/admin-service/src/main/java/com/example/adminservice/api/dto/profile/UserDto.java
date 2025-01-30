@@ -7,6 +7,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * DTO: информация о пользователе (регистрационные данные) - эксперта
+ */
 @Getter
 @Setter
 @ToString
@@ -14,23 +17,32 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserDto {
 
+    /**
+     * Идентификатор пользователя
+     */
     private UUID id;
 
+    /**
+     * Имя пользователя
+     */
     @JsonProperty
     private String fullName;
 
+    /**
+     * Email пользователя
+     */
     private String email;
 
+    /**
+     * Дата регистрации пользователя
+     */
     @JsonProperty
     private LocalDateTime registrationDate;
 
-    @JsonProperty
-    private boolean verificationEmail;
-
-    private RoleDto role;
-
-    @JsonProperty
-    private String keycloakId;
+    /**
+     * Роль пользователя
+     */
+    private String role;
 
 }
 

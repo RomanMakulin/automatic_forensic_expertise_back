@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.UUID;
 
+/**
+ * DTO: информация о локации работы эксперта
+ */
 @Getter
 @Setter
 @ToString
@@ -11,14 +14,29 @@ import java.util.UUID;
 @NoArgsConstructor
 public class LocationDto {
 
+    /**
+     * Идентификатор локации
+     */
     private UUID id;
 
+    /**
+     * Страна
+     */
     private String country;
 
+    /**
+     * Регион
+     */
     private String region;
 
+    /**
+     * Город
+     */
     private String city;
 
+    /**
+     * Адрес
+     */
     private String address;
 
 }
