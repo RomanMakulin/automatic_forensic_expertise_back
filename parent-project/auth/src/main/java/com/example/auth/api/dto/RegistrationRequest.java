@@ -1,20 +1,19 @@
 package com.example.auth.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * DTO для регистрации пользователя
  */
 @Getter
 @Setter
-@NoArgsConstructor
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class RegistrationRequest {
 
     @NotBlank(message = "Email не может быть пустым")
@@ -26,9 +25,11 @@ public class RegistrationRequest {
     private String password;
 
     @NotBlank(message = "Имя не может быть пустым")
+    @JsonProperty
     private String firstName;
 
     @NotBlank(message = "Фамилия не может быть пустой")
+    @JsonProperty
     private String lastName;
 
 }
