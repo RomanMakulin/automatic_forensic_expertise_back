@@ -1,4 +1,4 @@
-package com.example.auth.config;
+package com.example.mailnotification.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Конфигурация безопасности приложения.
+ * Конфигурация безопасности модуля
  */
 @Configuration
 @EnableWebSecurity
@@ -25,15 +25,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF, так как мы используем JWT
-                .cors(Customizer.withDefaults()) // включаем CORS
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/reset-password/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/public-notification/send").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults()) // Проверка JWT токена с учетом issuer-uri
+                        .jwt(Customizer.withDefaults()) // проверка JWT токена с учетом issuer-uri
                 );
 
         return http.build();
