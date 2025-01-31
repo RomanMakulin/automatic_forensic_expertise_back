@@ -1,5 +1,6 @@
 package com.example.auth.service.auth;
 
+import com.example.auth.api.dto.AuthUserDetailsResponse;
 import com.example.auth.model.User;
 import com.example.auth.api.dto.LoginRequest;
 import com.example.auth.api.dto.RegistrationRequest;
@@ -82,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
      * @return токен пользователя
      */
     @Override
-    public AccessTokenResponse login(LoginRequest request) {
+    public AuthUserDetailsResponse login(LoginRequest request) {
         return loginService.login(request);
     }
 

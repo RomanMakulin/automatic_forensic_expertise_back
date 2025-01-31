@@ -1,5 +1,6 @@
 package com.example.auth.service.auth;
 
+import com.example.auth.api.dto.AuthUserDetailsResponse;
 import com.example.auth.model.User;
 import com.example.auth.api.dto.LoginRequest;
 import com.example.auth.api.dto.RegistrationRequest;
@@ -25,7 +26,7 @@ public interface AuthService {
      * @param request запрос на авторизацию, содержащий информацию о пользователе
      * @return токен пользователя
      */
-    AccessTokenResponse login(LoginRequest request);
+    AuthUserDetailsResponse login(LoginRequest request);
 
     /**
      * Подтверждает регистрацию пользователя.

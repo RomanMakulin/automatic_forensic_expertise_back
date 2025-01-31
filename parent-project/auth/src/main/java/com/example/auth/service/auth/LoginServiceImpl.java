@@ -1,6 +1,8 @@
 package com.example.auth.service.auth;
 
+import com.example.auth.api.dto.AuthUserDetailsResponse;
 import com.example.auth.api.dto.LoginRequest;
+import com.example.auth.model.User;
 import com.example.auth.service.user.UserService;
 import com.example.auth.util.KeycloakConsts;
 import org.keycloak.OAuth2Constants;
@@ -40,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
      * @return ответ сервера, содержащий результат аутентификации
      */
     @Override
-    public AccessTokenResponse login(LoginRequest request) {
+    public AuthUserDetailsResponse login(LoginRequest request) {
 
         verifyEmail(request.getEmail()); // Проверка email пользователя на подтверждение
 
@@ -54,8 +56,10 @@ public class LoginServiceImpl implements LoginService {
                 .password(request.getPassword())
                 .build();
 
-        // Делаем запрос токена и возвращаем его
-        return keycloakForLogin.tokenManager().getAccessToken();
+        AccessTokenResponse accessTokenResponse = keycloakForLogin.tokenManager().getAccessToken(); // Делаем запрос токена
+        User user = userService.getUserByEmail(request.getEmail());
+
+        return new AuthUserDetailsResponse(user, accessTokenResponse);
     }
 
     /**

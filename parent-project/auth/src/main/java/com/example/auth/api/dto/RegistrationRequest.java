@@ -25,11 +25,11 @@ public class RegistrationRequest {
     private String password;
 
     @NotBlank(message = "Имя не может быть пустым")
-    @JsonProperty
+    @JsonProperty("first_name")
     private String firstName;
 
     @NotBlank(message = "Фамилия не может быть пустой")
-    @JsonProperty
+    @JsonProperty("last_name")
     private String lastName;
 
 }
