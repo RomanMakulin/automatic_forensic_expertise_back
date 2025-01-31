@@ -25,12 +25,14 @@ public class ProfileCancel {
 
     /**
      * Направления работы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
+     * Содержит ID
      */
-    private List<DirectionDto> directions;
+    private List<String> directions;
 
     /**
      * Файлы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
+     * Содержит ID
      */
-    private List<FilesDto> files;
+    private List<String> files;
 
 }

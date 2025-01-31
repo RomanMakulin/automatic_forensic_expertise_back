@@ -15,11 +15,6 @@ import java.util.UUID;
 public class LocationDto {
 
     /**
-     * Идентификатор локации
-     */
-    private UUID id;
-
-    /**
      * Страна
      */
     private String country;

@@ -60,7 +60,8 @@ public class ProfileDto {
 
     /**
      * Шаблоны профиля
+     * (Пока заглушка)
      */
-    private List<TemplateDto> templates;
+//    private List<TemplateDto> templates;
 
 }

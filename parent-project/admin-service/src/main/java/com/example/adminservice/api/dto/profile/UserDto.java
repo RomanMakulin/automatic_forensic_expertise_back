@@ -18,11 +18,6 @@ import java.util.UUID;
 public class UserDto {
 
     /**
-     * Идентификатор пользователя
-     */
-    private UUID id;
-
-    /**
      * Имя пользователя
      */
     @JsonProperty

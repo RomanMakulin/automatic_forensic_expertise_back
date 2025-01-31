@@ -16,11 +16,6 @@ import java.util.UUID;
 public class ProfileStatusDto {
 
     /**
-     * ID статуса
-     */
-    private UUID id;
-
-    /**
      * Результат проверки профиля администратором
      */
     @JsonProperty
