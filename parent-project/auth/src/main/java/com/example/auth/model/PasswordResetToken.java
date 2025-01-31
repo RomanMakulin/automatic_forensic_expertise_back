@@ -1,6 +1,7 @@
 package com.example.auth.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,6 +11,11 @@ import java.util.UUID;
  */
 @Entity
 @Table(name="password_reset_token")
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class PasswordResetToken {
 
     @Id
@@ -35,53 +41,9 @@ public class PasswordResetToken {
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
-    public PasswordResetToken() {}
-
     public PasswordResetToken(String token, User user, LocalDateTime expiryDate) {
         this.token = token;
         this.user = user;
         this.expiryDate = expiryDate;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    @Override
-    public String toString() {
-        return "PasswordResetToken{" +
-                "id=" + id +
-                ", token='" + token + '\'' +
-                ", user=" + user +
-                ", expiryDate=" + expiryDate +
-                '}';
     }
 }

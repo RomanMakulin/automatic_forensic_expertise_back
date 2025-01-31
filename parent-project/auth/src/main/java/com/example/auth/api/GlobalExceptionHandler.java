@@ -1,4 +1,4 @@
-package com.example.auth.controller;
+package com.example.auth.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
