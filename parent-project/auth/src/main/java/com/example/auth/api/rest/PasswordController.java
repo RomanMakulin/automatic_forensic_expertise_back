@@ -22,7 +22,7 @@ public class PasswordController {
      * @param email адрес пользователя
      * @return ответ сервера, содержащий результат восстановления пароля
      */
-    @GetMapping("/reset-password/{email}")
+    @PutMapping("/reset-password/{email}")
     public ResponseEntity<?> resetPasswordRequest(@PathVariable String email) {
         try {
             passwordService.resetPasswordRequest(email);
