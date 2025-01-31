@@ -1,0 +1,33 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/demo
+          jwk-set-uri: http://localhost:8081/realms/demo/protocol/openid-connect/certs
+
+server:
+  port: 8020
+
+# CORS CONFIG
+cors:
+  allowed-origins:
+    - http://localhost:5173 # ?????
+
+# SERVICES
+services:
+  notification: http://localhost:8087
+  auth: http://localhost:8080
+  frontend: http://localhost:5173
+
+# SERVICES ENDPOINTS
+paths:
+  notification:
+    send-mail: ${services.notification}/api/notification/send
+    public-send-mail: ${services.notification}/api/public-notification/send
+  auth:
+    reset-request: ${services.auth}/api/auth/reset-password
+    verification-request: ${services.auth}/api/auth/verify-email
+  frontend:
+    reset-request: ${services.frontend}/reset-password
+    login: ${services.frontend}/login

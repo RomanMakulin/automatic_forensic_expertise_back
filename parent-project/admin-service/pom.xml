@@ -15,7 +15,7 @@
 	<artifactId>admin-service</artifactId>
 	<packaging>jar</packaging>
 
-	<name>admin-service</name>
+	<name>admin-servicee</name>
 	<description>admin-service module</description>
 
 	<properties>
@@ -27,18 +27,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<!-- PostgreSQL Driver -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.5.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
 		<!-- Spring Boot Starter Security -->
