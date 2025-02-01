@@ -67,7 +67,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(authService.login(request));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed (check password): " + e.getMessage());
         }
     }
 
