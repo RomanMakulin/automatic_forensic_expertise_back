@@ -16,23 +16,39 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8081/realms/demo
-
-
-keycloak:
-  auth-server-url: http://localhost:8081/realms/demo
-  realm: demo
-  resource: spring-app
-  credentials:
-    secret: 5MBq5j4wVYsPsXlR3outUBVd3lb04PQO
-  bearer-only: true
-  use-resource-role-mappings: true
-  main:
-    server-url: http://localhost:8081
-    realm: master
-    clientId: admin-cli
-    username: admin
-    password: admin
-
+          jwk-set-uri: http://localhost:8081/realms/demo/protocol/openid-connect/certs
 
 server:
   port: 8090
+
+# CORS CONFIG
+cors:
+  allowed-origins:
+    - http://localhost:8010 # Frontend
+    - http://localhost:8090 # Profile service
+    - http://localhost:8020 # Admin service
+
+# SERVICES
+services:
+  notification: http://localhost:8087
+  auth: http://localhost:8080
+  frontend: http://localhost:8010
+  profile: http://localhost:8090
+  admin-service: http://localhost:8020
+
+# SERVICES ENDPOINTS
+paths:
+  notification:
+    send-mail: ${services.notification}/api/notification/send
+    public-send-mail: ${services.notification}/api/public-notification/send
+  auth:
+    reset-request: ${services.auth}/api/auth/reset-password
+    verification-request: ${services.auth}/api/auth/verify-email
+  frontend:
+    reset-request: ${services.frontend}/reset-password
+    login: ${services.frontend}/login
+  profile:
+    get-all-profiles: ${services.profile}/api/profile
+    get-unverified-profiles: ${services.profile}/api/profile/unverified
+    verify-profile: ${services.profile}/api/profile/verify
+    cancel-validation: ${services.profile}/api/profile/cancel-validation

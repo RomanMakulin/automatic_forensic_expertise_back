@@ -1,6 +1,7 @@
 package com.example.adminservice.api.dto.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -16,27 +17,32 @@ public class TemplateDto {
     /**
      * Идентификатор шаблона
      */
+    @NotNull(message = "ID шаблона не может быть пустым")
     private String id;
 
     /**
      * Название шаблона
      */
+    @NotNull(message = "Название шаблона не может быть пустым")
     private String name;
 
     /**
      * Тип шаблона
      */
+    @NotNull(message = "Тип шаблона не может быть пустым")
     private String type;
 
     /**
      * Путь к шаблону
      */
+    @NotNull(message = "Путь к шаблону не может быть пустым")
     private String path;
 
     /**
      * Дата создания шаблона
      */
-    @JsonProperty
+    @JsonProperty("created_at")
+    @NotNull(message = "Дата создания шаблона не может быть пустой")
     private String createdAt;
 
 }

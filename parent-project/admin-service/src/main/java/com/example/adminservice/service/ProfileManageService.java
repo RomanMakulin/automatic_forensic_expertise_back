@@ -1,13 +1,14 @@
 package com.example.adminservice.service;
 
 import com.example.adminservice.api.dto.profile.ProfileDto;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
 
 import java.util.List;
 
 /**
  * Интерфейс сервиса администратора
  */
-public interface AdminService {
+public interface ProfileManageService {
 
     /**
      * Получить профили всех пользователей
@@ -24,9 +25,17 @@ public interface AdminService {
     List<ProfileDto> getNotVerifiedProfiles();
 
     /**
-     * Изменить профиль пользователя (в том числе статус его верификации)
+     * Подтверждает профиль пользователя
      *
-     * @param profileDto профиль пользователя
+     * @param profileId идентификатор профиля
      */
-    void updateProfile(ProfileDto profileDto);
+    void verifyProfile(String profileId);
+
+    /**
+     * Отклонить профиль пользователя
+     *
+     * @param profileDto объект с некорректными данными профиля
+     */
+    void cancelProfile(ProfileCancel profileDto);
+
 }

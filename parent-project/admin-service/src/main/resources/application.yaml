@@ -14,6 +14,7 @@ cors:
   allowed-origins:
     - http://localhost:8010 # Frontend
     - http://localhost:8090 # Profile service
+    - http://localhost:8020 # Admin service
 
 # SERVICES
 services:
@@ -21,6 +22,7 @@ services:
   auth: http://localhost:8080
   frontend: http://localhost:8010
   profile: http://localhost:8090
+  admin-service: http://localhost:8020
 
 # SERVICES ENDPOINTS
 paths:

@@ -1,6 +1,7 @@
 package com.example.adminservice.api.dto.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -26,17 +27,20 @@ public class FilesDto {
     /**
      * Тип файла
      */
+    @NotNull
     private String type;
 
     /**
      * Путь к файлу
      */
+    @NotNull(message = "Путь к файлу не может быть пустым")
     private String path;
 
     /**
      * Дата создания файла
      */
-    @JsonProperty
+    @JsonProperty("created_at")
+    @NotNull(message = "Дата создания файла не может быть пустой")
     private String createdAt;
 
 }

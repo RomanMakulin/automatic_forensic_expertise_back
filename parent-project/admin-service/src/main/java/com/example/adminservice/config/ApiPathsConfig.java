@@ -34,6 +34,11 @@ public class ApiPathsConfig {
      */
     private Map<String, String> frontend;
 
+    /**
+     * Пути сервиса профилей
+     */
+    private Map<String, String> profile;
+
     // Сеттеры (Lombok не генерирует сеттеры для Map автоматически)
     public void setNotification(Map<String, String> notification) {
         this.notification = notification;
@@ -45,5 +50,9 @@ public class ApiPathsConfig {
 
     public void setFrontend(Map<String, String> frontend) {
         this.frontend = frontend;
+    }
+
+    public void setProfile(Map<String, String> profile) {
+        this.profile = profile;
     }
 }

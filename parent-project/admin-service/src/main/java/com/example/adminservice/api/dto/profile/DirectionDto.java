@@ -1,5 +1,6 @@
 package com.example.adminservice.api.dto.profile;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -15,11 +16,13 @@ public class DirectionDto {
     /**
      * id направления работы
      */
+    @NotNull(message = "id направления работы не может быть null")
     private String id;
 
     /**
      * Название направления работы
      */
+    @NotNull(message = "название направления работы не может быть null")
     private String name;
 
 }

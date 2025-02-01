@@ -1,5 +1,6 @@
 package com.example.adminservice.api.dto.profile;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.UUID;
@@ -17,21 +18,25 @@ public class LocationDto {
     /**
      * Страна
      */
+    @NotNull(message = "Страна не может быть null")
     private String country;
 
     /**
      * Регион
      */
+    @NotNull(message = "Регион не может быть null")
     private String region;
 
     /**
      * Город
      */
+    @NotNull(message = "Город не может быть null")
     private String city;
 
     /**
      * Адрес
      */
+    @NotNull(message = "Адрес не может быть null")
     private String address;
 
 }

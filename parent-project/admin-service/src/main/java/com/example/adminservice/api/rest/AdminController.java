@@ -2,6 +2,7 @@ package com.example.adminservice.api.rest;
 
 import com.example.adminservice.api.dto.profile.ProfileDto;
 import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class AdminController {
      * @param profileCancel dto с неподходящими данными
      */
     @PostMapping("/cancel-validation")
-    public ResponseEntity<Void> cancelValidationProfile(@RequestBody ProfileCancel profileCancel) {
+    public ResponseEntity<Void> cancelValidationProfile(@Valid @RequestBody ProfileCancel profileCancel) {
         // TODO logic
     }
 
