@@ -1,12 +1,12 @@
 package com.example.adminservice.api.rest;
 
-import com.example.adminservice.api.dto.profile.ProfileDto;
 import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import com.example.adminservice.exceptions.ProfileServiceException;
+import com.example.adminservice.service.ProfileManageService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Контроллер для управления профайлами
@@ -16,13 +16,27 @@ import java.util.List;
 public class AdminController {
 
     /**
+     * Интерфейс сервиса управления профайлами
+     */
+    private final ProfileManageService profileManageService;
+
+    public AdminController(ProfileManageService profileManageService) {
+        this.profileManageService = profileManageService;
+    }
+
+    /**
      * Возвращает список всех профилей
      *
      * @return список профилей
      */
     @GetMapping("/get-all-profiles")
-    public ResponseEntity<List<ProfileDto>> getAllProfiles() {
-        // TODO logic
+    public ResponseEntity<?> getAllProfiles() {
+        try {
+            return ResponseEntity.ok(profileManageService.getAllProfiles());
+        } catch (ProfileServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while getting unverified profiles: " + e.getMessage());
+        }
     }
 
     /**
@@ -31,8 +45,13 @@ public class AdminController {
      * @return список профилей
      */
     @GetMapping("/get-unverified-profiles")
-    public ResponseEntity<List<ProfileDto>> getUnverifiedProfiles() {
-        // TODO logic
+    public ResponseEntity<?> getUnverifiedProfiles() {
+        try {
+            return ResponseEntity.ok(profileManageService.getNotVerifiedProfiles());
+        } catch (ProfileServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while getting unverified profiles: " + e.getMessage());
+        }
     }
 
     /**
@@ -41,8 +60,14 @@ public class AdminController {
      * @param profileId идентификатор профиля
      */
     @GetMapping("/validate-profile/{profileId}")
-    public ResponseEntity<Void> validateProfile(@PathVariable("profileId") String profileId) {
-        // TODO logic
+    public ResponseEntity<?> validateProfile(@PathVariable("profileId") String profileId) {
+        try {
+            profileManageService.verifyProfile(profileId);
+            return ResponseEntity.ok().build();
+        } catch (ProfileServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Validate failed: " + e.getMessage());
+        }
     }
 
     /**
@@ -51,8 +76,14 @@ public class AdminController {
      * @param profileCancel dto с неподходящими данными
      */
     @PostMapping("/cancel-validation")
-    public ResponseEntity<Void> cancelValidationProfile(@Valid @RequestBody ProfileCancel profileCancel) {
-        // TODO logic
+    public ResponseEntity<?> cancelValidationProfile(@Valid @RequestBody ProfileCancel profileCancel) {
+        try {
+            profileManageService.cancelProfile(profileCancel);
+            return ResponseEntity.ok().build();
+        } catch (ProfileServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Cancel validation failed: " + e.getMessage());
+        }
     }
 
 }
