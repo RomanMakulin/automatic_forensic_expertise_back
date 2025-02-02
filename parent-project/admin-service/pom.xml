@@ -15,7 +15,7 @@
 	<artifactId>admin-service</artifactId>
 	<packaging>jar</packaging>
 
-	<name>admin-servicee</name>
+	<name>admin-service</name>
 	<description>admin-service module</description>
 
 	<dependencies>
@@ -43,23 +43,25 @@
 			<artifactId>spring-security-oauth2-jose</artifactId>
 		</dependency>
 
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Spring Boot Starter Validation -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
 		<!-- Зависимость для тестирования Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -68,13 +70,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version> <!-- Убедитесь, что это актуальная версия плагина -->
+				<version>3.11.0</version>
 				<configuration>
-					<source>${java.version}</source> <!-- Указываем версию Java -->
-					<target>${java.version}</target> <!-- Указываем версию Java -->
+					<source>${java.version}</source> <!-- Используем версию Java из родительского POM -->
+					<target>${java.version}</target> <!-- Используем версию Java из родительского POM -->
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
-
 </project>

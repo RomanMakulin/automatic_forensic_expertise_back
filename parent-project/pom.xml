@@ -15,7 +15,7 @@
     <groupId>com.example</groupId>
     <artifactId>parent-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging> <!-- Изменено на pom -->
+    <packaging>pom</packaging> <!-- Этот проект является родительским POM, а не jar -->
 
     <name>parent-project</name>
     <description>Parent project for multi-module Spring Boot application</description>
@@ -25,7 +25,7 @@
         <spring.boot.version>3.4.2</spring.boot.version>
     </properties>
 
-    <!-- Управление зависимостями для дочерних модулей -->
+    <!-- Управление зависимостями для всех дочерних модулей -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -34,6 +34,43 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Добавляем модули как управляемые зависимости -->
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>auth</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>admin-service</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>migration</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>mail-notification</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>profile</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>tariff-plans</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -51,24 +88,18 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Spring Boot Maven Plugin -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
 
                 <!-- Maven Compiler Plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version> <!-- Убедитесь, что используете актуальную версию -->
+                    <version>3.11.0</version>
                     <configuration>
-                        <source>21</source>
-                        <target>21</target>
+                        <source>${java.version}</source> <!-- Используем значение из properties -->
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
