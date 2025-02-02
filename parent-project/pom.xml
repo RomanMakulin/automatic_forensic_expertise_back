@@ -1,31 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Родительский POM Spring Boot -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.2</version>
-        <relativePath/> <!-- поиск родителя в репозитории -->
-    </parent>
-
     <groupId>com.example</groupId>
     <artifactId>parent-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging> <!-- Этот проект является родительским POM, а не jar -->
+    <packaging>pom</packaging>
 
     <name>parent-project</name>
-    <description>Parent project for multi-module Spring Boot application</description>
+    <description>Parent POM for all modules</description>
 
     <properties>
         <java.version>21</java.version>
         <spring.boot.version>3.4.2</spring.boot.version>
     </properties>
 
-    <!-- Управление зависимостями для всех дочерних модулей -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -35,47 +27,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!-- Добавляем модули как управляемые зависимости -->
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>auth</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>admin-service</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>migration</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>mail-notification</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>profile</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.example</groupId>
-                <artifactId>tariff-plans</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <!-- Список модулей проекта -->
     <modules>
         <module>auth</module>
         <module>migration</module>
@@ -83,23 +37,6 @@
         <module>admin-service</module>
         <module>profile</module>
         <module>tariff-plans</module>
+        <module>afe-app</module>
     </modules>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-
-                <!-- Maven Compiler Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <source>${java.version}</source> <!-- Используем значение из properties -->
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>

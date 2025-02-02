@@ -10,7 +10,9 @@
 		<groupId>com.example</groupId>
 		<artifactId>parent-project</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath/> <!-- Поиск родителя -->
 	</parent>
+
 
 	<artifactId>admin-service</artifactId>
 	<packaging>jar</packaging>
