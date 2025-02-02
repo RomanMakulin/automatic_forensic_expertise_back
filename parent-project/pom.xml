@@ -44,6 +44,8 @@
         <module>migration</module>
         <module>mail-notification</module>
         <module>admin-service</module>
+        <module>profile</module>
+        <module>tariff-plans</module>
     </modules>
 
     <build>
