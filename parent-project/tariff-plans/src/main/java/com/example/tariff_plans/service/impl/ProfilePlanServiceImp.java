@@ -92,4 +92,6 @@ public class ProfilePlanServiceImp implements ProfilePlanService {
     public List<Plan> getAvailablePlans() {
         return planRepository.findAll();
     }
+
+
 }
