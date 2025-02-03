@@ -80,12 +80,34 @@ public interface MinioService {
      */
     Resource getTemplate(UUID profileId);
 
+    /**
+     *  Удаляет фотографию для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     */
     void deletePhoto(UUID profileId);
 
+    /**
+     * Удаляет шаблон для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     */
     void deleteTemplate(UUID profileId);
 
+    /**
+     * Удаляет файл для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param fileId идентификатор файла
+     */
     void deleteFile(UUID profileId, UUID fileId);
 
+    /**
+     * Удаляет список файлов для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param fileIds список идентификаторов файлов
+     */
     void deleteFiles(UUID profileId, List<UUID> fileIds);
 
 }
