@@ -53,7 +53,7 @@ paths:
     reset-request: ${services.auth}/api/auth/password_recovery
     verification-request: ${services.auth}/api/auth/verify-email
   frontend:
-    reset-request: ${services.frontend}/reset-password
+    recovery-request: ${services.frontend}/password_recovery
     login: ${services.frontend}/login
   profile:
     get-all-profiles: ${services.profile}/api/profile

@@ -51,7 +51,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         String token = passwordTokenService.createPasswordResetToken(email);
 
-        String apiPath = apiPathsConfig.getFrontend().get("reset-request");
+        String apiPath = apiPathsConfig.getFrontend().get("recovery-request");
 
         // Формируем ссылку для восстановления пароля
         String resetLink = apiPath + "?token=" + token;
