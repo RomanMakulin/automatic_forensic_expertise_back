@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"  # S3 API порт
+      - "9001:9001"  # Web-интерфейс порт
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./data:/data  # Директория для хранения данных
+      - ./config:/root/.minio  # Директория для конфигурации
+    command: server /data --console-address ":9001"
+    restart: always
