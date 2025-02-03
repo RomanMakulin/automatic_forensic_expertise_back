@@ -21,18 +21,6 @@ public class TemplateDto {
     private String id;
 
     /**
-     * Название шаблона
-     */
-    @NotNull(message = "Название шаблона не может быть пустым")
-    private String name;
-
-    /**
-     * Тип шаблона
-     */
-    @NotNull(message = "Тип шаблона не может быть пустым")
-    private String type;
-
-    /**
      * Путь к шаблону
      */
     @NotNull(message = "Путь к шаблону не может быть пустым")
