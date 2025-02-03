@@ -33,7 +33,7 @@ cors:
 # SERVICES
 services:
   notification: http://localhost:8087
-  auth: http://localhost:8080
+  auth: http://localhost:8095
   frontend: http://localhost:8010
   profile: http://localhost:8090
   admin-service: http://localhost:8020
