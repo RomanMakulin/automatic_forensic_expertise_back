@@ -20,12 +20,36 @@ public class Status {
 
     private String name = "Создан";
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "verification_result")
-    private String verificationResult = "Профиль на верификации";
+    private VerificationResult verificationResult = VerificationResult.NEED_VERIFY;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "activity_status")
-    private String activityStatus = "Профиль ждет активации";
+    private ActivityStatus activityStatus = ActivityStatus.ZALYPA;
 
-    private String description = "Профиль на проверке у админа";
+
+    public enum VerificationResult {
+
+        NEED_VERIFY("Профиль на верификации"),
+        NEED_REMAKE("Требуется доработка"),
+        APPROVED("Профиль подтвержден");
+
+        private final String description;
+
+        VerificationResult(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
+    public enum ActivityStatus {
+
+        XYI, ZALYPA
+
+    }
 
 }
