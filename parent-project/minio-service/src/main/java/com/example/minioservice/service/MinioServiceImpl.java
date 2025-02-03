@@ -73,9 +73,6 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public void uploadPhoto(UUID profileId, MultipartFile avatar) {
         fileValidator.validateFile(profileId, avatar);
-
-
-
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
@@ -122,6 +119,7 @@ public class MinioServiceImpl implements MinioService {
         fileValidator.validateFileList(profileId, files);
 
         List<FileDto> fileDtos = new ArrayList<>();
+
         for (MultipartFile file : files) {
             fileDtos.add(uploadFile(profileId, file));
         }
