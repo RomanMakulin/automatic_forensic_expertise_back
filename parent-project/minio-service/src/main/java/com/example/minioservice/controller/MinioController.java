@@ -1,12 +1,14 @@
 package com.example.minioservice.controller;
 
 
+import com.example.minioservice.dto.FileDto;
 import com.example.minioservice.service.MinioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,14 +17,14 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/files")
-public class FileController {
+public class MinioController {
 
     /**
      * Интерфейс для работы с файлами minIO
      */
     private final MinioService minioService;
 
-    public FileController(MinioService minioService) {
+    public MinioController(MinioService minioService) {
         this.minioService = minioService;
     }
 
@@ -36,10 +38,10 @@ public class FileController {
      * @return список сгенерированных UUID для файлов пользователя
      */
     @PostMapping("/upload-all")
-    public ResponseEntity<List<UUID>> uploadAll(@RequestParam("profileId") UUID profileId,
-                                                @RequestParam("avatar") MultipartFile avatar,
-                                                @RequestParam("template") MultipartFile template,
-                                                @RequestParam("files") List<MultipartFile> files
+    public ResponseEntity<List<FileDto>> uploadAll(@RequestParam("profileId") UUID profileId,
+                                                   @RequestParam("avatar") MultipartFile avatar,
+                                                   @RequestParam("template") MultipartFile template,
+                                                   @RequestParam("files") List<MultipartFile> files
     ) {
         try {
             return ResponseEntity.ok(minioService.uploadAllFiles(profileId, avatar, template, files));
@@ -92,7 +94,7 @@ public class FileController {
      * @return UUID файла пользователя
      */
     @PostMapping("/upload-file")
-    public ResponseEntity<UUID> uploadFile(@RequestParam("profileId") UUID profileId,
+    public ResponseEntity<FileDto> uploadFile(@RequestParam("profileId") UUID profileId,
                                            @RequestParam("file") MultipartFile file) {
         try {
             return ResponseEntity.ok(minioService.uploadFile(profileId, file));
@@ -109,7 +111,7 @@ public class FileController {
      * @return список сгенерированных UUID для файлов пользователя
      */
     @PostMapping("/upload-files")
-    public ResponseEntity<List<UUID>> uploadFiles(@RequestParam("profileId") UUID profileId,
+    public ResponseEntity<List<FileDto>> uploadFiles(@RequestParam("profileId") UUID profileId,
                                                   @RequestParam("files") List<MultipartFile> files) {
         try {
             return ResponseEntity.ok(minioService.uploadFiles(profileId, files));
@@ -153,15 +155,13 @@ public class FileController {
     /**
      * API для удаления файла пользователя.
      *
-     * @param profileId ID пользователя
-     * @param fileId    ID файла
+     * @param path путь к файлу
      * @return статус операции
      */
     @PostMapping("/delete-file")
-    public ResponseEntity<String> deleteFile(@RequestParam("profileId") UUID profileId,
-                                            @RequestParam("fileId") UUID fileId) {
+    public ResponseEntity<String> deleteFile(@RequestParam("path") String path) {
         try {
-            minioService.deleteFile(profileId, fileId);
+            minioService.deleteFile(path);
             return ResponseEntity.ok("Successfully deleted file");
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -171,15 +171,13 @@ public class FileController {
     /**
      * API для удаления нескольких файлов пользователя.
      *
-     * @param profileId ID пользователя
-     * @param files     список ID файлов
+     * @param pathList список путей к файлам
      * @return статус операции
      */
-    @PostMapping("/delete-files")
-    public ResponseEntity<String> deleteFiles(@RequestParam("profileId") UUID profileId,
-                                                  @RequestParam("files") List<UUID> files) {
+    @PostMapping("/delete-file-list")
+    public ResponseEntity<String> deleteFileList(@RequestParam("path-list") List<String> pathList) {
         try {
-            minioService.deleteFiles(profileId, files);
+            minioService.deleteFiles(pathList);
             return ResponseEntity.ok("Successfully deleted files");
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

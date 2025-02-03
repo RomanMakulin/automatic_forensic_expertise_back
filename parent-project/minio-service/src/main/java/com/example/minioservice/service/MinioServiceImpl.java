@@ -1,7 +1,6 @@
 package com.example.minioservice.service;
 
-import io.minio.*;
-import io.minio.messages.Item;
+import com.example.minioservice.dto.FileDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,12 +9,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Сервис для работы с файлами в MinIO.
@@ -24,7 +21,10 @@ import java.util.stream.IntStream;
 public class MinioServiceImpl implements MinioService {
 
     private static final Logger log = LoggerFactory.getLogger(MinioServiceImpl.class);
-    private final MinioClient minioClient;
+
+    private final MinioHelper minioHelper;
+    private final FileValidator fileValidator;
+    private final FileNameBuilder fileNameBuilder;
 
     @Value("${minio.buckets.avatars}")
     private String bucketAvatars;
@@ -35,324 +35,185 @@ public class MinioServiceImpl implements MinioService {
     @Value("${minio.buckets.templates}")
     private String bucketTemplates;
 
-    public MinioServiceImpl(MinioClient minioClient) {
-        this.minioClient = minioClient;
+    public MinioServiceImpl(MinioHelper minioHelper,
+                            FileValidator fileValidator,
+                            FileNameBuilder fileNameBuilder) {
+        this.minioHelper = minioHelper;
+        this.fileValidator = fileValidator;
+        this.fileNameBuilder = fileNameBuilder;
     }
 
     /**
-     * Загружает все файлы, включая аватар и шаблон, для указанного профиля.
+     * Загружает все файлы для профиля.
      *
      * @param profileId идентификатор профиля
-     * @param avatar    аватар пользователя
-     * @param template  шаблон файла
-     * @param files     список файлов для загрузки
-     * @return список идентификаторов загруженных файлов
+     * @param avatar    файл аватара
+     * @param template  файл шаблона
+     * @param files     список файлов
+     * @return список DTO файлов
      */
     @Override
-    public List<UUID> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files) {
+    public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files) {
+        log.info("Загрузка всех файлов для profileId: {}", profileId);
 
-        log.info("Загрузка файлов в MinIO, profileId: {}", profileId);
+        fileValidator.validateFiles(profileId, avatar, template, files);
 
-        // Проверка на null
-        if (avatar == null || files == null || files.isEmpty() || template == null || template.isEmpty() || profileId == null) {
-            throw new IllegalArgumentException("Ошибка загрузки файлов в MinIO (Не все файлы загружены)");
-        }
+        minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
+        minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
 
-        // Генерируем список UUID для файлов пользователя
-        List<UUID> ids = generateUUIDs(files.size());
-
-        uploadProcess(bucketAvatars, avatar, buildAvatarObjectName(profileId));
-        uploadProcess(bucketTemplates, template, buildTemplateObjectName(profileId));
-
-
-        for (int i = 0; i < files.size(); i++) {
-            uploadProcess(bucketFiles, files.get(i), buildFileObjectName(profileId, ids.get(i)));
-        }
-
-        return ids;
+        return uploadFiles(profileId, files);
     }
 
     /**
-     * Загружает фотографию для указанного профиля.
+     * Загружает фотографию профиля.
      *
      * @param profileId идентификатор профиля
-     * @param avatar    фотография пользователя
+     * @param avatar    файл аватара
      */
     @Override
     public void uploadPhoto(UUID profileId, MultipartFile avatar) {
-        if (avatar == null || avatar.isEmpty() || profileId == null) {
-            throw new IllegalArgumentException("Ошибка загрузки фото в MinIO (Не все файлы загружены)");
-        }
-        uploadProcess(bucketAvatars, avatar, buildAvatarObjectName(profileId));
+        fileValidator.validateFile(profileId, avatar);
+
+
+
+        minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
     /**
-     * Загружает файл для указанного профиля.
+     * Загружает шаблон профиля.
      *
      * @param profileId идентификатор профиля
-     * @param file      файл для загрузки
-     * @return идентификатор загруженного файла
+     * @param template  файл шаблона
      */
-    @Override
-    public UUID uploadFile(UUID profileId, MultipartFile file) {
-        if (file == null || file.isEmpty() || profileId == null) {
-            throw new IllegalArgumentException("Ошибка загрузки файла в MinIO (Не все файлы загружены)");
-        }
-
-        UUID id = UUID.randomUUID();
-        uploadProcess(bucketFiles, file, buildFileObjectName(profileId, id));
-        return id;
-    }
-
     @Override
     public void uploadTemplate(UUID profileId, MultipartFile template) {
-        if (template == null || template.isEmpty() || profileId == null) {
-            throw new IllegalArgumentException("Ошибка загрузки шаблона в MinIO (Не все файлы загружены)");
-        }
-        uploadProcess(bucketTemplates, template, buildTemplateObjectName(profileId));
+        fileValidator.validateFile(profileId, template);
+        minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
     }
 
     /**
-     * Загружает список файлов для указанного профиля.
+     * Загружает файл.
      *
      * @param profileId идентификатор профиля
-     * @param files     список файлов для загрузки
-     * @return список идентификаторов загруженных файлов
+     * @param file      файл
+     * @return DTO файла
      */
     @Override
-    public List<UUID> uploadFiles(UUID profileId, List<MultipartFile> files) {
-        if (files == null || files.isEmpty() || profileId == null) {
-            throw new IllegalArgumentException("Ошибка загрузки файлов в MinIO (Не все файлы загружены)");
-        }
-        List<UUID> ids = generateUUIDs(files.size());
+    public FileDto uploadFile(UUID profileId, MultipartFile file) {
+        fileValidator.validateFile(profileId, file);
 
-        for (int i = 0; i < files.size(); i++) {
-            uploadProcess(bucketFiles, files.get(i), buildFileObjectName(profileId, ids.get(i)));
-        }
-        return ids;
+        UUID fileId = UUID.randomUUID();
+        String filePath = fileNameBuilder.buildFileObjectName(profileId, fileId);
+
+        minioHelper.upload(bucketFiles, file, filePath);
+
+        return new FileDto(fileId, filePath, LocalDateTime.now());
     }
 
     /**
-     * Генерирует список из UUID заданного размера
+     * Загружает список файлов.
      *
-     * @param size размер списка
-     * @return список UUID
+     * @param profileId идентификатор профиля
+     * @param files     список файлов
+     * @return список DTO файлов
      */
-    private List<UUID> generateUUIDs(int size) {
-        return IntStream.range(0, size)
-                .mapToObj(i -> UUID.randomUUID())
-                .collect(Collectors.toList());
-    }
+    @Override
+    public List<FileDto> uploadFiles(UUID profileId, List<MultipartFile> files) {
+        fileValidator.validateFileList(profileId, files);
 
-    /**
-     * Процесс и логика загрузки конкретного файла в MinIO
-     *
-     * @param bucketName название бакета
-     * @param file       файл
-     * @param objectName название файла
-     */
-    private void uploadProcess(String bucketName, MultipartFile file, String objectName) {
-        try {
-            try (InputStream inputStream = file.getInputStream()) {
-                minioClient.putObject(
-                        PutObjectArgs.builder()
-                                .bucket(bucketName)
-                                .object(objectName)
-                                .stream(inputStream, file.getSize(), -1)
-                                .contentType(file.getContentType())
-                                .build()
-                );
-                log.info("Файл успешно загружен в MinIO, bucketName: {}, objectName: {}", bucketName, objectName);
-            }
-        } catch (Exception e) {
-            log.error("Ошибка загрузки файла в MinIO, bucketName: {}, objectName: {}", bucketName, objectName);
-            throw new RuntimeException("Ошибка загрузки файла в MinIO", e);
+        List<FileDto> fileDtos = new ArrayList<>();
+        for (MultipartFile file : files) {
+            fileDtos.add(uploadFile(profileId, file));
         }
+        return fileDtos;
     }
 
     /**
-     * Получает фото из MinIO.
+     * Получает фотографию профиля.
      *
      * @param profileId идентификатор профиля
      * @return ресурс фотографии
      */
+    @Override
     public Resource getPhoto(UUID profileId) {
-        String objectName = buildAvatarObjectName(profileId);
-        InputStream inputStream = getObjectProcess(bucketAvatars, objectName);
-        return new InputStreamResource(inputStream);
+        return new InputStreamResource(minioHelper.getObject(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId)));
     }
 
     /**
-     * Получает список файлов из MinIO по конкретному профилю
-     *
-     * @param profileId UUID профиля
-     * @return список файлов из MinIO
-     */
-    public List<Resource> getFiles(UUID profileId) {
-        List<Resource> resources = new ArrayList<>();
-        try {
-            Iterable<Result<Item>> results = minioClient.listObjects(
-                    ListObjectsArgs.builder()
-                            .bucket(bucketFiles)
-                            .prefix(profileId + "_")
-                            .build()
-            );
-
-            for (Result<Item> result : results) {
-                Item item = result.get();
-                InputStream is = getObjectProcess(bucketFiles, item.objectName());
-                resources.add(new InputStreamResource(is));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при получении списка файлов из MinIO", e);
-        }
-        return resources;
-    }
-
-    /**
-     * Получает шаблон из MinIO.
+     * Получает шаблон профиля.
      *
      * @param profileId идентификатор профиля
      * @return ресурс шаблона
      */
     @Override
     public Resource getTemplate(UUID profileId) {
-        String objectName = buildTemplateObjectName(profileId);
-        InputStream inputStream = getObjectProcess(bucketTemplates, objectName);
-        return new InputStreamResource(inputStream);
+        return new InputStreamResource(minioHelper.getObject(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId)));
     }
 
     /**
-     * Общая реализация получения файла из MinIO.
+     * Получает список файлов профиля.
      *
-     * @param bucket     название бакета
-     * @param objectName название файла
-     * @return файл из MinIO
+     * @param profileId идентификатор профиля
+     * @return список ресурсов файлов
      */
-    private InputStream getObjectProcess(String bucket, String objectName) {
-        try {
-            return minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(objectName)
-                            .build()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при получении файла из MinIO", e);
+    @Override
+    public List<Resource> getFiles(UUID profileId) {
+        List<Resource> resources = new ArrayList<>();
+        for (String objectName : minioHelper.listObjects(bucketFiles, profileId.toString())) {
+            resources.add(new InputStreamResource(minioHelper.getObject(bucketFiles, objectName)));
         }
+        return resources;
     }
 
     /**
-     * Удаляет фото из MinIO по конкретному профилю.
+     * Удаляет фотографию профиля.
      *
      * @param profileId идентификатор профиля
      */
     @Override
     public void deletePhoto(UUID profileId) {
-        if (profileId == null) {
-            throw new IllegalArgumentException("ProfileId не может быть null");
-        }
-        String objectName = buildAvatarObjectName(profileId);
-        deleteObject(bucketAvatars, objectName);
+        fileValidator.validateProfileId(profileId);
+        minioHelper.delete(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
     /**
-     * Удаляет шаблон из MinIO по конкретному профилю.
+     * Удаляет шаблон профиля.
      *
      * @param profileId идентификатор профиля
      */
     @Override
     public void deleteTemplate(UUID profileId) {
-        if (profileId == null) {
-            throw new IllegalArgumentException("ProfileId не может быть null");
-        }
-        String objectName = buildTemplateObjectName(profileId);
-        deleteObject(bucketTemplates, objectName);
+        fileValidator.validateProfileId(profileId);
+        minioHelper.delete(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId));
     }
 
     /**
-     * Удаляет файл из MinIO по конкретному профилю.
+     * Удаляет файл.
      *
-     * @param profileId идентификатор профиля
-     * @param fileId    идентификатор файла
+     * @param path путь к файлу
      */
     @Override
-    public void deleteFile(UUID profileId, UUID fileId) {
-        if (profileId == null || fileId == null) {
-            throw new IllegalArgumentException("Параметры не могут быть null");
+    public void deleteFile(String path) {
+        if (path == null) {
+            throw new IllegalArgumentException("Путь к файлу не может быть пустым");
         }
-        String objectName = buildFileObjectName(profileId, fileId);
-        deleteObject(bucketFiles, objectName);
+        minioHelper.delete(bucketFiles, path);
     }
 
     /**
-     * Удаляет файлы из MinIO по конкретному профилю.
+     * Удаляет список файлов.
      *
-     * @param profileId UUID профиля
-     * @param fileIds   список UUID файлов
+     * @param pathList список путей к файлам
      */
     @Override
-    public void deleteFiles(UUID profileId, List<UUID> fileIds) {
-        if (profileId == null || fileIds == null || fileIds.isEmpty()) {
-            throw new IllegalArgumentException("Параметры не могут быть null или пустыми");
+    public void deleteFiles(List<String> pathList) {
+        if (pathList == null || pathList.isEmpty()) {
+            throw new IllegalArgumentException("Список путей к файлам не может быть пустым");
         }
-        for (UUID fileId : fileIds) {
-            String objectName = buildFileObjectName(profileId, fileId);
-            deleteObject(bucketFiles, objectName);
-        }
-    }
-
-    /**
-     * Общая реализация удаления объекта из MinIO.
-     *
-     * @param bucket     название бакета
-     * @param objectName имя удаляемого объекта
-     */
-    private void deleteObject(String bucket, String objectName) {
-        try {
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(objectName)
-                            .build()
-            );
-            log.info("Объект успешно удален: bucket={}, objectName={}", bucket, objectName);
-        } catch (Exception e) {
-            log.error("Ошибка удаления объекта из MinIO: bucket={}, objectName={}", bucket, objectName, e);
-            throw new RuntimeException("Ошибка удаления объекта из MinIO", e);
+        for (String path : pathList) {
+            minioHelper.delete(bucketFiles, path);
         }
     }
-
-    /**
-     * Формирует имя файла для аватара.
-     *
-     * @param profileId идентификатор профиля
-     * @return имя файла для аватара
-     */
-    private String buildAvatarObjectName(UUID profileId) {
-        return profileId + ".jpg";
-    }
-
-    /**
-     * Формирует имя файла для шаблона.
-     *
-     * @param profileId идентификатор профиля
-     * @return имя файла для шаблона
-     */
-    private String buildTemplateObjectName(UUID profileId) {
-        return profileId + ".odt";
-    }
-
-    /**
-     * Формирует имя файла для файла.
-     *
-     * @param profileId идентификатор профиля
-     * @param fileId    идентификатор файла
-     * @return имя файла для файла
-     */
-    private String buildFileObjectName(UUID profileId, UUID fileId) {
-        return profileId + "_" + fileId + ".pdf";
-    }
-
-
 }
+
+

@@ -1,5 +1,6 @@
 package com.example.minioservice.service;
 
+import com.example.minioservice.dto.FileDto;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,7 @@ public interface MinioService {
      * @param files список файлов для загрузки
      * @return список идентификаторов загруженных файлов
      */
-    List<UUID> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files);
+    List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files);
 
     /**
      * Загружает фотографию для указанного профиля.
@@ -37,7 +38,7 @@ public interface MinioService {
      * @param file файл для загрузки
      * @return идентификатор загруженного файла
      */
-    UUID uploadFile(UUID profileId, MultipartFile file);
+    FileDto uploadFile(UUID profileId, MultipartFile file);
 
     /**
      * Загружает шаблон для указанного профиля.
@@ -54,7 +55,7 @@ public interface MinioService {
      * @param files список файлов для загрузки
      * @return список идентификаторов загруженных файлов
      */
-    List<UUID> uploadFiles(UUID profileId, List<MultipartFile> files);
+    List<FileDto> uploadFiles(UUID profileId, List<MultipartFile> files);
 
     /**
      * Возвращает фотографию для указанного профиля.
@@ -97,17 +98,15 @@ public interface MinioService {
     /**
      * Удаляет файл для указанного профиля.
      *
-     * @param profileId идентификатор профиля
-     * @param fileId идентификатор файла
+     * @param path путь к файлу
      */
-    void deleteFile(UUID profileId, UUID fileId);
+    void deleteFile(String path);
 
     /**
      * Удаляет список файлов для указанного профиля.
      *
-     * @param profileId идентификатор профиля
-     * @param fileIds список идентификаторов файлов
+     * @param pathList список путей к файлам
      */
-    void deleteFiles(UUID profileId, List<UUID> fileIds);
+    void deleteFiles(List<String> pathList);
 
 }
