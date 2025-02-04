@@ -25,11 +25,15 @@ public interface ProfileFullMapper {
     @Mapping(source = "status.name", target = "statusName")
     @Mapping(source = "status.verificationResult", target = "verificationResult", qualifiedByName = "verificationToString")
     @Mapping(source = "status.activityStatus", target = "activityStatus", qualifiedByName = "activityToString")
+
     ProfileFullDTO toDto(Profile profile);
 
     @InheritInverseConfiguration
+    @Mapping(source = "verificationResult", target = "status.verificationResult", qualifiedByName = "stringToVerificationResult")
+    @Mapping(source = "activityStatus", target = "status.activityStatus", qualifiedByName = "stringToActivityStatus")
     Profile toEntity(ProfileFullDTO dto);
 
+    // Конвертация enum -> String
     @Named("verificationToString")
     static String verificationToString(Status.VerificationResult verificationResult) {
         return verificationResult != null ? verificationResult.name() : null;
@@ -38,5 +42,16 @@ public interface ProfileFullMapper {
     @Named("activityToString")
     static String activityToString(Status.ActivityStatus activityStatus) {
         return activityStatus != null ? activityStatus.name() : null;
+    }
+
+    // Конвертация String -> enum
+    @Named("stringToVerificationResult")
+    static Status.VerificationResult stringToVerificationResult(String value) {
+        return value != null ? Status.VerificationResult.valueOf(value) : null;
+    }
+
+    @Named("stringToActivityStatus")
+    static Status.ActivityStatus stringToActivityStatus(String value) {
+        return value != null ? Status.ActivityStatus.valueOf(value) : null;
     }
 }
