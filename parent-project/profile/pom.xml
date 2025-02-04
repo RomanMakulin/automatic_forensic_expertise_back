@@ -85,7 +85,7 @@
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
+            <artifactId>mapstruct</artifactId> <!-- -->
             <version>1.6.3</version>
         </dependency>
 
