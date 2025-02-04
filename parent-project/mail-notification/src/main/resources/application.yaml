@@ -1,27 +1,5 @@
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081/realms/demo
-          jwk-set-uri: http://localhost:8081/realms/demo/protocol/openid-connect/certs
-
-server:
-  port: 8087
-
-# MAIL
-mail:
-  host: smtp.gmail.com
-  port: 587
-  username: sup.makulin@gmail.com # ???? ?????
-  password: xnzmskzuppubcifc
-  protocol: smtp
-  properties:
-    mail.smtp.auth: true
-    mail.smtp.starttls.enable: true
-    mail.debug: true
-
-# CORS
-cors:
-  allowed-origins:
-    - http://localhost:8095 # auth-service
+  application:
+    name: mail
+  config:
+    import: "configserver:http://localhost:8888"
