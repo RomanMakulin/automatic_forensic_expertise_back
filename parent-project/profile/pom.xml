@@ -18,10 +18,6 @@
     <name>profile</name>
     <description>profile module</description>
 
-    <properties>
-        <java.version>${java.version}</java.version>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot Starter Web -->
         <dependency>
@@ -78,15 +74,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
+
+        <!-- Зависимость для тестирования Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
+            <artifactId>mapstruct</artifactId> <!-- -->
             <version>1.6.3</version>
         </dependency>
 
@@ -128,10 +127,15 @@
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
+            <!-- Maven Compiler Plugin для использования Java 21 -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- Убедитесь, что это актуальная версия плагина -->
+                <configuration>
+                    <source>${java.version}</source> <!-- Указываем версию Java -->
+                    <target>${java.version}</target> <!-- Указываем версию Java -->
+                </configuration>
             </plugin>
         </plugins>
     </build>

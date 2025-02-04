@@ -1,11 +1,10 @@
-package com.example.auth;
-
+package com.example.tariff_plans;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthApplicationTests {
+class TariffPlansApplicationTests {
 
 	@Test
 	void contextLoads() {

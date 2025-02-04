@@ -1,4 +1,4 @@
-package com.example.config;
+package com.example.tariff_plans.config;
 
 import lombok.Getter;
 import lombok.Setter;
