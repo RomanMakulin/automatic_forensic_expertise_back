@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.model.Profile;
+import com.example.model.Status;
 import com.example.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,11 @@ public class ProfileService {
     public void delete(UUID id) {
         profileRepository.deleteById(id);
     }
+
+    public List<Profile> getUnverifiedProfiles() {
+        return profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+    }
+
+
 
 }

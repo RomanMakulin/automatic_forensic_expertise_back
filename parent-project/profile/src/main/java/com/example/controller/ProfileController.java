@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -59,5 +60,70 @@ public class ProfileController {
         profileService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    /**
+     * Возвращает список всех профилей, которые не прошли проверку администратором
+     *
+     * @return список профилей
+     */
+    @GetMapping("/get-unverified-profiles")
+    public ResponseEntity<List<Profile>> getUnverifiedProfiles() {
+        // TODO logic
+        List<Profile> profiles = profileService.getUnverifiedProfiles();
+        return ResponseEntity.ok(profiles);
+    }
+
+    /**
+     * Подтверждает профиль пользователя
+     *
+     * @param profileId идентификатор профиля
+     */
+    @GetMapping("/validate-profile/{profileId}")
+    public ResponseEntity<Void> validateProfile(@PathVariable("profileId") String profileId) {
+        Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileId));
+
+        if (optionalProfile.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Profile profile = optionalProfile.get();
+        profile.getStatus().setVerificationResult(Status.VerificationResult.APPROVED);
+        profileService.save(profile);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Отменяет подтверждение профиля пользователя
+     *
+     * @param profileCancel dto с неподходящими данными
+     */
+    @PostMapping("/cancel-validation")
+    public ResponseEntity<Void> cancelValidationProfile(@RequestBody ProfileCancel profileCancel) {
+        Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileCancel.getProfileId()));
+
+        if (optionalProfile.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Profile profile = optionalProfile.get();
+
+        if (!profileCancel.getDirections().isEmpty()) {
+            for (String directionId : profileCancel.getDirections()) {
+                profile.getDirections().remove(UUID.fromString(directionId));
+            }
+        }
+
+        if (!profileCancel.getFiles().isEmpty()) {
+            for (String fileId : profileCancel.getFiles()) {
+                profile.getFiles().remove(UUID.fromString(fileId));
+            }
+        }
+
+        profile.getStatus().setVerificationResult(Status.VerificationResult.NEED_REMAKE);
+        profileService.save(profile);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
