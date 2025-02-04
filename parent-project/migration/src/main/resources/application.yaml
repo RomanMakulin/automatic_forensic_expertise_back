@@ -1,14 +1,8 @@
-server:
-  port: 8086
-
 spring:
   application:
     name: migration
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-  datasource:
-    url: jdbc:postgresql://localhost:5432/flm_project
-    username: postgres
-    password: 1
-    driver-class-name: org.postgresql.Driver
+  config:
+    import: "configserver:http://localhost:8888"
+
+
+

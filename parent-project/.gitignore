@@ -34,3 +34,7 @@ build/
 
 ### Amplicode ###
 *amplicode*
+
+### MinIO ###
+.minio.sys/
+*.meta
