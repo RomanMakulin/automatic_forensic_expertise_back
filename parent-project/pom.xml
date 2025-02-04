@@ -37,6 +37,7 @@
         <module>admin-service</module>
         <module>profile</module>
         <module>tariff-plans</module>
+        <module>minio-service</module>
         <module>afe-app</module>
     </modules>
 </project>

@@ -18,10 +18,6 @@
     <name>minio-service</name>
     <description>minio-service module</description>
 
-    <properties>
-        <java.version>${java.version}</java.version>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot Starter Web -->
         <dependency>
@@ -63,6 +59,12 @@
             <artifactId>minio</artifactId>
             <version>8.5.7</version>
         </dependency>
+        <!-- Зависимость для тестирования Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 
 
@@ -70,10 +72,15 @@
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
+            <!-- Maven Compiler Plugin для использования Java 21 -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- Убедитесь, что это актуальная версия плагина -->
+                <configuration>
+                    <source>${java.version}</source> <!-- Указываем версию Java -->
+                    <target>${java.version}</target> <!-- Указываем версию Java -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
