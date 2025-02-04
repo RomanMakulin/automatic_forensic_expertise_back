@@ -11,6 +11,5 @@ import java.util.UUID;
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, UUID> {
 
-    Optional<Plan> findByProfileIdAndEndDateAfter(UUID profileId, LocalDate now);
 }
 

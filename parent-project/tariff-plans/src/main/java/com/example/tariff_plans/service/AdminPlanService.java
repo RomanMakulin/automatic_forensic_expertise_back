@@ -7,14 +7,5 @@ import java.util.UUID;
 
 public interface AdminPlanService {
 
-    List<Plan> getAllPlans();
-
-    Plan getPlanById(UUID id);
-
-    Plan createPlan(Plan plan);
-
-    Plan updatePlan(UUID id, Plan plan);
-
-    void deletePlan(UUID id);
 
 }

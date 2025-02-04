@@ -18,48 +18,5 @@ public class ProfilePlanController {
         this.profilePlanService = profilePlanService;
     }
 
-    /**
-     * Покупка нового тарифного плана пользователем.
-     */
-    @PostMapping("/{profileId}/buy/{planId}")
-    public ResponseEntity<Plan> buyPlan(@PathVariable UUID profileId, @PathVariable UUID planId) {
-        Plan plan = profilePlanService.buyPlan(profileId, planId);
-        return ResponseEntity.ok(plan);
-    }
 
-    /**
-     * Получение активного тарифного плана пользователя.
-     */
-    @GetMapping("/{profileId}/active")
-    public ResponseEntity<Plan> getActivePlan(@PathVariable UUID profileId) {
-        Plan activePlan = profilePlanService.getActivePlan(profileId);
-        return ResponseEntity.ok(activePlan);
-    }
-
-    /**
-     * Оплата текущего активного тарифного плана.
-     */
-    @PostMapping("/{profileId}/pay")
-    public ResponseEntity<String> payForPlan(@PathVariable UUID profileId) {
-        profilePlanService.payForPlan(profileId);
-        return ResponseEntity.ok("Тариф успешно оплачен");
-    }
-
-    /**
-     * Проверка статуса оплаты тарифного плана.
-     */
-    @GetMapping("/{profileId}/status")
-    public ResponseEntity<Boolean> isPlanPaid(@PathVariable UUID profileId) {
-        boolean isPaid = profilePlanService.isPlanPaid(profileId);
-        return ResponseEntity.ok(isPaid);
-    }
-
-    /**
-     * Получение списка доступных тарифных планов.
-     */
-    @GetMapping("/available")
-    public ResponseEntity<List<Plan>> getAvailablePlans() {
-        List<Plan> plans = profilePlanService.getAvailablePlans();
-        return ResponseEntity.ok(plans);
-    }
 }
