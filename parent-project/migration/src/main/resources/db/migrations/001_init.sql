@@ -19,9 +19,9 @@ CREATE TABLE App_User
 CREATE TABLE Status
 (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name                VARCHAR(50) NOT NULL,
-    verification_result VARCHAR(50) NOT NULL,
-    activity_status     VARCHAR(50) NOT NULL
+    name                VARCHAR(50)                    NOT NULL,
+    verification_result VARCHAR(50)                    NOT NULL,
+    activity_status     VARCHAR(50)                    NOT NULL
 );
 
 CREATE TABLE Location
@@ -58,11 +58,18 @@ CREATE TABLE File
 (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     profile_id  UUID                                       NOT NULL,
-    description VARCHAR(255)                               NOT NULL,
-    type        VARCHAR(50)                                NOT NULL,
-    path        VARCHAR(255)                               NOT NULL,
+    path        VARCHAR(255),
     upload_date TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT fk_profile_file FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
+);
+
+CREATE TABLE Template
+(
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID                                       NOT NULL,
+    path       VARCHAR(255),
+    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT fk_profile_template_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
 );
 
 CREATE TABLE Plan
@@ -76,17 +83,6 @@ CREATE TABLE Plan
     start_date    DATE           NOT NULL,
     end_date      DATE           NOT NULL,
     CONSTRAINT fk_profile_plan_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
-);
-
-CREATE TABLE Template
-(
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    profile_id UUID                                       NOT NULL,
-    name       VARCHAR(255)                               NOT NULL,
-    type       VARCHAR(50)                                NOT NULL,
-    path       VARCHAR(255)                               NOT NULL,
-    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT fk_profile_template_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
 );
 
 CREATE TABLE password_reset_token

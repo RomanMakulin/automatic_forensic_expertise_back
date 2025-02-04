@@ -24,4 +24,4 @@ mail:
 # CORS
 cors:
   allowed-origins:
-    - http://localhost:8080 # auth-service
+    - http://localhost:8095 # auth-service

@@ -20,17 +20,6 @@ public class FilesDto {
     private String id;
 
     /**
-     * Имя файла
-     */
-    private String name;
-
-    /**
-     * Тип файла
-     */
-    @NotNull
-    private String type;
-
-    /**
      * Путь к файлу
      */
     @NotNull(message = "Путь к файлу не может быть пустым")
