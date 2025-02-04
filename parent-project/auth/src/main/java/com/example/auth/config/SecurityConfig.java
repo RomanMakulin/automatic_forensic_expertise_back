@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Отключение CSRF, так как мы используем JWT
                 .cors(Customizer.withDefaults()) // включаем CORS
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/reset-password/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/register", "/reset-password/**").anonymous()
+                        .requestMatchers("/api/auth/**").anonymous()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

@@ -19,9 +19,9 @@ CREATE TABLE App_User
 CREATE TABLE Status
 (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name                VARCHAR(50)                    NOT NULL,
-    verification_result VARCHAR(50)                    NOT NULL,
-    activity_status     VARCHAR(50)                    NOT NULL
+    name                VARCHAR(50) NOT NULL,
+    verification_result VARCHAR(50) NOT NULL,
+    activity_status     VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Location
@@ -33,17 +33,31 @@ CREATE TABLE Location
     address VARCHAR(255) NOT NULL
 );
 
+-- Базовая сущность тарифного плана
+CREATE TABLE Plan
+(
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name          VARCHAR(100)   NOT NULL,
+    description   TEXT           NOT NULL,
+    price         DECIMAL(10, 2) NOT NULL,
+    storage_limit INT            NOT NULL
+);
+
 CREATE TABLE Profile
 (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id     UUID UNIQUE  NOT NULL,
-    photo       VARCHAR(255) NOT NULL,
-    phone       VARCHAR(15)  NOT NULL,
-    location_id UUID         NOT NULL,
-    status_id   UUID         NOT NULL,
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id             UUID UNIQUE  NOT NULL,
+    photo               VARCHAR(255) NOT NULL,
+    phone               VARCHAR(15)  NOT NULL,
+    location_id         UUID         NOT NULL,
+    status_id           UUID         NOT NULL,
+    plan_id             UUID,
+    plan_start_date     DATE,
+    plan_duration_month INT,
     CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES App_User (id) ON DELETE CASCADE,
     CONSTRAINT fk_profile_location FOREIGN KEY (location_id) REFERENCES Location (id),
-    CONSTRAINT fk_profile_status FOREIGN KEY (status_id) REFERENCES Status (id)
+    CONSTRAINT fk_profile_status FOREIGN KEY (status_id) REFERENCES Status (id),
+    CONSTRAINT fk_profile_plan FOREIGN KEY (plan_id) REFERENCES Plan (id)
 );
 
 CREATE TABLE Direction
@@ -70,19 +84,6 @@ CREATE TABLE Template
     path       VARCHAR(255),
     created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT fk_profile_template_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
-);
-
-CREATE TABLE Plan
-(
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    profile_id    UUID           NOT NULL,
-    name          VARCHAR(100)   NOT NULL,
-    description   TEXT           NOT NULL,
-    price         DECIMAL(10, 2) NOT NULL,
-    storage_limit INT            NOT NULL,
-    start_date    DATE           NOT NULL,
-    end_date      DATE           NOT NULL,
-    CONSTRAINT fk_profile_plan_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
 );
 
 CREATE TABLE password_reset_token

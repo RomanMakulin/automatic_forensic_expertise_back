@@ -1,5 +1,7 @@
 package com.example.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,6 +10,8 @@ import java.util.List;
 /**
  * Настройки конфигурации CORS
  */
+@Setter
+@Getter
 @Component
 @ConfigurationProperties(prefix = "cors")
 public class CorsConfigProperties {
@@ -17,11 +21,4 @@ public class CorsConfigProperties {
      */
     private List<String> allowedOrigins;
 
-    public List<String> getAllowedOrigins() {
-        return allowedOrigins;
-    }
-
-    public void setAllowedOrigins(List<String> allowedOrigins) {
-        this.allowedOrigins = allowedOrigins;
-    }
 }
