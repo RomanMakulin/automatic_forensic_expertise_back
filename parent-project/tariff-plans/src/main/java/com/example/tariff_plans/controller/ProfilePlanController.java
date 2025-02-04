@@ -12,11 +12,7 @@ import java.util.UUID;
 @RequestMapping("/api/profile-plans")
 public class ProfilePlanController {
 
-    private final ProfilePlanService profilePlanService;
 
-    public ProfilePlanController(ProfilePlanService profilePlanService) {
-        this.profilePlanService = profilePlanService;
-    }
 
 
 }

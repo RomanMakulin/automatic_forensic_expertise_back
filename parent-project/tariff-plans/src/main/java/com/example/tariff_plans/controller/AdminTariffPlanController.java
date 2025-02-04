@@ -15,11 +15,6 @@ import java.util.UUID;
 @PreAuthorize("hasRole('ADMIN')") // Все методы доступны только администраторам
 public class AdminTariffPlanController {
 
-    private final AdminPlanService adminPlanService;
-
-    public AdminTariffPlanController(AdminPlanService adminPlanService) {
-        this.adminPlanService = adminPlanService;
-    }
 
 
 }
