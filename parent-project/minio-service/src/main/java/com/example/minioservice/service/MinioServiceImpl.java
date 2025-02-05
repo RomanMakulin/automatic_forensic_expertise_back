@@ -42,24 +42,6 @@ public class MinioServiceImpl implements MinioService {
     }
 
     /**
-     * Валидация базовых аргументов
-     *
-     * @param profileId идентификатор профиля
-     * @param file      файл
-     */
-    private void validateIdAndFile(UUID profileId, MultipartFile file) {
-        if (profileId == null || file == null) {
-            throw new IllegalArgumentException("Некорректные параметры");
-        }
-    }
-
-    private void validateId(UUID profileId) {
-        if (profileId == null) {
-            throw new IllegalArgumentException("Некорректные параметры");
-        }
-    }
-
-    /**
      * Загружает все файлы для профиля.
      *
      * @param profileId идентификатор профиля
@@ -234,6 +216,30 @@ public class MinioServiceImpl implements MinioService {
             minioHelper.delete(bucketFiles, path);
         }
     }
+
+    /**
+     * Валидация базовых аргументов
+     *
+     * @param profileId идентификатор профиля
+     * @param file      файл
+     */
+    private void validateIdAndFile(UUID profileId, MultipartFile file) {
+        if (profileId == null || file == null) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
+    }
+
+    /**
+     * Валидация идентификатора
+     *
+     * @param profileId идентификатор профиля
+     */
+    private void validateId(UUID profileId) {
+        if (profileId == null) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
+    }
+
 }
 
 
