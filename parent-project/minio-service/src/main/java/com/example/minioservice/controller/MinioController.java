@@ -175,7 +175,7 @@ public class MinioController {
      * @return статус операции
      */
     @PostMapping("/delete-file-list")
-    public ResponseEntity<String> deleteFileList(@RequestParam("path-list") List<String> pathList) {
+    public ResponseEntity<String> deleteFileList(@RequestBody List<String> pathList) {
         try {
             minioService.deleteFiles(pathList);
             return ResponseEntity.ok("Successfully deleted files");
