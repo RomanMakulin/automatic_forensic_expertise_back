@@ -105,6 +105,18 @@
 }
 ```
 
+**Curl:**
+```
+curl --location 'http://localhost:8095/api/auth/register' \
+--data-raw '{
+    "email": "sup.makulin@mail.ru",
+    "password": "123456",
+    "first_name": "Roman",
+    "last_name": "Makulin"
+}
+'
+```
+
 ### Логин
 **URL:** `http://localhost:8095/api/auth/login`  
 **Метод:** POST  
@@ -116,8 +128,23 @@
 }
 ```
 
+**Curl:**
+```
+curl --location 'http://localhost:8095/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "sup.makulin@mail.ru",
+  "password": "123456"
+}'
+```
+
 ### Сброс пароля
 **URL:** `http://localhost:8080/api/auth/reset-password/sup.makulin@mail.ru`  - в url PathVariable email
 
 **Метод:** GET
+
+**Curl:**
+```
+curl --location 'http://localhost:8080/api/auth/reset-password/sup.makulin@mail.ru'
+```
 
