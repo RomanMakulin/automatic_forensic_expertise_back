@@ -58,28 +58,28 @@ public interface MinioService {
     List<FileDto> uploadFiles(UUID profileId, List<MultipartFile> files);
 
     /**
-     * Возвращает фотографию для указанного профиля.
+     * Возвращает ссылку на аватар для указанного профиля.
      *
      * @param profileId идентификатор профиля
      * @return ресурс фотографии
      */
-    Resource getPhoto(UUID profileId);
+    String getPhoto(UUID profileId);
 
     /**
-     * Возвращает список файлов для указанного профиля.
+     * Возвращает ссылки на файлы для указанного профиля.
      *
      * @param profileId идентификатор профиля
      * @return список ресурсов файлов
      */
-    List<Resource> getFiles(UUID profileId);
+    List<String> getFiles(UUID profileId);
 
     /**
-     * Возвращает шаблон для указанного профиля.
+     * Возвращает ссылку на шаблон для указанного профиля.
      *
      * @param profileId идентификатор профиля
      * @return ресурс шаблона
      */
-    Resource getTemplate(UUID profileId);
+    String getTemplate(UUID profileId);
 
     /**
      *  Удаляет фотографию для указанного профиля.

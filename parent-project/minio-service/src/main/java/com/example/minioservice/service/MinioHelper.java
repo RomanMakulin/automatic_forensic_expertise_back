@@ -1,6 +1,7 @@
 package com.example.minioservice.service;
 
 import io.minio.*;
+import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Класс MinioHelper предоставляет методы для работы с MinIO.
@@ -73,6 +75,30 @@ public class MinioHelper {
             throw new RuntimeException("Ошибка получения файла из MinIO", e);
         }
     }
+
+    /**
+     * Получает ссылку для скачивания файла из MinIO.
+     *
+     * @param bucket     имя бакета
+     * @param objectName имя объекта в MinIO
+     * @return ссылка для скачивания файла
+     */
+    public String getObjectUrl(String bucket, String objectName) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)  // Метод GET для скачивания
+                            .bucket(bucket)
+                            .object(objectName)
+                            .expiry(1, TimeUnit.HOURS) // Срок действия ссылки 1 час
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error("Ошибка генерации presigned URL: bucket={}, objectName={}", bucket, objectName, e);
+            throw new RuntimeException("Ошибка генерации presigned URL", e);
+        }
+    }
+
 
     /**
      * Удаляет файл из MinIO.

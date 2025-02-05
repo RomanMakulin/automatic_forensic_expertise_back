@@ -134,9 +134,9 @@ public class MinioServiceImpl implements MinioService {
      * @return ресурс фотографии
      */
     @Override
-    public Resource getPhoto(UUID profileId) {
+    public String getPhoto(UUID profileId) {
         validateId(profileId);
-        return new InputStreamResource(minioHelper.getObject(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId)));
+        return minioHelper.getObjectUrl(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
     /**
@@ -146,9 +146,9 @@ public class MinioServiceImpl implements MinioService {
      * @return ресурс шаблона
      */
     @Override
-    public Resource getTemplate(UUID profileId) {
+    public String getTemplate(UUID profileId) {
         validateId(profileId);
-        return new InputStreamResource(minioHelper.getObject(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId)));
+        return minioHelper.getObjectUrl(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId));
     }
 
     /**
@@ -158,11 +158,11 @@ public class MinioServiceImpl implements MinioService {
      * @return список ресурсов файлов
      */
     @Override
-    public List<Resource> getFiles(UUID profileId) {
+    public List<String> getFiles(UUID profileId) {
         validateId(profileId);
-        List<Resource> resources = new ArrayList<>();
+        List<String> resources = new ArrayList<>();
         for (String objectName : minioHelper.listObjects(bucketFiles, profileId.toString())) {
-            resources.add(new InputStreamResource(minioHelper.getObject(bucketFiles, objectName)));
+            resources.add(minioHelper.getObjectUrl(bucketFiles, objectName));
         }
         return resources;
     }

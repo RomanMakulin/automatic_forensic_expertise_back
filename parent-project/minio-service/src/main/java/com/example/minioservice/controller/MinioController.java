@@ -191,7 +191,7 @@ public class MinioController {
      * @return фото пользователя
      */
     @GetMapping("/get-photo")
-    public ResponseEntity<Resource> getPhoto(@RequestParam("profileId") UUID profileId) {
+    public ResponseEntity<String> getPhoto(@RequestParam("profileId") UUID profileId) {
         try {
             return ResponseEntity.ok(minioService.getPhoto(profileId));
         } catch (Exception e) {
@@ -206,7 +206,7 @@ public class MinioController {
      * @return шаблон пользователя
      */
     @GetMapping("/get-template")
-    public ResponseEntity<Resource> getTemplate(@RequestParam("profileId") UUID profileId) {
+    public ResponseEntity<String> getTemplate(@RequestParam("profileId") UUID profileId) {
         try {
             return ResponseEntity.ok(minioService.getTemplate(profileId));
         } catch (Exception e) {
@@ -221,7 +221,7 @@ public class MinioController {
      * @return файла пользователя
      */
     @GetMapping("/get-files")
-    public ResponseEntity<List<Resource>> getFile(@RequestParam("profileId") UUID profileId) {
+    public ResponseEntity<List<String>> getFile(@RequestParam("profileId") UUID profileId) {
         try {
             return ResponseEntity.ok(minioService.getFiles(profileId));
         } catch (Exception e) {
