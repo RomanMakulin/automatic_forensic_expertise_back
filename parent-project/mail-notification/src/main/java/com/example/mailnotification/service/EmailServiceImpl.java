@@ -68,8 +68,10 @@ public class EmailServiceImpl implements EmailService {
             log.info("Email успешно отправлен на адрес: {}", to);
         } catch (AuthenticationFailedException e) {
             log.error("Ошибка аутентификации: проверь логин и пароль.", e);
+            throw new RuntimeException("Ошибка при отправке email: ", e);
         } catch (MessagingException e) {
             log.error("Ошибка при отправке email", e);
+            throw new RuntimeException("Ошибка при отправке email: ", e);
         }
     }
 

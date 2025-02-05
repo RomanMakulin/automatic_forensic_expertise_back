@@ -1,0 +1,199 @@
+# Работа с файлами через minIO модуль
+
+## Загрузка фото
+**URL:** `http://localhost:8030/api/files/upload-photo`  
+**Метод:** POST  
+**Body:**
+```form-data
+profileId: UUID
+avatar: MultipartFile
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/upload-photo' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--form 'profileId="90f69820-8211-4683-b2e7-21e0c9a781b2"' \
+--form 'avatar=@"/C:/Users/supma/Desktop/files-test/IMG_6011.JPG"'
+```
+
+## Загрузка шаблона
+**URL:** `http://localhost:8030/api/files/upload-template`  
+**Метод:** POST  
+**Body:**
+```form-data
+profileId: UUID
+template: MultipartFile
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/upload-template' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--form 'profileId="92f69820-8211-4683-b2e7-21e0c9a781b2"' \
+--form 'template=@"/C:/Users/supma/Desktop/files-test/sadasdas.docx"'
+```
+
+
+## Загрузка файла
+**URL:** `http://localhost:8030/api/files/upload-file`  
+**Метод:** POST  
+**Body:**
+```form-data
+profileId: UUID
+file: MultipartFile
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/upload-file' \
+--form 'profileId="<UUID>"' \
+--form 'file=@"<file_path>"'
+```
+
+## Загрузка нескольких файлов
+**URL:** `http://localhost:8030/api/files/upload-files`  
+**Метод:** POST  
+**Body:**
+```form-data
+profileId: UUID
+files: List<MultipartFile>
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/upload-files' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--header 'Cookie: JSESSIONID=50AD2518A52AEA0ED12E13F8DC6E5A66' \
+--form 'profileId="92f69820-8211-4683-b2e7-21e0c9a781b2"' \
+--form 'files=@"/C:/Users/supma/Desktop/files-test/Сведения о работе2.pdf"' \
+--form 'files=@"/C:/Users/supma/Desktop/files-test/Сведения о работе3.pdf"'
+```
+
+## Загрузка всех файлов (аватар, шаблон, файлы)
+**URL:** `http://localhost:8030/api/files/upload-all`  
+**Метод:** POST  
+**Body:**
+```form-data
+profileId: UUID
+avatar: MultipartFile
+template: MultipartFile
+files: List<MultipartFile>
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/upload-all' \
+--form 'profileId="<UUID>"' \
+--form 'avatar=@"<avatar_path>"' \
+--form 'template=@"<template_path>"' \
+--form 'files=@"<file_path1>"' \
+--form 'files=@"<file_path2>"'
+```
+
+## Удаление фото
+**URL:** `http://localhost:8030/api/files/delete-photo`  
+**Метод:** POST  
+**Body:**
+```json
+{
+    "profileId": "<UUID>"
+}
+```
+
+**Curl:**
+```
+curl --location --request POST 'http://localhost:8030/api/files/delete-photo?profileId=92f69820-8211-4683-b2e7-21e0c9a781b2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--header 'Cookie: JSESSIONID=50AD2518A52AEA0ED12E13F8DC6E5A66'
+```
+
+## Удаление шаблона
+**URL:** `http://localhost:8030/api/files/delete-template`  
+**Метод:** POST  
+**Body:**
+```json
+{
+    "profileId": "<UUID>"
+}
+```
+
+**Curl:**
+```
+curl --location --request POST 'http://localhost:8030/api/files/delete-template?profileId=92f69820-8211-4683-b2e7-21e0c9a781b2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--header 'Cookie: JSESSIONID=50AD2518A52AEA0ED12E13F8DC6E5A66'
+```
+
+## Удаление файла
+**URL:** `http://localhost:8030/api/files/delete-file`  
+**Метод:** POST  
+**Body:**
+```json
+{
+    "path": "<file_path>"
+}
+```
+
+**Curl:**
+```
+curl --location --request POST 'http://localhost:8030/api/files/delete-file?path=92f69820-8211-4683-b2e7-21e0c9a781b2_d02b659e-9ada-4135-b36f-a6c073efa90a.pdf' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--header 'Cookie: JSESSIONID=50AD2518A52AEA0ED12E13F8DC6E5A66'
+```
+
+## Удаление нескольких файлов
+**URL:** `http://localhost:8030/api/files/delete-file-list`  
+**Метод:** POST  
+**Body:**
+```json
+[
+   "90f69890-8211-4683-b2e7-21e0c9a781b2_db904227-be5a-470f-bb30-2fafa2c9e48f.pdf",
+   "10f69890-8211-4683-b2e7-21e0c9a781b2_cdba87d4-b903-45e7-bd0c-04d57d3903af.pdf"
+]
+
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/delete-file-list' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--data '[
+    "90f69890-8211-4683-b2e7-21e0c9a781b2_db904227-be5a-470f-bb30-2fafa2c9e48f.pdf",
+    "10f69890-8211-4683-b2e7-21e0c9a781b2_cdba87d4-b903-45e7-bd0c-04d57d3903af.pdf"
+]
+'
+```
+
+## Получение фото пользователя
+**URL:** `http://localhost:8030/api/files/get-photo?profileId=<UUID>`  
+**Метод:** GET
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/get-photo?profileId=92f69820-8211-4683-b2e7-21e0c9a781b2' \
+--header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkYk02d0RITF85MDdaNk1xRWFvbVJjTW5xYUQzb2JEcFVtUnd4anBoNmY4In0.eyJleHAiOjE3Mzg3OTA4NDUsImlhdCI6MTczODc3Mjg0NSwianRpIjoiZDMzYzBhZjctZTNiOC00YTE0LWE1NjQtYzY4ZGMzZWU3MmFmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL3JlYWxtcy9kZW1vIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjJiODBjMTUzLWQ0MGEtNGMwMC1iMzI0LWQ5NTQ2MjEwMDVkZiIsInR5cCI6IkJlYXJlciIsImF6cCI6InNwcmluZy1hcHAiLCJzZXNzaW9uX3N0YXRlIjoiNTk4NTAzM2YtMTFlMy00ZWJhLWExMTEtZjM0ODU1YmViNWE2IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1kZW1vIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjU5ODUwMzNmLTExZTMtNGViYS1hMTExLWYzNDg1NWJlYjVhNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlJvbWFuIE1ha3VsaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzdXAubWFrdWxpbkBtYWlsLnJ1IiwiZ2l2ZW5fbmFtZSI6IlJvbWFuIiwiZmFtaWx5X25hbWUiOiJNYWt1bGluIiwiZW1haWwiOiJzdXAubWFrdWxpbkBtYWlsLnJ1In0.RPlHPIs2DjKhyZDQ3g11Z6sjpasQ8agSaLw9pSfwWjI9F2-Xqxi6ygDaAnpDFBJQzXUMMomhv4qjnTXgqZX9Mma0pAQ3E2prfammzB1_7Et9SCEca6daHw3cMUi_PdcOyVJYfRd3dGm7HzOv73glFGIFVZWOkNKLKbxdQrqlqJGpSrQC09nXAAg82n7u-KzeGYAfHwuVtfgN589tSwjFFw_MjAEiWPAGXAsx_3c0UB-yoXzxTgJAl13R8NAWKpVtKs_9aJ7pMbnhszV6hoHmB2eqntjMpnOI3P2YeAoTa5IVcNMSr5YTtqL4Gh-0EIPQRBLiJA-RfaAHatLu5DEI9Q' \
+--header 'Cookie: JSESSIONID=50AD2518A52AEA0ED12E13F8DC6E5A66'
+```
+
+## Получение шаблона пользователя
+**URL:** `http://localhost:8030/api/files/get-template?profileId=<UUID>`  
+**Метод:** GET
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/get-template?profileId=<UUID>'
+```
+
+## Получение списка файлов пользователя
+**URL:** `http://localhost:8030/api/files/get-files?profileId=<UUID>`  
+**Метод:** GET
+
+**Curl:**
+```
+curl --location 'http://localhost:8030/api/files/get-files?profileId=<UUID>'
+```

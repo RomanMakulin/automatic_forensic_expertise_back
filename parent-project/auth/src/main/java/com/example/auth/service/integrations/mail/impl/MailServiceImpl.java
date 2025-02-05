@@ -5,6 +5,8 @@ import com.example.auth.api.dto.MailRequest;
 import com.example.auth.service.integrations.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -51,13 +53,23 @@ public class MailServiceImpl implements MailService {
     public void publicSendMail(MailRequest mailRequest) {
         try {
             String mailApi = apiPathsConfig.getNotification().get("public-send-mail");
-
-
-            restTemplate.postForEntity(mailApi, mailRequest, Void.class);
+            ResponseEntity<Void> response = restTemplate.postForEntity(mailApi, mailRequest, Void.class);
+            checkResponseAnswer(response);
             log.debug("Email request successfully sent to notification service: {}", mailRequest);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
             throw new RuntimeException("Registration failed with send email to notification service: " + mailRequest, e);
+        }
+    }
+
+    /**
+     * Проверяет ответ от сервиса отправки писем
+     *
+     * @param response ответ от сервиса отправки писем
+     */
+    private void checkResponseAnswer(ResponseEntity<Void> response){
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new RuntimeException("Registration failed with send email to notification service");
         }
     }
 

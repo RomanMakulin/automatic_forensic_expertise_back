@@ -85,12 +85,21 @@
 
 ### MinIO
 
-- Загрузка файла: `http://localhost:8030/api/file/upload`
-
+- Загрузка файла: `http://localhost:8030/api/files/upload-file`
+- Загрузка нескольких файлов: `http://localhost:8030/api/files/upload-files`
+- Загрузка всех файлов (аватар, шаблон, файлы): `http://localhost:8030/api/files/upload-all`
+- Удаление фото: `http://localhost:8030/api/files/delete-photo`
+- Удаление шаблона: `http://localhost:8030/api/files/delete-template`
+- Удаление файла: `http://localhost:8030/api/files/delete-file`
+- Удаление нескольких файлов: `http://localhost:8030/api/files/delete-file-list`
+- Получение фото пользователя: `http://localhost:8030/api/files/get-photo`
+- Получение шаблона пользователя: `http://localhost:8030/api/files/get-template`
+- Получение списка файлов пользователя: `http://localhost:8030/api/files/get-files`
 
 ---
 
 ## Примеры запросов
+
 
 ### Регистрация
 **URL:** `http://localhost:8095/api/auth/register`  
@@ -148,3 +157,5 @@ curl --location 'http://localhost:8095/api/auth/login' \
 curl --location 'http://localhost:8080/api/auth/reset-password/sup.makulin@mail.ru'
 ```
 
+### Работа с файлами через minIO
+[Кликабельно](MINIO.md)
