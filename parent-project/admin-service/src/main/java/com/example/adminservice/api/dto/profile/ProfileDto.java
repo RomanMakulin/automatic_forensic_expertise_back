@@ -68,10 +68,4 @@ public class ProfileDto {
     @NotEmpty(message = "файлы не может быть пустым")
     private List<FilesDto> files;
 
-    /**
-     * Шаблоны профиля
-     * (Пока заглушка)
-     */
-//    private List<TemplateDto> templates;
-
 }
