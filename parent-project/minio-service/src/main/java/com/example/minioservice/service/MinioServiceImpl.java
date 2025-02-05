@@ -23,7 +23,7 @@ public class MinioServiceImpl implements MinioService {
     private static final Logger log = LoggerFactory.getLogger(MinioServiceImpl.class);
 
     private final MinioHelper minioHelper;
-    private final FileValidator fileValidator;
+
     private final FileNameBuilder fileNameBuilder;
 
     @Value("${minio.buckets.avatars}")
@@ -36,11 +36,27 @@ public class MinioServiceImpl implements MinioService {
     private String bucketTemplates;
 
     public MinioServiceImpl(MinioHelper minioHelper,
-                            FileValidator fileValidator,
                             FileNameBuilder fileNameBuilder) {
         this.minioHelper = minioHelper;
-        this.fileValidator = fileValidator;
         this.fileNameBuilder = fileNameBuilder;
+    }
+
+    /**
+     * Валидация базовых аргументов
+     *
+     * @param profileId идентификатор профиля
+     * @param file      файл
+     */
+    private void validateIdAndFile(UUID profileId, MultipartFile file) {
+        if (profileId == null || file == null) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
+    }
+
+    private void validateId(UUID profileId) {
+        if (profileId == null) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
     }
 
     /**
@@ -56,11 +72,12 @@ public class MinioServiceImpl implements MinioService {
     public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files) {
         log.info("Загрузка всех файлов для profileId: {}", profileId);
 
-        fileValidator.validateFiles(profileId, avatar, template, files);
+        if (profileId == null || avatar == null || template == null || files == null || files.isEmpty()) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
 
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
         minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
-
         return uploadFiles(profileId, files);
     }
 
@@ -72,7 +89,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public void uploadPhoto(UUID profileId, MultipartFile avatar) {
-        fileValidator.validateFile(profileId, avatar);
+        validateIdAndFile(profileId, avatar);
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
@@ -84,7 +101,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public void uploadTemplate(UUID profileId, MultipartFile template) {
-        fileValidator.validateFile(profileId, template);
+        validateIdAndFile(profileId, template);
         minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
     }
 
@@ -97,7 +114,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public FileDto uploadFile(UUID profileId, MultipartFile file) {
-        fileValidator.validateFile(profileId, file);
+        validateIdAndFile(profileId, file);
 
         UUID fileId = UUID.randomUUID();
         String filePath = fileNameBuilder.buildFileObjectName(profileId, fileId);
@@ -116,7 +133,9 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public List<FileDto> uploadFiles(UUID profileId, List<MultipartFile> files) {
-        fileValidator.validateFileList(profileId, files);
+        if (profileId == null || files == null || files.isEmpty()) {
+            throw new IllegalArgumentException("Некорректные параметры");
+        }
 
         List<FileDto> fileDtos = new ArrayList<>();
 
@@ -134,6 +153,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public Resource getPhoto(UUID profileId) {
+        validateId(profileId);
         return new InputStreamResource(minioHelper.getObject(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId)));
     }
 
@@ -145,6 +165,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public Resource getTemplate(UUID profileId) {
+        validateId(profileId);
         return new InputStreamResource(minioHelper.getObject(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId)));
     }
 
@@ -156,6 +177,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public List<Resource> getFiles(UUID profileId) {
+        validateId(profileId);
         List<Resource> resources = new ArrayList<>();
         for (String objectName : minioHelper.listObjects(bucketFiles, profileId.toString())) {
             resources.add(new InputStreamResource(minioHelper.getObject(bucketFiles, objectName)));
@@ -170,7 +192,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public void deletePhoto(UUID profileId) {
-        fileValidator.validateProfileId(profileId);
+        validateId(profileId);
         minioHelper.delete(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId));
     }
 
@@ -181,7 +203,7 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public void deleteTemplate(UUID profileId) {
-        fileValidator.validateProfileId(profileId);
+        validateId(profileId);
         minioHelper.delete(bucketTemplates, fileNameBuilder.buildTemplateObjectName(profileId));
     }
 
