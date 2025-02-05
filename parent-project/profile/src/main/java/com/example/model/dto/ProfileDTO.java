@@ -14,13 +14,11 @@ public class ProfileDTO {
 
     private AppUser appUser;
 
-    private String photo;
-
     private String phone;
 
-    private Location location;
+    private LocationDTO locationDTO;
 
-    private Status status;
+    private StatusDTO statusDTO;
 
     private Set<File> files;
 

@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,15 +37,21 @@ public class Profile {
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
+
+    @Column(name = "plan_start_date")
+    private LocalDateTime planStartDate;
+
+    @Column(name = "plan_duration_month")
+    private LocalDateTime planDurationMonth;
+
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<File> files;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(
-            name = "profile_direction",
-            joinColumns = @JoinColumn(name = "profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "direction_id")
-    )
+    @JsonManagedReference
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Direction> directions;
 
 }

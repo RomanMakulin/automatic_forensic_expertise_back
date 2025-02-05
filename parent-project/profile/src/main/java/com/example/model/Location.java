@@ -18,12 +18,12 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    private String country = "country";
+    private String country;
 
-    private String region = "region";
+    private String region;
 
-    private String city = "city";
+    private String city;
 
-    private String address = "address";
+    private String address;
 
 }
