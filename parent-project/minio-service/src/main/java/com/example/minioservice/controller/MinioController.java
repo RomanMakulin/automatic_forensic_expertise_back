@@ -3,12 +3,10 @@ package com.example.minioservice.controller;
 
 import com.example.minioservice.dto.FileDto;
 import com.example.minioservice.service.MinioService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -97,7 +95,7 @@ public class MinioController {
      */
     @PostMapping("/upload-file")
     public ResponseEntity<FileDto> uploadFile(@RequestParam("profileId") UUID profileId,
-                                           @RequestParam("file") MultipartFile file) {
+                                              @RequestParam("file") MultipartFile file) {
         try {
             return ResponseEntity.ok(minioService.uploadFile(profileId, file));
         } catch (Exception e) {
@@ -114,7 +112,7 @@ public class MinioController {
      */
     @PostMapping("/upload-files")
     public ResponseEntity<List<FileDto>> uploadFiles(@RequestParam("profileId") UUID profileId,
-                                                  @RequestParam("files") List<MultipartFile> files) {
+                                                     @RequestParam("files") List<MultipartFile> files) {
         try {
             return ResponseEntity.ok(minioService.uploadFiles(profileId, files));
         } catch (Exception e) {
@@ -181,6 +179,51 @@ public class MinioController {
         try {
             minioService.deleteFiles(pathList);
             return ResponseEntity.ok("Successfully deleted files");
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для получения фото пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return фото пользователя
+     */
+    @GetMapping("/get-photo")
+    public ResponseEntity<Resource> getPhoto(@RequestParam("profileId") UUID profileId) {
+        try {
+            return ResponseEntity.ok(minioService.getPhoto(profileId));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для получения шаблона пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return шаблон пользователя
+     */
+    @GetMapping("/get-template")
+    public ResponseEntity<Resource> getTemplate(@RequestParam("profileId") UUID profileId) {
+        try {
+            return ResponseEntity.ok(minioService.getTemplate(profileId));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для получения файла пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return файла пользователя
+     */
+    @GetMapping("/get-files")
+    public ResponseEntity<List<Resource>> getFile(@RequestParam("profileId") UUID profileId) {
+        try {
+            return ResponseEntity.ok(minioService.getFiles(profileId));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
