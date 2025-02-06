@@ -7,16 +7,12 @@ import com.example.model.*;
 import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
 import com.example.repository.ProfileRepository;
-import com.example.repository.StatusRepository;
 import com.example.service.AppUserService;
 import com.example.service.FileService;
 import com.example.service.MinIOFileService;
 import com.example.service.ProfileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -30,7 +26,6 @@ import java.util.*;
 @RequestMapping("/api/profile")
 public class ProfileController {
 
-    private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
     private final ProfileService profileService;
 
     private final LocationMapper locationMapper;
@@ -45,11 +40,9 @@ public class ProfileController {
 
     private final FileService fileService;
 
-    private final StatusRepository statusRepository;
-
     private final ProfileRepository profileRepository;
 
-    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, StatusRepository statusRepository, ProfileRepository profileRepository) {
+    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository) {
         this.profileService = profileService;
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
@@ -57,7 +50,6 @@ public class ProfileController {
         this.appUserService = appUserService;
         this.minIOFileService = minIOFileService;
         this.fileService = fileService;
-        this.statusRepository = statusRepository;
         this.profileRepository = profileRepository;
     }
 
@@ -72,66 +64,58 @@ public class ProfileController {
 
     }
 
-    /**
-     * Создание профиля
-     */
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<?> saveAll(
-            @RequestPart("profile") ProfileCreateDTO profileCreateDTO,
-            @RequestPart("photo") MultipartFile photo,
-            @RequestPart("files") List<MultipartFile> files
+    public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
+                                     @RequestPart("photo") MultipartFile photo,
+//                                        @RequestPart("template") MultipartFile template, //todo пока не понятно что с шаблоном
+                                     @RequestPart("files") List<MultipartFile> files
     ) {
-        try {
-            // Проверка входных данных
-            if (photo == null || photo.isEmpty()) {
-                return ResponseEntity.badRequest().body("Фото обязательно для загрузки.");
-            }
-            if (files == null || files.isEmpty()) {
-                return ResponseEntity.badRequest().body("Сканы документов обязательны.");
-            }
 
-            // Получение аутентифицированного пользователя
-            AppUser appUser = getAuthenticatedUser();
-
-            // Создаём профиль
-            Profile profile = new Profile();
-            profile.setId(UUID.randomUUID()); // Генерируем ID
-            profile.setPhone(profileCreateDTO.getPhone());
-            profile.setAppUser(appUser);
-            profile.setStatus(new Status()); // Устанавливаем дефолтный статус
-            profile.setLocation(locationMapper.toEntity(profileCreateDTO.getLocationDTO()));
-            Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
-            directions.forEach(direction -> direction.setProfile(profile));
-            profile.setDirections(directions);
-            profile.setFiles(new HashSet<>());
-
-            // Сохраняем фото и файлы
-            List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
-
-            for (FileDTO fileDTO : fileDTOS) {
-                File fileEntity = new File();
-                fileEntity.setId(fileDTO.getId());
-                fileEntity.setPath(fileDTO.getPath());
-                fileEntity.setUploadDate(fileDTO.getCratedAt());
-
-                fileEntity.setProfile(profile);
-                profile.getFiles().add(fileEntity);
-            }
-
-            profileRepository.save(profile);
-
-            return ResponseEntity.ok("Профиль успешно создан.");
-        } catch (ObjectOptimisticLockingFailureException e) {
-
-            log.error("Конфликт при обновлении данных: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Конфликт данных. Пожалуйста, попробуйте снова.");
-        } catch (Exception e) {
-            log.error("Ошибка при создании профиля: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Произошла ошибка. Попробуйте позже.");
+        if (photo == null || photo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("А где фотка, умник? Иди фоткой рожу свою, потом еще раз попробуешь");
         }
+
+//        if (template == null || template.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)                          //todo пока не понятно что с шаблоном
+//                    .body("А где, блять, шаблон? Это шутка какая-то? Смешно, да?");
+//        }
+
+        if (files == null || files.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("А где сканы документов? Иди делай, потом вернешься");
+        }
+
+        AppUser appUser = getAuthenticatedUser();
+
+        Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
+        Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
+
+        Profile profile = new Profile();
+        profile.setId(UUID.randomUUID()); // Генерируем ID
+        profile.setPhone(profileCreateDTO.getPhone());
+        profile.setAppUser(appUser);  // подставляем юзера
+        profile.setStatus(new Status());  // создаем дефолтный статус
+        profile.setDirections(directions);
+        profile.setLocation(location);
+
+        for (Direction direction : directions) {
+            direction.setProfile(profile);
+        }
+
+        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
+
+        for (FileDTO fileDTO : fileDTOS) {
+            File file = fileMapper.toEntity(fileDTO);
+            file.setProfile(profile);
+
+            profile.getFiles().add(file);
+        }
+
+        profileService.save(profile);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update")
