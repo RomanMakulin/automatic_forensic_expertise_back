@@ -10,14 +10,19 @@ import java.util.UUID;
 @Data
 public class FileDTO {
 
-    private Profile profile;
+    /**
+     * Идентификатор файла
+     */
+    private UUID id;
 
-    private String description;
-
-    private String type;
-
+    /**
+     * Имя файла
+     */
     private String path;
 
-    private LocalDateTime uploadDate;
+    /**
+     * Дата создания файла
+     */
+    private LocalDateTime cratedAt;
 
 }

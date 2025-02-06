@@ -3,11 +3,13 @@ package com.example.controller;
 import com.example.mapper.DirectionMapper;
 import com.example.mapper.LocationMapper;
 import com.example.model.*;
+import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
 import com.example.model.dto.ProfileDTO;
 import com.example.model.dto.ProfileFullDTO;
 import com.example.repository.AppUserRepository;
 import com.example.service.AppUserService;
+import com.example.service.FileService;
 import com.example.service.LocationService;
 import com.example.service.ProfileService;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -38,12 +40,14 @@ public class ProfileController {
 
     private final AppUserService appUserService;
 
-    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, AppUserService appUserService) {
+    private final FileService fileService;
+
+    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, AppUserService appUserService, FileService fileService) {
         this.profileService = profileService;
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
         this.appUserService = appUserService;
-
+        this.fileService = fileService;
     }
 
     @GetMapping
@@ -57,8 +61,9 @@ public class ProfileController {
 
     }
 
+
     @PostMapping("/save")
-    public ResponseEntity<Profile> save(@RequestBody Profile profile) {
+    public ResponseEntity<Profile> save(@RequestBody Profile profile) { //todo удалить после нормально реализации метода созранения
         AppUser appUser = new AppUser();
     //    Location location = locationService.save(new Location());
         Status status = new Status();
@@ -76,27 +81,27 @@ public class ProfileController {
      */
     @PostMapping("/create")
     public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
-                                           @RequestPart("photo") MultipartFile photo
-//            ,
-//                                           @RequestPart("files") List<MultipartFile> files
-    ) throws ChangeSetPersister.NotFoundException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                                        @RequestPart("photo") MultipartFile photo,
+                                        @RequestPart("template") MultipartFile template,
+                                        @RequestPart("files") List<MultipartFile> files
+    ) {
 
-        //todo где брать пользователя
-//
-//        if (authentication == null && !(authentication.getPrincipal() instanceof Jwt)) {
-//            Jwt jwt = (Jwt) authentication.getPrincipal();
-//
-//            UUID userId = (UUID) jwt.getClaims().get("id");
-//
-//
-//        }
-//        if (authentication == null || !(authentication.getPrincipal() instanceof AppUser)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Увы... Нет авторизованного пользователя");
-//        }
+        if (photo == null || photo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("А где фотка, умник? Иди фоткой рожу свою, потом еще раз попробуешь");
+        }
 
-        AppUser appUser = appUserService.getAppUserById(UUID.fromString("ddbb5a76-cf35-4a75-919b-9e2a0bc1194d")).orElseThrow(() ->
-                new ChangeSetPersister.NotFoundException());
+        if (template == null || template.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("А где, блять, шаблон? Это шутка какая-то? Смешно, да?");
+        }
+
+        if (files == null || files.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("А где сканы документов? Иди делай, потом вернешься");
+        }
+
+        AppUser appUser = getAuthenticatedUser();
 
         Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
         Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
@@ -112,24 +117,16 @@ public class ProfileController {
             direction.setProfile(profile);
         }
 
-        profile.setPhoto("загалушечка"); //todo дописать реализацию
+        profileService.save(profile);
 
-        if (photo != null && !photo.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("А где фотка, умник? Иди фоткой рожу свою, потом еще раз попробуешь");
-        }
-
-        System.out.println(photo.getName());
-        System.out.println(photo.getContentType());
-
-//        if (files != null && !files.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("А где сканы документов? Иди делай, потом вернешься");
-//        }
-
-//        fileService.save(photo);
-//        fileService.save(files);
+        List<FileDTO> fileDTOS = fileService.savePhotoTemplateFiles(profile.getId(), photo, template, files);
 
 
-        return ResponseEntity.ok(profileService.save(profile));
+
+        profileService.save(profile);
+
+//todo        fileService.save(files);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update")
@@ -205,6 +202,17 @@ public class ProfileController {
         profile.getStatus().setVerificationResult(Status.VerificationResult.NEED_REMAKE);
         profileService.save(profile);
         return ResponseEntity.ok().build();
+    }
+
+    public AppUser getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+
+        String email = jwt.getClaim("email"); // Email пользователя
+        return appUserService.getAppUserByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Authenticated user not found"));
     }
 
 
