@@ -16,8 +16,7 @@ import java.util.UUID;
 public class File {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @ManyToOne
     @JoinColumn(name = "profile_id", nullable = false)

@@ -19,8 +19,7 @@ import java.util.UUID;
 public class Profile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
@@ -48,7 +47,7 @@ public class Profile {
     @Column(name = "plan_duration_month")
     private LocalDateTime planDurationMonth;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<File> files = new HashSet<>();
 
     @JsonManagedReference
