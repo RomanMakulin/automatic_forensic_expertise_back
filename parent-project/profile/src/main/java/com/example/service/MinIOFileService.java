@@ -37,6 +37,80 @@ public class MinIOFileService {
     }
 
     /**
+     * Получить фото из minOP по идентификатору пользователя
+     *
+     * @param profileId идентификатор пользователя
+     * @return ссылка на фото
+     */
+    public String getPhotoUrl(UUID profileId) {
+        String url = "http://localhost:8030/api/files/get-photo" + "?profileId=" + profileId;
+
+        // Создаем заголовки с токеном авторизации
+        HttpHeaders headers = createAuthHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Отправляем GET-запрос с заголовками
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Ошибка получения фото: " + response.getStatusCode());
+        }
+
+    }
+
+    /**
+     * Получить файлы из minOP по идентификатору пользователя
+     *
+     * @param profileId идентификатор пользователя
+     * @return список ссылок на файлы
+     */
+    public List<String> getFiles(UUID profileId) {
+        String url = "http://localhost:8030/api/files/get-files" + "?profileId=" + profileId;
+
+        // Создаем заголовки с токеном авторизации
+        HttpHeaders headers = createAuthHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Отправляем GET-запрос с заголовками
+        ResponseEntity<List<String>> response = restTemplate.exchange(
+                url, HttpMethod.GET, entity,
+                new ParameterizedTypeReference<>() {
+                } // Используется для обработки списка строк
+        );
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Ошибка получения файлов: " + response.getStatusCode());
+        }
+    }
+
+    /**
+     * Получить файл по пути (Название файла)
+     *
+     * @param path путь к файлу
+     * @return ссылка на файл
+     */
+    public String getFile(String path) {
+        String url = "http://localhost:8030/api/files/get-file" + "?path=" + path;
+
+        // Создаем заголовки с токеном авторизации
+        HttpHeaders headers = createAuthHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Отправляем GET-запрос с заголовками
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody(); // Возвращает URL или содержимое файла
+        } else {
+            throw new RuntimeException("Ошибка получения файла: " + response.getStatusCode());
+        }
+    }
+
+    /**
      * Сохраниить фото
      */
     @SneakyThrows
@@ -66,7 +140,8 @@ public class MinIOFileService {
                 url,
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         return photoUrl.getBody();
@@ -107,7 +182,8 @@ public class MinIOFileService {
                 url,
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         System.out.println(response.getBody());

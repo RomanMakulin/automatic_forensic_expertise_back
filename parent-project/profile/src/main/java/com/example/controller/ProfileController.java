@@ -6,11 +6,9 @@ import com.example.mapper.LocationMapper;
 import com.example.model.*;
 import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
+import com.example.model.newDto.profile.ProfileDto;
 import com.example.repository.ProfileRepository;
-import com.example.service.AppUserService;
-import com.example.service.FileService;
-import com.example.service.MinIOFileService;
-import com.example.service.ProfileService;
+import com.example.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,7 +40,9 @@ public class ProfileController {
 
     private final ProfileRepository profileRepository;
 
-    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository) {
+    private final MinioService minioService;
+
+    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, MinioService minioService) {
         this.profileService = profileService;
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
@@ -51,6 +51,7 @@ public class ProfileController {
         this.minIOFileService = minIOFileService;
         this.fileService = fileService;
         this.profileRepository = profileRepository;
+        this.minioService = minioService;
     }
 
     @GetMapping
@@ -136,11 +137,10 @@ public class ProfileController {
      *
      * @return список профилей
      */
-    @GetMapping("/get-unverified-profiles")
-    public ResponseEntity<List<Profile>> getUnverifiedProfiles() {
-        // TODO logic
+    @GetMapping("/unverified")
+    public ResponseEntity<List<ProfileDto>> getUnverifiedProfiles() {
         List<Profile> profiles = profileService.getUnverifiedProfiles();
-        return ResponseEntity.ok(profiles);
+        return ResponseEntity.ok(minioService.generateProfileDtoList(profiles));
     }
 
     /**
