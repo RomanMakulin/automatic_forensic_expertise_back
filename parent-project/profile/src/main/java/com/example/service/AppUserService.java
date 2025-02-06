@@ -16,6 +16,9 @@ public class AppUserService {
         this.appUserRepository = appUserRepository;
     }
 
+    public Optional<AppUser> getAppUserByEmail(String email) {
+        return appUserRepository.getAppUsersByEmail(email);
+    }
 
     public Optional<AppUser> getAppUserById(UUID id) {
         return appUserRepository.findById(id);
