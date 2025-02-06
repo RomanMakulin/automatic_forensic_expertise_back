@@ -74,6 +74,14 @@ public interface MinioService {
     List<String> getFiles(UUID profileId);
 
     /**
+     * Возвращает ссылку на файл для указанного профиля.
+     *
+     * @param path путь к файлу
+     * @return ресурс файла
+     */
+    String getFile(String path);
+
+    /**
      * Возвращает ссылку на шаблон для указанного профиля.
      *
      * @param profileId идентификатор профиля

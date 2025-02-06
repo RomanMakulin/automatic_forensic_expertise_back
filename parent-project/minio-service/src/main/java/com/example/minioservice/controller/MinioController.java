@@ -229,4 +229,18 @@ public class MinioController {
         }
     }
 
+    /**
+     * API для получения файла пользователя.
+     * @param path путь к файлу
+     * @return файла пользователя
+     */
+    @GetMapping("/get-file")
+    public ResponseEntity<String> getFile(@RequestParam("path") String path) {
+        try {
+            return ResponseEntity.ok(minioService.getFile(path));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

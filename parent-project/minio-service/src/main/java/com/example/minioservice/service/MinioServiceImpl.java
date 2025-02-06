@@ -168,6 +168,20 @@ public class MinioServiceImpl implements MinioService {
     }
 
     /**
+     * Получает файл.
+     *
+     * @param path путь к файлу
+     * @return ресурс файла (ссылка)
+     */
+    @Override
+    public String getFile(String path) {
+        if (path == null) {
+            throw new IllegalArgumentException("Путь к файлу не может быть пустым");
+        }
+        return minioHelper.getObjectUrl(bucketFiles, path);
+    }
+
+    /**
      * Удаляет фотографию профиля.
      *
      * @param profileId идентификатор профиля
