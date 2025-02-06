@@ -54,12 +54,12 @@ public class MinioServiceImpl implements MinioService {
     public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files) {
         log.info("Загрузка всех файлов для profileId: {}", profileId);
 
-        if (profileId == null || avatar == null || template == null || files == null || files.isEmpty()) {
+        if (profileId == null || avatar == null || files == null || files.isEmpty()) {
             throw new IllegalArgumentException("Некорректные параметры");
         }
 
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
-        minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
+//        minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
         return uploadFiles(profileId, files);
     }
 
