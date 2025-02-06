@@ -51,7 +51,7 @@ public class MinioServiceImpl implements MinioService {
      * @return список DTO файлов
      */
     @Override
-    public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files) {
+    public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, List<MultipartFile> files) {
         log.info("Загрузка всех файлов для profileId: {}", profileId);
 
         if (profileId == null || avatar == null || files == null || files.isEmpty()) {

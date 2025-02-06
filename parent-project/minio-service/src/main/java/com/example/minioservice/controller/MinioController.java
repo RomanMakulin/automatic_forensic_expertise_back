@@ -40,11 +40,11 @@ public class MinioController {
     @PostMapping("/upload-all")
     public ResponseEntity<List<FileDto>> uploadAll(@RequestParam("profileId") UUID profileId,
                                                    @RequestParam("avatar") MultipartFile avatar,
-                                                   @RequestParam("template") MultipartFile template,
+//                                                   @RequestParam("template") MultipartFile template,
                                                    @RequestParam("files") List<MultipartFile> files
     ) {
         try {
-            return ResponseEntity.ok(minioService.uploadAllFiles(profileId, avatar, template, files));
+            return ResponseEntity.ok(minioService.uploadAllFiles(profileId, avatar, files));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

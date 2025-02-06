@@ -21,7 +21,7 @@ public interface MinioService {
      * @param files список файлов для загрузки
      * @return список идентификаторов загруженных файлов
      */
-    List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile template, List<MultipartFile> files);
+    List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, List<MultipartFile> files);
 
     /**
      * Загружает фотографию для указанного профиля.
