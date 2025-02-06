@@ -46,11 +46,12 @@ CREATE TABLE Plan
 CREATE TABLE Profile
 (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id             UUID UNIQUE  NOT NULL,
-    photo               VARCHAR(255) NOT NULL,
-    phone               VARCHAR(15)  NOT NULL,
-    location_id         UUID         NOT NULL,
-    status_id           UUID         NOT NULL,
+    user_id             UUID UNIQUE NOT NULL,
+    photo               VARCHAR(255),
+    template            VARCHAR(255),
+    phone               VARCHAR(15) NOT NULL,
+    location_id         UUID        NOT NULL,
+    status_id           UUID        NOT NULL,
     plan_id             UUID,
     plan_start_date     DATE,
     plan_duration_month INT,
@@ -75,15 +76,6 @@ CREATE TABLE File
     path        VARCHAR(255),
     upload_date TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT fk_profile_file FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
-);
-
-CREATE TABLE Template
-(
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    profile_id UUID                                       NOT NULL,
-    path       VARCHAR(255),
-    created_at TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT fk_profile_template_profile FOREIGN KEY (profile_id) REFERENCES Profile (id) ON DELETE CASCADE
 );
 
 CREATE TABLE password_reset_token
