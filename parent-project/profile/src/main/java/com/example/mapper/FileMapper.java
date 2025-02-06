@@ -8,9 +8,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface FileMapper {
 
+    @Mapping(source = "uploadDate", target = "cratedAt") // Соответствие полей
     FileDTO toDto(File file);
 
-    @Mapping(target = "id", ignore = true) // Игнорируем id при маппинге File -> FileDTO
+    @Mapping(source = "cratedAt", target = "uploadDate") // Обратное соответствие
+    @Mapping(target = "profile", ignore = true) // Игнорируем поле profile, так как оно не в DTO
     File toEntity(FileDTO dto);
 
 }
