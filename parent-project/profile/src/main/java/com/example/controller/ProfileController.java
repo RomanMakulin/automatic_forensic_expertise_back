@@ -1,25 +1,20 @@
 package com.example.controller;
 
 import com.example.mapper.DirectionMapper;
+import com.example.mapper.FileMapper;
 import com.example.mapper.LocationMapper;
 import com.example.model.*;
 import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
-import com.example.model.dto.ProfileDTO;
-import com.example.model.dto.ProfileFullDTO;
-import com.example.repository.AppUserRepository;
 import com.example.service.AppUserService;
 import com.example.service.FileService;
-import com.example.service.LocationService;
+import com.example.service.MinIOFileService;
 import com.example.service.ProfileService;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.hibernate5.SpringSessionContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,15 +33,21 @@ public class ProfileController {
 
     private final DirectionMapper directionMapper;
 
+    private final FileMapper fileMapper;
+
     private final AppUserService appUserService;
+
+    private final MinIOFileService minIOFileService;
 
     private final FileService fileService;
 
-    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, AppUserService appUserService, FileService fileService) {
+    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService) {
         this.profileService = profileService;
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
+        this.fileMapper = fileMapper;
         this.appUserService = appUserService;
+        this.minIOFileService = minIOFileService;
         this.fileService = fileService;
     }
 
@@ -82,7 +83,7 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
                                         @RequestPart("photo") MultipartFile photo,
-                                        @RequestPart("template") MultipartFile template,
+//                                        @RequestPart("template") MultipartFile template, //todo пока не понятно что с шаблоном
                                         @RequestPart("files") List<MultipartFile> files
     ) {
 
@@ -91,10 +92,10 @@ public class ProfileController {
                     .body("А где фотка, умник? Иди фоткой рожу свою, потом еще раз попробуешь");
         }
 
-        if (template == null || template.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("А где, блять, шаблон? Это шутка какая-то? Смешно, да?");
-        }
+//        if (template == null || template.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)                          //todo пока не понятно что с шаблоном
+//                    .body("А где, блять, шаблон? Это шутка какая-то? Смешно, да?");
+//        }
 
         if (files == null || files.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -119,13 +120,14 @@ public class ProfileController {
 
         profileService.save(profile);
 
-        List<FileDTO> fileDTOS = fileService.savePhotoTemplateFiles(profile.getId(), photo, template, files);
+        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
 
-
+        for (FileDTO fileDTO : fileDTOS) {
+            profile.getFiles().add(fileMapper.toEntity(fileDTO));
+        }
 
         profileService.save(profile);
 
-//todo        fileService.save(files);
         return ResponseEntity.ok().build();
     }
 
