@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,8 +48,8 @@ public class Profile {
     @Column(name = "plan_duration_month")
     private LocalDateTime planDurationMonth;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<File> files;
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<File> files = new HashSet<>();
 
     @JsonManagedReference
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)

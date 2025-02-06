@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,24 +63,10 @@ public class ProfileController {
 
     }
 
-
-    @PostMapping("/save")
-    public ResponseEntity<Profile> save(@RequestBody Profile profile) { //todo удалить после нормально реализации метода созранения
-        AppUser appUser = new AppUser();
-    //    Location location = locationService.save(new Location());
-        Status status = new Status();
-        Role role = new Role();
-        appUser.setRole(role);
-        System.out.println(profile);
-     //   profile.setLocation(location);
-        profile.setStatus(status);
-        profile.setAppUser(appUser);
-        return ResponseEntity.ok(profileService.save(profile));
-    }
-
     /**
      * Создание профиля
      */
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
                                         @RequestPart("photo") MultipartFile photo,
@@ -118,12 +105,17 @@ public class ProfileController {
             direction.setProfile(profile);
         }
 
-        profileService.save(profile);
+        profileService.saveAndFlush(profile);
 
         List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
 
         for (FileDTO fileDTO : fileDTOS) {
-            profile.getFiles().add(fileMapper.toEntity(fileDTO));
+            File file = fileMapper.toEntity(fileDTO);
+            file.setProfile(profile);
+
+            file = fileService.save(file);
+
+            profile.getFiles().add(file);
         }
 
         profileService.save(profile);

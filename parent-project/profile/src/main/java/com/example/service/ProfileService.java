@@ -31,6 +31,10 @@ public class ProfileService {
         return profileRepository.save(profile);
     }
 
+    public Profile saveAndFlush(Profile profile) {
+        return profileRepository.saveAndFlush(profile);
+    }
+
     public Profile update(Profile profile) {
         profileRepository.findById(profile.getId())
                 .orElseThrow(() ->
