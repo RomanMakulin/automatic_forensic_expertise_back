@@ -157,5 +157,84 @@ curl --location 'http://localhost:8095/api/auth/login' \
 curl --location 'http://localhost:8080/api/auth/reset-password/sup.makulin@mail.ru'
 ```
 
+
+## Модуль Профиля
+
+
+### Создание профиля
+**URL:** `http://localhost:8090/api/profile/create`  
+**Метод:** POST  
+**Body:**
+```form-data
+profile: json
+photo: MultipartFile
+files: MultipartFile
+files: MultipartFile
+```
+
+```json
+{
+   "phone": "+1234567890",
+   "locationDTO": {
+      "country": "Россия",
+      "region": "Московская область",
+      "city": "Москва",
+      "address": "Красная площадь, 1"
+   },
+   "directionDTOList": [
+      {
+         "name": "IT"
+      },
+      {
+         "name": "Финансы"
+      }
+   ]
+}
+
+```
+
+**Curl:**
+```
+curl --location 'http://localhost:8090/api/profile/create' \
+--header 'Authorization: Bearer JWTToken' \
+--header 'Cookie: JSESSIONID=18844149A5E9CCE31AEA024E3939295E' \
+--form 'profile="{
+  \"phone\": \"+1234567890\",
+  \"locationDTO\": {
+    \"country\": \"Россия\",
+    \"region\": \"Московская область\",
+    \"city\": \"Москва\",
+    \"address\": \"Красная площадь, 1\"
+  },
+  \"directionDTOList\": [
+    {
+      \"name\": \"IT\"
+    },
+    {
+      \"name\": \"Финансы\"
+    }
+  ]
+}
+
+";type=application/json' \
+--form 'photo=@"/C:/Users/ADIKIA/Desktop/111.jpg"' \
+--form 'files=@"/C:/Users/ADIKIA/Desktop/доки 1.pdf"' \
+--form 'files=@"/C:/Users/ADIKIA/Desktop/доки 2.pdf"'
+```
+
+
+### Получение профиля
+**URL:** `http://localhost:8090/api/profile` 
+
+**Метод:** GET
+
+**Curl:**
+```
+curl --location 'http://localhost:8090/api/profile/?id=782d26a5-775d-4f80-9135-1d6cf1cce3a9' \
+--header 'Authorization: Bearer JWTToken' \
+--header 'Cookie: JSESSIONID=18844149A5E9CCE31AEA024E3939295E'
+```
+
+
 ### Работа с файлами через minIO
 [Кликабельно](MINIO.md)

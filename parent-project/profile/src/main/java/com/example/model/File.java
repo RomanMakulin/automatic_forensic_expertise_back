@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,9 @@ public class File {
     @Id
     private UUID id = UUID.randomUUID();
 
+
+    @ToString.Exclude
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;

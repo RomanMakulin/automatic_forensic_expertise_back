@@ -47,6 +47,7 @@ public class Profile {
     @Column(name = "plan_duration_month")
     private LocalDateTime planDurationMonth;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<File> files = new HashSet<>();
 

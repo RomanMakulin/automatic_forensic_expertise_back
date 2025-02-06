@@ -58,9 +58,10 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getAllProfiles());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Profile> getProfile(@PathVariable UUID id) {
-        return profileService.getProfileById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/")
+    public ResponseEntity<Profile> getProfile(@RequestParam UUID id) {
+        System.out.println(id);
+        return profileService.getProfileById(id).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
 
     }
 
