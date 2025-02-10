@@ -33,7 +33,7 @@ public class MailService {
      *
      * @param profileSaved новый профиль сохраненный в БД
      */
-    public void sendMailToAdmins(Profile profileSaved) {
+    public void sendMailToAdminsForVerification(Profile profileSaved) {
         try {
             List<AppUser> appUsers = appUserService.getAdmins();
 
@@ -57,6 +57,64 @@ public class MailService {
         } catch (Exception e) {
             log.error("Ошибка при отправке писем администраторам: {}", e.getMessage(), e);
         }
+    }
+
+    /**
+     * Отправить письмо пользователю о том, что верификация не пройдена
+     *
+     * @param toEmail email пользователя
+     */
+    public void cancelVerificationForUser(String toEmail) {
+        MailRequest mailRequest = new MailRequest(
+                toEmail,
+                "Верификация не пройдена",
+                "Вы не прошли верификацию профиля. Ознакомьтесь с подробностями в личном кабинете.");
+
+        try {
+            mailIntegration.sendMail(mailRequest);
+            logResultVerification(toEmail);
+        } catch (Exception e) {
+            logException(e, toEmail);
+        }
+
+    }
+
+    /**
+     * Отправить письмо пользователю о том, что верификация пройдена
+     *
+     * @param toEmail email пользователя
+     */
+    public void acceptVerificationForUser(String toEmail) {
+        MailRequest mailRequest = new MailRequest(
+                toEmail,
+                "Верификация пройдена",
+                "Вы прошли верификацию профиля. Ознакомьтесь с подробностями в личном кабинете.");
+
+        try {
+            mailIntegration.sendMail(mailRequest);
+            logResultVerification(toEmail);
+        } catch (Exception e) {
+            logException(e, toEmail);
+        }
+    }
+
+    /**
+     * Логирование действия по отправке письма о верификации пользователя
+     *
+     * @param toEmail email пользователя
+     */
+    private void logResultVerification(String toEmail) {
+        log.info("Отправлено письмо пользователю о результате верификации: {}", toEmail);
+    }
+
+    /**
+     * Логирование ошибки при отправке письма о верификации пользователя
+     *
+     * @param e      ошибка
+     * @param toEmail email пользователя
+     */
+    private void logException(Exception e, String toEmail){
+        log.error("Ошибка отправки письма пользователю: {}", toEmail, e.getMessage(), e);
     }
 
 }

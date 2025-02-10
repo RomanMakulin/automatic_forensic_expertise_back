@@ -27,9 +27,12 @@ public class ProfileController {
 
     private final ProfileMapper profileMapper;
 
-    public ProfileController(ProfileService profileService, ProfileMapper profileMapper) {
+    private final MailService mailService;
+
+    public ProfileController(ProfileService profileService, ProfileMapper profileMapper, MailService mailService) {
         this.profileService = profileService;
         this.profileMapper = profileMapper;
+        this.mailService = mailService;
     }
 
     @GetMapping
@@ -121,6 +124,7 @@ public class ProfileController {
         Profile profile = optionalProfile.get();
         profile.getStatus().setVerificationResult(Status.VerificationResult.APPROVED);
         profileService.save(profile);
+        mailService.acceptVerificationForUser(profile.getAppUser().getEmail()); // отправить уведомление пользователю о его верификации
         return ResponseEntity.ok().build();
     }
 
@@ -153,6 +157,7 @@ public class ProfileController {
 
         profile.getStatus().setVerificationResult(Status.VerificationResult.NEED_REMAKE);
         profileService.save(profile);
+        mailService.cancelVerificationForUser(profile.getAppUser().getEmail()); // отправить уведомление пользователю о его верификации
         return ResponseEntity.ok().build();
     }
 

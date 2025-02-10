@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.integration.mail.dto.MailRequest;
 import com.example.mapper.DirectionMapper;
 import com.example.mapper.FileMapper;
 import com.example.mapper.LocationMapper;
@@ -11,7 +10,6 @@ import com.example.model.dto.ProfileCreateDTO;
 import com.example.model.dto.ProfileDTO;
 import com.example.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -121,7 +119,7 @@ public class ProfileService {
         }
 
         save(profile);
-        mailService.sendMailToAdmins(profile); // разослать администратором сообщение, что данного пользователя необходимо проверить
+        mailService.sendMailToAdminsForVerification(profile); // разослать администратором сообщение, что данного пользователя необходимо проверить
     }
 
     public AppUser getAuthenticatedUser() {
