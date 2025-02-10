@@ -1,22 +1,56 @@
 package com.example.service;
 
-import com.example.model.Profile;
-import com.example.model.Status;
+import com.example.mapper.DirectionMapper;
+import com.example.mapper.FileMapper;
+import com.example.mapper.LocationMapper;
+import com.example.mapper.ProfileMapper;
+import com.example.model.*;
+import com.example.model.dto.FileDTO;
+import com.example.model.dto.ProfileCreateDTO;
+import com.example.model.dto.ProfileDTO;
 import com.example.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class ProfileService {
 
+    private final LocationMapper locationMapper;
+
+    private final DirectionMapper directionMapper;
+
+    private final FileMapper fileMapper;
+
+    private final AppUserService appUserService;
+
+    private final MinIOFileService minIOFileService;
+
+    private final FileService fileService;
+
     private final ProfileRepository profileRepository;
 
-    public ProfileService(ProfileRepository profileRepository) {
+    private final ProfileMapper profileMapper;
+
+
+    public ProfileService( LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper) {
+        this.locationMapper = locationMapper;
+        this.directionMapper = directionMapper;
+        this.fileMapper = fileMapper;
+        this.appUserService = appUserService;
+        this.minIOFileService = minIOFileService;
+        this.fileService = fileService;
         this.profileRepository = profileRepository;
+        this.profileMapper = profileMapper;
     }
 
     public List<Profile> getAllProfiles() {
@@ -46,10 +80,53 @@ public class ProfileService {
         profileRepository.deleteById(id);
     }
 
-    public List<Profile> getUnverifiedProfiles() {
-        return profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+    public List<ProfileDTO> getUnverifiedProfiles() {
+        List<Profile> profiles = profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+
+        List<ProfileDTO> profileDTOS = profileMapper.toDto(profiles);
+        return profileDTOS;
     }
 
 
+    public void createProfile(ProfileCreateDTO profileCreateDTO, MultipartFile photo, List<MultipartFile> files) {
+        AppUser appUser = getAuthenticatedUser();
+
+        Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
+        Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
+
+        Profile profile = new Profile();
+        profile.setId(UUID.randomUUID()); // Генерируем ID
+        profile.setPhone(profileCreateDTO.getPhone());
+        profile.setAppUser(appUser);  // подставляем юзера
+        profile.setStatus(new Status());  // создаем дефолтный статус
+        profile.setDirections(directions);
+        profile.setLocation(location);
+
+        for (Direction direction : directions) {
+            direction.setProfile(profile);
+        }
+
+        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
+
+        for (FileDTO fileDTO : fileDTOS) {
+            File file = fileMapper.toEntity(fileDTO);
+            file.setProfile(profile);
+
+            profile.getFiles().add(file);
+        }
+
+        save(profile);
+    }
+
+    public AppUser getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+
+        String email = jwt.getClaim("email"); // Email пользователя
+        return appUserService.getAppUserByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Authenticated user not found"));
+    }
 
 }

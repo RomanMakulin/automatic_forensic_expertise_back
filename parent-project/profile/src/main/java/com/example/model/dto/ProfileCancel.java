@@ -1,4 +1,4 @@
-package com.example.model.newDto.profileCancel;
+package com.example.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

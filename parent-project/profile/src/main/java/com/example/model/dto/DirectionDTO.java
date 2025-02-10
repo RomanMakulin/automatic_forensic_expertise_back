@@ -1,10 +1,13 @@
 package com.example.model.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class DirectionDTO {
-
 
     private String name;
 
