@@ -16,6 +16,8 @@ import java.util.UUID;
 @ToString
 public class ProfileDTO {
 
+    private String id;
+
     private AppUserDTO appUser;
 
     private String phone;

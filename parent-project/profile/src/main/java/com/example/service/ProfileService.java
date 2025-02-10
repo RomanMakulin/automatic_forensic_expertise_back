@@ -71,12 +71,33 @@ public class ProfileService {
         return profileRepository.saveAndFlush(profile);
     }
 
-    public Profile update(Profile profile) {
-        profileRepository.findById(profile.getId())
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Profile not found with id: " + profile.getId()));
+    //todo доработать логику сохранения
+    public void update(ProfileCreateDTO profileCreateDTO,
+                             MultipartFile photo,
+                             MultipartFile passport,
+                             List<MultipartFile> files) {
 
-        return profileRepository.save(profile);
+        AppUser appUser = getAuthenticatedUser();
+
+        Profile profile = profileRepository.findByAppUser_Id(appUser.getId())
+                .orElseThrow(() ->
+                new EntityNotFoundException("Profile not found"));
+
+        if (photo != null && !photo.isEmpty()) {
+            minIOFileService.savePhoto(profile.getId(), photo);
+        }
+
+        //todo доработать логику сохранения
+        if (passport != null && !passport.isEmpty()) {
+            minIOFileService.savePhoto(profile.getId(), photo);
+        }
+
+        //todo доработать логику сохранения
+        if (!files.isEmpty()) {
+            minIOFileService.savePhoto(profile.getId(), photo);
+        }
+
+        profileRepository.save(profile);
     }
 
     public void delete(UUID id) {
@@ -113,7 +134,7 @@ public class ProfileService {
             direction.setProfile(profile);
         }
 
-        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
+        List<FileDTO> fileDTOS = minIOFileService.saveAllFilesForProfile(profile.getId(), photo, passport, diplom, files);
 
         for (FileDTO fileDTO : fileDTOS) {
             File file = fileMapper.toEntity(fileDTO);
