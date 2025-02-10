@@ -10,7 +10,6 @@ import com.example.model.dto.ProfileCreateDTO;
 import com.example.model.dto.ProfileDTO;
 import com.example.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,8 +40,10 @@ public class ProfileService {
 
     private final ProfileMapper profileMapper;
 
+    private final MailService mailService;
 
-    public ProfileService( LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper) {
+
+    public ProfileService(LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper, MailService mailService) {
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
         this.fileMapper = fileMapper;
@@ -51,6 +52,7 @@ public class ProfileService {
         this.fileService = fileService;
         this.profileRepository = profileRepository;
         this.profileMapper = profileMapper;
+        this.mailService = mailService;
     }
 
     public List<Profile> getAllProfiles() {
@@ -121,6 +123,7 @@ public class ProfileService {
         }
 
         save(profile);
+        mailService.sendMailToAdminsForVerification(profile); // разослать администратором сообщение, что данного пользователя необходимо проверить
     }
 
     public AppUser getAuthenticatedUser() {

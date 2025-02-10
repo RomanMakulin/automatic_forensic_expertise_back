@@ -27,6 +27,18 @@ public class ProfileCancel {
     private String profileId;
 
     /**
+     * Если приходит с фронта true - удаляем из профиля паспорт
+     */
+    @JsonProperty("need_passport_delete")
+    private Boolean needPassportDelete;
+
+    /**
+     * Если приходит с фронта true - удаляем из профиля диплом
+     */
+    @JsonProperty("need_diplom_delete")
+    private Boolean needDiplomDelete;
+
+    /**
      * Направления работы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
      * Содержит ID
      */
