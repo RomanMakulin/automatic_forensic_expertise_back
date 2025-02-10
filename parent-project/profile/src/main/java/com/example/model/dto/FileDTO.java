@@ -27,6 +27,6 @@ public class FileDTO {
     /**
      * Дата создания файла
      */
-    private LocalDateTime cratedAt;
+    private LocalDateTime uploadDate;
 
 }

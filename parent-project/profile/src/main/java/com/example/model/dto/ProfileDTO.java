@@ -16,16 +16,16 @@ import java.util.UUID;
 @ToString
 public class ProfileDTO {
 
-    private AppUser appUser;
+    private AppUserDTO appUser;
 
     private String phone;
 
-    private LocationDTO locationDTO;
+    private LocationDTO locationDTO = new LocationDTO();
 
-    private StatusDTO statusDTO;
+    private StatusDTO statusDTO  = new StatusDTO();
 
-    private Set<File> files;
+    private Set<FileDTO> files;
 
-    private Set<Direction> directions;
+    private Set<DirectionDTO> directions;
 
 }

@@ -1,8 +1,5 @@
 package com.example.mapper;
 
-import com.example.model.Profile;
-import com.example.model.Status;
-import com.example.model.dto.ProfileFullDTO;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = { FileMapper.class, DirectionMapper.class })
@@ -20,8 +17,7 @@ public interface ProfileFullMapper {
 //    @Mapping(source = "location.region", target = "region")
 //    @Mapping(source = "location.city", target = "city")
 //    @Mapping(source = "location.address", target = "address")
-//
-//    @Mapping(source = "status.id", target = "statusId")
+////    @Mapping(source = "status.id", target = "statusId")
 //    @Mapping(source = "status.name", target = "statusName")
 //    @Mapping(source = "status.verificationResult", target = "verificationResult", qualifiedByName = "verificationToString")
 //    @Mapping(source = "status.activityStatus", target = "activityStatus", qualifiedByName = "activityToString")

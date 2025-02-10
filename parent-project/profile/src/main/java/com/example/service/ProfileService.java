@@ -91,7 +91,11 @@ public class ProfileService {
     }
 
 
-    public void createProfile(ProfileCreateDTO profileCreateDTO, MultipartFile photo, List<MultipartFile> files) {
+    public void createProfile(ProfileCreateDTO profileCreateDTO,
+                              MultipartFile photo,
+                              MultipartFile passport,
+                              MultipartFile diplom,
+                              List<MultipartFile> files) {
         AppUser appUser = getAuthenticatedUser();
 
         Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());

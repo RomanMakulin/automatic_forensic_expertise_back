@@ -10,7 +10,6 @@ public interface LocationMapper {
 
     LocationDTO toDto(Location location);
 
-//    @BeanMapping(ignoreByDefault = true)
     Location toEntity(LocationDTO locationDTO);
 
 }
