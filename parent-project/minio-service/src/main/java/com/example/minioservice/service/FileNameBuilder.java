@@ -40,4 +40,15 @@ public class FileNameBuilder {
     public String buildFileObjectName(UUID profileId, UUID fileId) {
         return profileId + "_" + fileId + ".pdf";
     }
+
+    /**
+     * Построение имени файла
+     *
+     * @param profileId идентификатор профиля
+     * @return имя файла
+     */
+    public String buildFileObjectName(UUID profileId) {
+        return profileId + ".pdf";
+    }
+
 }

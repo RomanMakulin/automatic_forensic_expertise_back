@@ -16,26 +16,44 @@ public interface MinioService {
      * Загружает все файлы, включая аватар и шаблон, для указанного профиля.
      *
      * @param profileId идентификатор профиля
-     * @param avatar аватар пользователя
-     * @param template шаблон файла
-     * @param files список файлов для загрузки
+     * @param avatar    аватар пользователя
+     * @param passport  паспорт
+     * @param diplom    диплом
+     * @param template  шаблон файла
+     * @param files     список файлов для загрузки
      * @return список идентификаторов загруженных файлов
      */
-    List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, List<MultipartFile> files);
+    List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile passport, MultipartFile diplom, List<MultipartFile> files);
 
     /**
      * Загружает фотографию для указанного профиля.
      *
      * @param profileId идентификатор профиля
-     * @param avatar фотография пользователя
+     * @param avatar    фотография пользователя
      */
     void uploadPhoto(UUID profileId, MultipartFile avatar);
+
+    /**
+     * Загружает паспорт для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param passport  паспорт пользователя
+     */
+    void uploadPassport(UUID profileId, MultipartFile passport);
+
+    /**
+     * Загружает диплом для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param diplom    диплом пользователя
+     */
+    void uploadDiplom(UUID profileId, MultipartFile diplom);
 
     /**
      * Загружает файл для указанного профиля.
      *
      * @param profileId идентификатор профиля
-     * @param file файл для загрузки
+     * @param file      файл для загрузки
      * @return идентификатор загруженного файла
      */
     FileDto uploadFile(UUID profileId, MultipartFile file);
@@ -44,7 +62,7 @@ public interface MinioService {
      * Загружает шаблон для указанного профиля.
      *
      * @param profileId идентификатор профиля
-     * @param template шаблон файла
+     * @param template  шаблон файла
      */
     void uploadTemplate(UUID profileId, MultipartFile template);
 
@@ -52,7 +70,7 @@ public interface MinioService {
      * Загружает список файлов для указанного профиля.
      *
      * @param profileId идентификатор профиля
-     * @param files список файлов для загрузки
+     * @param files     список файлов для загрузки
      * @return список идентификаторов загруженных файлов
      */
     List<FileDto> uploadFiles(UUID profileId, List<MultipartFile> files);
@@ -64,6 +82,22 @@ public interface MinioService {
      * @return ресурс фотографии
      */
     String getPhoto(UUID profileId);
+
+    /**
+     * Возвращает ссылку на паспорт для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @return ресурс паспорта
+     */
+    String getPassport(UUID profileId);
+
+    /**
+     * Возвращает ссылку на диплом для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @return ресурс диплома
+     */
+    String getDiplom(UUID profileId);
 
     /**
      * Возвращает ссылки на файлы для указанного профиля.
@@ -90,7 +124,7 @@ public interface MinioService {
     String getTemplate(UUID profileId);
 
     /**
-     *  Удаляет фотографию для указанного профиля.
+     * Удаляет фотографию для указанного профиля.
      *
      * @param profileId идентификатор профиля
      */
@@ -116,5 +150,19 @@ public interface MinioService {
      * @param pathList список путей к файлам
      */
     void deleteFiles(List<String> pathList);
+
+    /**
+     * Удаляет паспорт для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     */
+    void deletePassport(UUID profileId);
+
+    /**
+     * Удаляет диплом для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     */
+    void deleteDiplom(UUID profileId);
 
 }
