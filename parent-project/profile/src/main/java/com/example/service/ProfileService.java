@@ -84,17 +84,15 @@ public class ProfileService {
                 new EntityNotFoundException("Profile not found"));
 
         if (photo != null && !photo.isEmpty()) {
-            minIOFileService.savePhoto(profile.getId(), photo);
+            String photoPath = minIOFileService.savePhoto(profile.getId(), photo);
         }
 
-        //todo доработать логику сохранения
         if (passport != null && !passport.isEmpty()) {
-            minIOFileService.savePhoto(profile.getId(), photo);
+            String passportPath = minIOFileService.savePassport(profile.getId(), passport);
         }
 
-        //todo доработать логику сохранения
         if (!files.isEmpty()) {
-            minIOFileService.savePhoto(profile.getId(), photo);
+            String Path = minIOFileService.saveFiles(profile.getId(), files);
         }
 
         profileRepository.save(profile);

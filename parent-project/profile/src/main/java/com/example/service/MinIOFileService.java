@@ -198,6 +198,157 @@ public class MinIOFileService {
         return response.getBody();
     }
 
+    @SneakyThrows
+    public List<FileDTO> saveFiles(UUID profileId, List<MultipartFile> files) {
+
+        // Добавляем поддержку multipart/form-data
+        restTemplate.setMessageConverters(List.of(
+                new FormHttpMessageConverter(),
+                new ByteArrayHttpMessageConverter()
+        ));
+
+        // Добавляем поддержку текстовых ответов
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+        String url = "http://localhost:8030/api/files/upload-all";
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Формируем тело запроса
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("profileId", profileId.toString());  // 👈 Передаем как строку
+
+        for (MultipartFile file : files) {
+            body.add("files", convertMultipartFileToResource(file));
+        }
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<List<FileDTO>> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        System.out.println(response.getBody());
+
+        return response.getBody();
+    }
+
+    @SneakyThrows
+    public FileDTO saveFile(UUID profileId, MultipartFile file) {
+
+        // Добавляем поддержку multipart/form-data
+        restTemplate.setMessageConverters(List.of(
+                new FormHttpMessageConverter(),
+                new ByteArrayHttpMessageConverter()
+        ));
+
+        // Добавляем поддержку текстовых ответов
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+        String url = "http://localhost:8030/api/files/upload-file";
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Формируем тело запроса
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("profileId", profileId.toString());  // 👈 Передаем как строку
+        body.add("file", convertMultipartFileToResource(file));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<FileDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        System.out.println(response.getBody());
+
+        return response.getBody();
+    }
+
+    @SneakyThrows
+    public FileDTO savePassport(UUID profileId, MultipartFile pasport) {
+
+        // Добавляем поддержку multipart/form-data
+        restTemplate.setMessageConverters(List.of(
+                new FormHttpMessageConverter(),
+                new ByteArrayHttpMessageConverter()
+        ));
+
+        // Добавляем поддержку текстовых ответов
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+        String url = "http://localhost:8030/api/files/upload-passport";
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Формируем тело запроса
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("profileId", profileId.toString());  // 👈 Передаем как строку
+        body.add("passport", convertMultipartFileToResource(pasport));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<FileDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        System.out.println(response.getBody());
+
+        return response.getBody();
+    }
+
+    @SneakyThrows
+    public FileDTO saveDiplom(UUID profileId, MultipartFile diplom) {
+
+        // Добавляем поддержку multipart/form-data
+        restTemplate.setMessageConverters(List.of(
+                new FormHttpMessageConverter(),
+                new ByteArrayHttpMessageConverter()
+        ));
+
+        // Добавляем поддержку текстовых ответов
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+        String url = "http://localhost:8030/api/files/upload-diplom";
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Формируем тело запроса
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("profileId", profileId.toString());  // 👈 Передаем как строку
+        body.add("diplom", convertMultipartFileToResource(diplom));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<FileDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        System.out.println(response.getBody());
+
+        return response.getBody();
+    }
+
     private ByteArrayResource convertMultipartFileToResource(MultipartFile file) throws IOException {
         return new ByteArrayResource(file.getBytes()) {
             @Override

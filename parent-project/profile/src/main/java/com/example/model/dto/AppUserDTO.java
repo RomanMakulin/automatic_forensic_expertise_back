@@ -1,6 +1,7 @@
 package com.example.model.dto;
 
 import com.example.model.Role;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,12 @@ public class AppUserDTO {
 
     private UUID id;
 
+    @JsonProperty("full_name")
     private String fullName;
 
     private String email;
 
+    @JsonProperty("registration_date")
     private LocalDateTime registrationDate;
 
     private RoleDTO role;

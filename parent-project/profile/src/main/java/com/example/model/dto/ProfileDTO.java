@@ -18,6 +18,7 @@ public class ProfileDTO {
 
     private String id;
 
+    @JsonProperty("app_user")
     private AppUserDTO appUser;
 
     private String phone;

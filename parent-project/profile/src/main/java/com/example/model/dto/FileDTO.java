@@ -1,6 +1,7 @@
 package com.example.model.dto;
 
 import com.example.model.Profile;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class FileDTO {
     /**
      * Дата создания файла
      */
+    @JsonProperty("upload_date")
     private LocalDateTime uploadDate;
 
 }
