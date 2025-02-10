@@ -25,7 +25,25 @@ public class Profile {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
 
+    /**
+     * Путь к фото в minIO
+     */
     private String photo;
+
+    /**
+     * Путь к паспорту в minIO
+     */
+    private String passport;
+
+    /**
+     * Путь к диплому в minIO
+     */
+    private String diplom;
+
+    /**
+     * Путь к шаблону в minIO
+     */
+    private String template;
 
     private String phone;
 
