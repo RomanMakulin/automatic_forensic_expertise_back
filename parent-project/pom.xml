@@ -49,6 +49,7 @@
         <module>tariff-plans</module>
         <module>minio-service</module>
         <module>afe-app</module>
+        <module>gigachat</module>
     </modules>
 
     <build>
