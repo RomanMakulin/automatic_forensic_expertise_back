@@ -1,17 +1,17 @@
 package com.example.controller;
 
+import com.example.mapper.LocationMapper;
 import com.example.mapper.ProfileMapper;
+import com.example.mapper.StatusMapper;
 import com.example.model.*;
-import com.example.model.dto.FileDTO;
+
+import com.example.model.dto.LocationDTO;
 import com.example.model.dto.ProfileCreateDTO;
 import com.example.model.dto.ProfileDTO;
-import com.example.repository.ProfileRepository;
+import com.example.model.dto.StatusDTO;
 import com.example.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,9 +27,15 @@ public class ProfileController {
 
     private final ProfileMapper profileMapper;
 
-    public ProfileController(ProfileService profileService, ProfileMapper profileMapper) {
+    private final LocationMapper locationMapper;
+
+    private final StatusMapper statusMapper;
+
+    public ProfileController(ProfileService profileService, ProfileMapper profileMapper, LocationMapper locationMapper, StatusMapper statusMapper) {
         this.profileService = profileService;
         this.profileMapper = profileMapper;
+        this.locationMapper = locationMapper;
+        this.statusMapper = statusMapper;
     }
 
     @GetMapping
@@ -47,7 +53,15 @@ public class ProfileController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+
         Profile profile = optionalProfile.get();
+
+        System.out.println(profile.getStatus());
+        System.out.println(profile.getLocation());
+
+        StatusDTO statusDTO = statusMapper.toDto(profile.getStatus());
+        LocationDTO locationDTO = locationMapper.toDto(profile.getLocation());
+
         ProfileDTO profileDTO = profileMapper.toDto(profile);
         return ResponseEntity.ok(profileDTO);
     }
@@ -56,7 +70,8 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
                                      @RequestPart("photo") MultipartFile photo,
-//                                        @RequestPart("template") MultipartFile template, //todo пока не понятно что с шаблоном
+                                     @RequestPart("passport") MultipartFile passport,
+                                     @RequestPart("diplom") MultipartFile diplom,
                                      @RequestPart("files") List<MultipartFile> files
     ) {
 
@@ -65,20 +80,22 @@ public class ProfileController {
                     .body("А где фотка, умник? Иди фоткой рожу свою, потом еще раз попробуешь");
         }
 
-//        if (template == null || template.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)                          //todo пока не понятно что с шаблоном
-//                    .body("А где, блять, шаблон? Это шутка какая-то? Смешно, да?");
-//        }
-
         if (files == null || files.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("А где сканы документов? Иди делай, потом вернешься");
         }
 
-        profileService.createProfile(profileCreateDTO, photo, files);
+        //todo долелать сохранения пасспорта и диплома
+        profileService.createProfile(profileCreateDTO, photo, passport, diplom, files);
 
         return ResponseEntity.ok().build();
     }
+
+    //todo @RequestPart("profile") ProfileCreateDTO profileCreateDTO,
+    //                                     @RequestPart("photo") MultipartFile photo,
+    //                                     @RequestPart("passport") MultipartFile passport,
+    //
+    //                                     @RequestPart("files") List<MultipartFile> files
 
     @PostMapping("/update")
     public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile) {
@@ -100,7 +117,6 @@ public class ProfileController {
      */
     @GetMapping("/get-unverified-profiles")
     public ResponseEntity<List<ProfileDTO>> getUnverifiedProfiles() {
-        // TODO logic
         List<ProfileDTO> profiles = profileService.getUnverifiedProfiles();
         return ResponseEntity.ok(profiles);
     }
