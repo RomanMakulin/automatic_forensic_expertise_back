@@ -56,8 +56,8 @@ public class ProfileController {
     @PostMapping("/create")
     public ResponseEntity<?> saveAll(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
                                      @RequestPart("photo") MultipartFile photo,
-//                                     @RequestPart("passport") MultipartFile passport,
-//                                     @RequestPart("diplom") MultipartFile diplom,
+                                     @RequestPart("passport") MultipartFile passport,
+                                     @RequestPart("diplom") MultipartFile diplom,
                                      @RequestPart("files") List<MultipartFile> files
     ) {
 
@@ -72,7 +72,7 @@ public class ProfileController {
         }
 
         //todo долелать сохранения пасспорта и диплома
-        profileService.createProfile(profileCreateDTO, photo,  files);
+        profileService.createProfile(profileCreateDTO, photo, passport, diplom, files);
 
         return ResponseEntity.ok().build();
     }
