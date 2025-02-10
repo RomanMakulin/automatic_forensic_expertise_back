@@ -4,6 +4,7 @@ import com.example.model.AppUser;
 import com.example.repository.AppUserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,5 +25,13 @@ public class AppUserService {
         return appUserRepository.findById(id);
     }
 
+    /**
+     * Найти всех пользователей с ролью "Admin"
+     *
+     * @return список пользователей - администр
+     */
+    public List<AppUser> getAdmins() {
+        return appUserRepository.findAdmins();
+    }
 
 }
