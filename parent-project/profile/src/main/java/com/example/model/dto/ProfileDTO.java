@@ -1,16 +1,20 @@
 package com.example.model.dto;
 
 import com.example.model.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ProfileDTO {
-
-    private UUID id;
 
     private AppUser appUser;
 

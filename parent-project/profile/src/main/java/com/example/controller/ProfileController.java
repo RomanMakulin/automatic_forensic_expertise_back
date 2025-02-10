@@ -1,12 +1,10 @@
 package com.example.controller;
 
-import com.example.mapper.DirectionMapper;
-import com.example.mapper.FileMapper;
-import com.example.mapper.LocationMapper;
+import com.example.mapper.ProfileMapper;
 import com.example.model.*;
 import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
-import com.example.model.newDto.profile.ProfileDto;
+import com.example.model.dto.ProfileDTO;
 import com.example.repository.ProfileRepository;
 import com.example.service.*;
 import org.springframework.http.HttpStatus;
@@ -26,44 +24,32 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    private final LocationMapper locationMapper;
 
-    private final DirectionMapper directionMapper;
+    private final ProfileMapper profileMapper;
 
-    private final FileMapper fileMapper;
-
-    private final AppUserService appUserService;
-
-    private final MinIOFileService minIOFileService;
-
-    private final FileService fileService;
-
-    private final ProfileRepository profileRepository;
-
-    private final MinioService minioService;
-
-    public ProfileController(ProfileService profileService, LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, MinioService minioService) {
+    public ProfileController(ProfileService profileService, ProfileMapper profileMapper) {
         this.profileService = profileService;
-        this.locationMapper = locationMapper;
-        this.directionMapper = directionMapper;
-        this.fileMapper = fileMapper;
-        this.appUserService = appUserService;
-        this.minIOFileService = minIOFileService;
-        this.fileService = fileService;
-        this.profileRepository = profileRepository;
-        this.minioService = minioService;
+        this.profileMapper = profileMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<Profile>> getAll() {
-        return ResponseEntity.ok(profileService.getAllProfiles());
+    public ResponseEntity<List<ProfileDTO>> getAll() {
+        List<Profile> profiles = profileService.getAllProfiles();
+        List<ProfileDTO> profileDTOS = profileMapper.toDto(profiles);
+        return ResponseEntity.ok(profileDTOS);
     }
 
     @GetMapping("/")
-    public ResponseEntity<Profile> getProfile(@RequestParam UUID id) {
-        System.out.println(id);
-        return profileService.getProfileById(id).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
+    public ResponseEntity<ProfileDTO> getProfile(@RequestParam UUID id) {
+        Optional<Profile> optionalProfile = profileService.getProfileById(id);
 
+        if (optionalProfile.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Profile profile = optionalProfile.get();
+        ProfileDTO profileDTO = profileMapper.toDto(profile);
+        return ResponseEntity.ok(profileDTO);
     }
 
     @Transactional
@@ -89,58 +75,34 @@ public class ProfileController {
                     .body("А где сканы документов? Иди делай, потом вернешься");
         }
 
-        AppUser appUser = getAuthenticatedUser();
-
-        Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
-        Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
-
-        Profile profile = new Profile();
-        profile.setId(UUID.randomUUID()); // Генерируем ID
-        profile.setPhone(profileCreateDTO.getPhone());
-        profile.setAppUser(appUser);  // подставляем юзера
-        profile.setStatus(new Status());  // создаем дефолтный статус
-        profile.setDirections(directions);
-        profile.setLocation(location);
-
-        for (Direction direction : directions) {
-            direction.setProfile(profile);
-        }
-
-        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
-
-        for (FileDTO fileDTO : fileDTOS) {
-            File file = fileMapper.toEntity(fileDTO);
-            file.setProfile(profile);
-
-            profile.getFiles().add(file);
-        }
-
-        profileService.save(profile);
+        profileService.createProfile(profileCreateDTO, photo, files);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Profile> updateProfile(@RequestBody Profile profile) {
-        return ResponseEntity.ok(profileService.update(profile));
+    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile) {
+        Profile updatedProfile = profileService.update(profile);
+        ProfileDTO profileDTO = profileMapper.toDto(updatedProfile);
+        return ResponseEntity.ok(profileDTO);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProfile(@PathVariable UUID id) {
         profileService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
-
 
     /**
      * Возвращает список всех профилей, которые не прошли проверку администратором
      *
      * @return список профилей
      */
-    @GetMapping("/unverified")
-    public ResponseEntity<List<ProfileDto>> getUnverifiedProfiles() {
-        List<Profile> profiles = profileService.getUnverifiedProfiles();
-        return ResponseEntity.ok(minioService.generateProfileDtoList(profiles));
+    @GetMapping("/get-unverified-profiles")
+    public ResponseEntity<List<ProfileDTO>> getUnverifiedProfiles() {
+        // TODO logic
+        List<ProfileDTO> profiles = profileService.getUnverifiedProfiles();
+        return ResponseEntity.ok(profiles);
     }
 
     /**
@@ -148,8 +110,8 @@ public class ProfileController {
      *
      * @param profileId идентификатор профиля
      */
-    @GetMapping("/verify/{profileId}")
-    public ResponseEntity<Void> validateProfile(@PathVariable("profileId") String profileId) {
+    @GetMapping("/verify")
+    public ResponseEntity<Void> validateProfile(@RequestParam("profileId") String profileId) {
         Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileId));
 
         if (optionalProfile.isEmpty()) {
@@ -193,17 +155,5 @@ public class ProfileController {
         profileService.save(profile);
         return ResponseEntity.ok().build();
     }
-
-    public AppUser getAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-
-        String email = jwt.getClaim("email"); // Email пользователя
-        return appUserService.getAppUserByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("Authenticated user not found"));
-    }
-
 
 }

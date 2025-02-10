@@ -1,34 +1,56 @@
 package com.example.service;
 
-import com.example.integration.mail.MailIntegration;
-import com.example.integration.mail.dto.MailRequest;
-import com.example.model.AppUser;
-import com.example.model.Profile;
-import com.example.model.Status;
+import com.example.mapper.DirectionMapper;
+import com.example.mapper.FileMapper;
+import com.example.mapper.LocationMapper;
+import com.example.mapper.ProfileMapper;
+import com.example.model.*;
+import com.example.model.dto.FileDTO;
+import com.example.model.dto.ProfileCreateDTO;
+import com.example.model.dto.ProfileDTO;
 import com.example.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class ProfileService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProfileService.class);
+    private final LocationMapper locationMapper;
+
+    private final DirectionMapper directionMapper;
+
+    private final FileMapper fileMapper;
+
+    private final AppUserService appUserService;
+
+    private final MinIOFileService minIOFileService;
+
+    private final FileService fileService;
+
     private final ProfileRepository profileRepository;
-    private final MailService mailService;
+
+    private final ProfileMapper profileMapper;
 
 
-
-
-    public ProfileService(ProfileRepository profileRepository,
-                          MailService mailService) {
+    public ProfileService( LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper) {
+        this.locationMapper = locationMapper;
+        this.directionMapper = directionMapper;
+        this.fileMapper = fileMapper;
+        this.appUserService = appUserService;
+        this.minIOFileService = minIOFileService;
+        this.fileService = fileService;
         this.profileRepository = profileRepository;
-        this.mailService = mailService;
+        this.profileMapper = profileMapper;
     }
 
     public List<Profile> getAllProfiles() {
@@ -40,14 +62,7 @@ public class ProfileService {
     }
 
     public Profile save(Profile profile) {
-        try {
-            Profile profileSaved = profileRepository.save(profile);
-            mailService.sendMailToAdmins(profileSaved);
-            return profileSaved;
-        } catch (Exception e) {
-            log.error("Ошибка при сохранении профиля: {}", e.getMessage(), e);
-            throw new RuntimeException("Ошибка сохранения профиля", e);
-        }
+        return profileRepository.save(profile);
     }
 
     public Profile saveAndFlush(Profile profile) {
@@ -55,15 +70,10 @@ public class ProfileService {
     }
 
     public Profile update(Profile profile) {
-        Profile dataBaseProfile = profileRepository.findById(profile.getId())
+        profileRepository.findById(profile.getId())
                 .orElseThrow(() ->
                         new EntityNotFoundException("Profile not found with id: " + profile.getId()));
 
-        // Если данные редактирует не верифицированный пользователь - необходимо ему сменить статус и отправить рассылку админам
-        if (dataBaseProfile.getStatus().getVerificationResult() == Status.VerificationResult.NEED_REMAKE) {
-            dataBaseProfile.getStatus().setVerificationResult(Status.VerificationResult.NEED_VERIFY);
-            mailService.sendMailToAdmins(profile);
-        }
         return profileRepository.save(profile);
     }
 
@@ -71,9 +81,53 @@ public class ProfileService {
         profileRepository.deleteById(id);
     }
 
-    public List<Profile> getUnverifiedProfiles() {
-        return profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+    public List<ProfileDTO> getUnverifiedProfiles() {
+        List<Profile> profiles = profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+
+        List<ProfileDTO> profileDTOS = profileMapper.toDto(profiles);
+        return profileDTOS;
     }
 
+
+    public void createProfile(ProfileCreateDTO profileCreateDTO, MultipartFile photo, List<MultipartFile> files) {
+        AppUser appUser = getAuthenticatedUser();
+
+        Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
+        Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
+
+        Profile profile = new Profile();
+        profile.setId(UUID.randomUUID()); // Генерируем ID
+        profile.setPhone(profileCreateDTO.getPhone());
+        profile.setAppUser(appUser);  // подставляем юзера
+        profile.setStatus(new Status());  // создаем дефолтный статус
+        profile.setDirections(directions);
+        profile.setLocation(location);
+
+        for (Direction direction : directions) {
+            direction.setProfile(profile);
+        }
+
+        List<FileDTO> fileDTOS = minIOFileService.savePhotoTemplateFiles(profile.getId(), photo, files);
+
+        for (FileDTO fileDTO : fileDTOS) {
+            File file = fileMapper.toEntity(fileDTO);
+            file.setProfile(profile);
+
+            profile.getFiles().add(file);
+        }
+
+        save(profile);
+    }
+
+    public AppUser getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+
+        String email = jwt.getClaim("email"); // Email пользователя
+        return appUserService.getAppUserByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Authenticated user not found"));
+    }
 
 }

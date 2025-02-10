@@ -1,9 +1,13 @@
 package com.example.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class LocationDTO {
 
     @NotBlank(message = "Страна не может быть пустой")

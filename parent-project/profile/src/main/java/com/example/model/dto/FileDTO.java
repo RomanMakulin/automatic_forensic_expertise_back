@@ -2,12 +2,16 @@ package com.example.model.dto;
 
 import com.example.model.Profile;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class FileDTO {
 
     /**

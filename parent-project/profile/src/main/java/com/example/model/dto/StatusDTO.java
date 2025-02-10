@@ -2,14 +2,16 @@ package com.example.model.dto;
 
 import com.example.model.Status;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class StatusDTO {
-
-    private UUID id;
 
     private String name = "Создан";
 
