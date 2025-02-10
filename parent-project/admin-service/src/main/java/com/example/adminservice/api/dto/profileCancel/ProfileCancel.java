@@ -29,11 +29,13 @@ public class ProfileCancel {
     /**
      * Если приходит с фронта true - удаляем из профиля паспорт
      */
+    @JsonProperty("need_passport_delete")
     private Boolean needPassportDelete;
 
     /**
      * Если приходит с фронта true - удаляем из профиля диплом
      */
+    @JsonProperty("need_diplom_delete")
     private Boolean needDiplomDelete;
 
     /**
