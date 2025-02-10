@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.integration.mail.dto.MailRequest;
 import com.example.mapper.DirectionMapper;
 import com.example.mapper.FileMapper;
 import com.example.mapper.LocationMapper;
@@ -41,8 +42,10 @@ public class ProfileService {
 
     private final ProfileMapper profileMapper;
 
+    private final MailService mailService;
 
-    public ProfileService( LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper) {
+
+    public ProfileService(LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper, MailService mailService) {
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
         this.fileMapper = fileMapper;
@@ -51,6 +54,7 @@ public class ProfileService {
         this.fileService = fileService;
         this.profileRepository = profileRepository;
         this.profileMapper = profileMapper;
+        this.mailService = mailService;
     }
 
     public List<Profile> getAllProfiles() {
@@ -117,6 +121,7 @@ public class ProfileService {
         }
 
         save(profile);
+        mailService.sendMailToAdmins(profile); // разослать администратором сообщение, что данного пользователя необходимо проверить
     }
 
     public AppUser getAuthenticatedUser() {
