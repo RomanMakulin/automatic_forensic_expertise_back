@@ -1,4 +1,4 @@
-package com.example.minioservice.dto;
+package com.example.minioservice.api.dto;
 
 import lombok.*;
 

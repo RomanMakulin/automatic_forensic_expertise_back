@@ -1,4 +1,4 @@
-package com.example.minioservice.service;
+package com.example.minioservice.service.util;
 
 import org.springframework.stereotype.Component;
 

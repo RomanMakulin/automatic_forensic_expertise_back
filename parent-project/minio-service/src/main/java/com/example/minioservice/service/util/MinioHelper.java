@@ -1,10 +1,11 @@
-package com.example.minioservice.service;
+package com.example.minioservice.service.util;
 
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,21 @@ public class MinioHelper {
 
     private static final Logger log = LoggerFactory.getLogger(MinioHelper.class);
     private final MinioClient minioClient;
+
+    @Value("${minio.buckets.avatars}")
+    public String bucketAvatars;
+
+    @Value("${minio.buckets.passports}")
+    public String bucketPassports;
+
+    @Value("${minio.buckets.diploms}")
+    public String bucketDiploms;
+
+    @Value("${minio.buckets.files}")
+    public String bucketFiles;
+
+    @Value("${minio.buckets.templates}")
+    public String bucketTemplates;
 
     /**
      * Конструктор класса MinioHelper.
