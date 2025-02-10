@@ -1,8 +1,8 @@
-package com.example.auth.service.integrations.mail.impl;
+package com.example.auth.integrations.mail.impl;
 
 import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.api.dto.MailRequest;
-import com.example.auth.service.integrations.mail.MailService;
+import com.example.auth.integrations.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

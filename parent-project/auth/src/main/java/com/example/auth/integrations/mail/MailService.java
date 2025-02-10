@@ -1,4 +1,4 @@
-package com.example.auth.service.integrations.mail;
+package com.example.auth.integrations.mail;
 
 import com.example.auth.api.dto.MailRequest;
 

@@ -1,7 +1,7 @@
 package com.example.auth.service.sheduler;
 
 import com.example.auth.model.User;
-import com.example.auth.service.integrations.keycloak.KeycloakAdminService;
+import com.example.auth.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

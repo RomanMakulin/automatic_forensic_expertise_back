@@ -1,4 +1,4 @@
-package com.example.auth.service.integrations.keycloak;
+package com.example.auth.integrations.keycloak;
 
 import com.example.auth.api.dto.RegistrationRequest;
 import com.example.auth.util.KeycloakConsts;
