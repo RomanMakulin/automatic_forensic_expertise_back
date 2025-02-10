@@ -38,13 +38,13 @@ public class ProfileDto {
     private String photo;
 
     /**
-     * Паспорт профиля
+     * Паспорт профиля (ссылка на файл)
      */
     @NotNull(message = "паспорт не может быть пустым")
     private String passport;
 
     /**
-     * Диплом профиля
+     * Диплом профиля (ссылка на файл)
      */
     @NotNull(message = "диплом не может быть пустым")
     private String diplom;
