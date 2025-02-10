@@ -38,6 +38,18 @@ public class ProfileDto {
     private String photo;
 
     /**
+     * Паспорт профиля
+     */
+    @NotNull(message = "паспорт не может быть пустым")
+    private String passport;
+
+    /**
+     * Диплом профиля
+     */
+    @NotNull(message = "диплом не может быть пустым")
+    private String diplom;
+
+    /**
      * Телефон профиля
      */
     @NotNull(message = "номер телефона не может быть пустым")
