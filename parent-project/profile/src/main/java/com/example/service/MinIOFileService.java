@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.config.ApiPathsConfig;
+import com.example.integration.IntegrationHelper;
 import com.example.model.dto.FileDTO;
 import lombok.SneakyThrows;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,9 +32,12 @@ public class MinIOFileService {
 
     private final ApiPathsConfig apiPathsConfig;
 
-    public MinIOFileService(RestTemplate restTemplate, ApiPathsConfig apiPathsConfig) {
+    private final IntegrationHelper integrationHelper;
+
+    public MinIOFileService(RestTemplate restTemplate, ApiPathsConfig apiPathsConfig, IntegrationHelper integrationHelper) {
         this.restTemplate = restTemplate;
         this.apiPathsConfig = apiPathsConfig;
+        this.integrationHelper = integrationHelper;
     }
 
     /**
@@ -46,7 +50,7 @@ public class MinIOFileService {
         String url = "http://localhost:8030/api/files/get-photo" + "?profileId=" + profileId;
 
         // Создаем заголовки с токеном авторизации
-        HttpHeaders headers = createAuthHeaders();
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         // Отправляем GET-запрос с заголовками
@@ -70,7 +74,7 @@ public class MinIOFileService {
         String url = "http://localhost:8030/api/files/get-files" + "?profileId=" + profileId;
 
         // Создаем заголовки с токеном авторизации
-        HttpHeaders headers = createAuthHeaders();
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         // Отправляем GET-запрос с заголовками
@@ -97,7 +101,7 @@ public class MinIOFileService {
         String url = "http://localhost:8030/api/files/get-file" + "?path=" + path;
 
         // Создаем заголовки с токеном авторизации
-        HttpHeaders headers = createAuthHeaders();
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         // Отправляем GET-запрос с заголовками
@@ -126,7 +130,7 @@ public class MinIOFileService {
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
         String url = "http://localhost:8030/api/files/upload-photo";
-        HttpHeaders headers = createAuthHeaders();
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // Формируем тело запроса
@@ -164,7 +168,7 @@ public class MinIOFileService {
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
         String url = "http://localhost:8030/api/files/upload-all";
-        HttpHeaders headers = createAuthHeaders();
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // Формируем тело запроса
@@ -198,19 +202,6 @@ public class MinIOFileService {
                 return file.getOriginalFilename();
             }
         };
-    }
-
-    /**
-     * Создание HTTP-заголовков с Bearer-токеном для авторизации
-     */
-    private HttpHeaders createAuthHeaders() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
-            throw new IllegalStateException("Невозможно получить JWT из SecurityContext");
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwt.getTokenValue());
-        return headers;
     }
 
 }
