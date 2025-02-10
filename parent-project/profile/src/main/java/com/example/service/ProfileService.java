@@ -73,6 +73,7 @@ public class ProfileService {
         profileRepository.findById(profile.getId())
                 .orElseThrow(() ->
                         new EntityNotFoundException("Profile not found with id: " + profile.getId()));
+
         return profileRepository.save(profile);
     }
 

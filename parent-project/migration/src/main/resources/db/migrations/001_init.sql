@@ -49,6 +49,8 @@ CREATE TABLE Profile
     user_id             UUID UNIQUE NOT NULL,
     photo               VARCHAR(255),
     template            VARCHAR(255),
+    passport            VARCHAR(255),
+    diplom              VARCHAR(255),
     phone               VARCHAR(15) NOT NULL,
     location_id         UUID        NOT NULL,
     status_id           UUID        NOT NULL,
