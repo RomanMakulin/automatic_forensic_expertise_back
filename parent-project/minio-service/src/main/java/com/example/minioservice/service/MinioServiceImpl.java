@@ -29,6 +29,12 @@ public class MinioServiceImpl implements MinioService {
     @Value("${minio.buckets.avatars}")
     private String bucketAvatars;
 
+    @Value("${minio.buckets.passports}")
+    private String bucketPassports;
+
+    @Value("${minio.buckets.diploms}")
+    private String bucketDiploms;
+
     @Value("${minio.buckets.files}")
     private String bucketFiles;
 
@@ -46,12 +52,14 @@ public class MinioServiceImpl implements MinioService {
      *
      * @param profileId идентификатор профиля
      * @param avatar    файл аватара
+     * @param passport  паспорт
+     * @param diplom    диплом
      * @param template  файл шаблона
      * @param files     список файлов
      * @return список DTO файлов
      */
     @Override
-    public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, List<MultipartFile> files) {
+    public List<FileDto> uploadAllFiles(UUID profileId, MultipartFile avatar, MultipartFile passport, MultipartFile diplom, List<MultipartFile> files) {
         log.info("Загрузка всех файлов для profileId: {}", profileId);
 
         if (profileId == null || avatar == null || files == null || files.isEmpty()) {
@@ -59,6 +67,8 @@ public class MinioServiceImpl implements MinioService {
         }
 
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
+        minioHelper.upload(bucketPassports, passport, fileNameBuilder.buildFileObjectName(profileId));
+        minioHelper.upload(bucketDiploms, diplom, fileNameBuilder.buildFileObjectName(profileId));
 //        minioHelper.upload(bucketTemplates, template, fileNameBuilder.buildTemplateObjectName(profileId));
         return uploadFiles(profileId, files);
     }
@@ -73,6 +83,30 @@ public class MinioServiceImpl implements MinioService {
     public void uploadPhoto(UUID profileId, MultipartFile avatar) {
         validateIdAndFile(profileId, avatar);
         minioHelper.upload(bucketAvatars, avatar, fileNameBuilder.buildAvatarObjectName(profileId));
+    }
+
+    /**
+     * Загружает паспорт для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param passport  паспорт пользователя
+     */
+    @Override
+    public void uploadPassport(UUID profileId, MultipartFile passport) {
+        validateIdAndFile(profileId, passport);
+        minioHelper.upload(bucketPassports, passport, fileNameBuilder.buildFileObjectName(profileId));
+    }
+
+    /**
+     * Загружает диплом для указанного профиля.
+     *
+     * @param profileId идентификатор профиля
+     * @param diplom    диплом пользователя
+     */
+    @Override
+    public void uploadDiplom(UUID profileId, MultipartFile diplom) {
+        validateIdAndFile(profileId, diplom);
+        minioHelper.upload(bucketDiploms, diplom, fileNameBuilder.buildFileObjectName(profileId));
     }
 
     /**
@@ -137,6 +171,30 @@ public class MinioServiceImpl implements MinioService {
     public String getPhoto(UUID profileId) {
         validateId(profileId);
         return minioHelper.getObjectUrl(bucketAvatars, fileNameBuilder.buildAvatarObjectName(profileId));
+    }
+
+    /**
+     * Получает паспорт пользователя (ссылка на документ)
+     *
+     * @param profileId идентификатор профиля
+     * @return паспорт пользователя
+     */
+    @Override
+    public String getPassport(UUID profileId) {
+        validateId(profileId);
+        return minioHelper.getObjectUrl(bucketPassports, fileNameBuilder.buildFileObjectName(profileId));
+    }
+
+    /**
+     * Получает диплом пользователя (ссылка на документ)
+     *
+     * @param profileId идентификатор профиля
+     * @return диплом пользователя
+     */
+    @Override
+    public String getDiplom(UUID profileId) {
+        validateId(profileId);
+        return minioHelper.getObjectUrl(bucketDiploms, fileNameBuilder.buildFileObjectName(profileId));
     }
 
     /**
@@ -229,6 +287,28 @@ public class MinioServiceImpl implements MinioService {
         for (String path : pathList) {
             minioHelper.delete(bucketFiles, path);
         }
+    }
+
+    /**
+     * Удаляет паспорт пользователя
+     *
+     * @param profileId идентификатор профиля
+     */
+    @Override
+    public void deletePassport(UUID profileId) {
+        validateId(profileId);
+        minioHelper.delete(bucketPassports, fileNameBuilder.buildFileObjectName(profileId));
+    }
+
+    /**
+     * Удаляет диплом пользователя
+     *
+     * @param profileId идентификатор профиля
+     */
+    @Override
+    public void deleteDiplom(UUID profileId) {
+        validateId(profileId);
+        minioHelper.delete(bucketDiploms, fileNameBuilder.buildFileObjectName(profileId));
     }
 
     /**

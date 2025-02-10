@@ -33,6 +33,8 @@ public class MinioController {
      *
      * @param profileId ID пользователя
      * @param avatar    Аватар пользователя
+     * @param passport  паспорт
+     * @param diplom    диплом
      * @param template  Шаблон
      * @param files     список файлов
      * @return список сгенерированных UUID для файлов пользователя
@@ -40,11 +42,13 @@ public class MinioController {
     @PostMapping("/upload-all")
     public ResponseEntity<List<FileDto>> uploadAll(@RequestParam("profileId") UUID profileId,
                                                    @RequestParam("avatar") MultipartFile avatar,
+                                                   @RequestParam("passport") MultipartFile passport,
+                                                   @RequestParam("diplom") MultipartFile diplom,
 //                                                   @RequestParam("template") MultipartFile template,
                                                    @RequestParam("files") List<MultipartFile> files
     ) {
         try {
-            return ResponseEntity.ok(minioService.uploadAllFiles(profileId, avatar, files));
+            return ResponseEntity.ok(minioService.uploadAllFiles(profileId, avatar, passport, diplom, files));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -63,6 +67,42 @@ public class MinioController {
         try {
             minioService.uploadPhoto(profileId, avatar);
             return ResponseEntity.ok("Successfully uploaded photo");
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для загрузки паспорта пользователя.
+     *
+     * @param profileId ID пользователя
+     * @param passport  Паспорт
+     * @return UUID файла пользователя
+     */
+    @PostMapping("/upload-passport")
+    public ResponseEntity<String> uploadPassport(@RequestParam("profileId") UUID profileId,
+                                                 @RequestParam("passport") MultipartFile passport) {
+        try {
+            minioService.uploadPassport(profileId, passport);
+            return ResponseEntity.ok("Successfully uploaded passport");
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для загрузки диплома пользователя.
+     *
+     * @param profileId ID пользователя
+     * @param diplom    Диплом
+     * @return UUID файла пользователя
+     */
+    @PostMapping("/upload-diplom")
+    public ResponseEntity<String> uploadDiplom(@RequestParam("profileId") UUID profileId,
+                                               @RequestParam("diplom") MultipartFile diplom) {
+        try {
+            minioService.uploadDiplom(profileId, diplom);
+            return ResponseEntity.ok("Successfully uploaded diplom");
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -137,6 +177,38 @@ public class MinioController {
     }
 
     /**
+     * API для удаления файла пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return статус операции
+     */
+    @PostMapping("/delete-diplom")
+    public ResponseEntity<String> deleteDiplom(@RequestParam("profileId") UUID profileId) {
+        try {
+            minioService.deleteDiplom(profileId);
+            return ResponseEntity.ok("Successfully deleted diplom");
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для удаления паспорта пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return статус операции
+     */
+    @PostMapping("/delete-passport")
+    public ResponseEntity<String> deletePassport(@RequestParam("profileId") UUID profileId) {
+        try {
+            minioService.deletePassport(profileId);
+            return ResponseEntity.ok("Successfully deleted passport");
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * API для удаления шаблона пользователя.
      *
      * @param profileId ID пользователя
@@ -200,6 +272,36 @@ public class MinioController {
     }
 
     /**
+     * API для получения диплома пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return диплом пользователя
+     */
+    @GetMapping("/get-diplom")
+    public ResponseEntity<String> getDiplom(@RequestParam("profileId") UUID profileId) {
+        try {
+            return ResponseEntity.ok(minioService.getDiplom(profileId));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API для получения паспорта пользователя.
+     *
+     * @param profileId ID пользователя
+     * @return паспорт пользователя
+     */
+    @GetMapping("/get-passport")
+    public ResponseEntity<String> getPassport(@RequestParam("profileId") UUID profileId) {
+        try {
+            return ResponseEntity.ok(minioService.getPassport(profileId));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * API для получения шаблона пользователя.
      *
      * @param profileId ID пользователя
@@ -231,6 +333,7 @@ public class MinioController {
 
     /**
      * API для получения файла пользователя.
+     *
      * @param path путь к файлу
      * @return файла пользователя
      */
