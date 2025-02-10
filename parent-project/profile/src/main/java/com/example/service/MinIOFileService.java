@@ -11,9 +11,6 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -155,7 +152,11 @@ public class MinIOFileService {
      * Сохраниить все файлы для профиля (фото, шаблон, файлы)
      */
     @SneakyThrows
-    public List<FileDTO> savePhotoTemplateFiles(UUID profileId, MultipartFile photo, List<MultipartFile> files) {
+    public List<FileDTO> saveAllFilesForProfile(UUID profileId,
+                                                MultipartFile photo,
+                                                MultipartFile passport,
+                                                MultipartFile diplom,
+                                                List<MultipartFile> files) {
 
         // Добавляем поддержку multipart/form-data
         restTemplate.setMessageConverters(List.of(
@@ -175,6 +176,8 @@ public class MinIOFileService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("profileId", profileId.toString());  // 👈 Передаем как строку
         body.add("avatar", convertMultipartFileToResource(photo));
+        body.add("passport", convertMultipartFileToResource(passport));
+        body.add("diplom", convertMultipartFileToResource(diplom));
 
         for (MultipartFile file : files) {
             body.add("files", convertMultipartFileToResource(file));

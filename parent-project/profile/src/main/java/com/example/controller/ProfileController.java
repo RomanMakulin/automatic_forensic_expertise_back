@@ -27,18 +27,12 @@ public class ProfileController {
 
     private final ProfileMapper profileMapper;
 
-    private final LocationMapper locationMapper;
-
-    private final StatusMapper statusMapper;
-
-    public ProfileController(ProfileService profileService, ProfileMapper profileMapper, LocationMapper locationMapper, StatusMapper statusMapper) {
+    public ProfileController(ProfileService profileService, ProfileMapper profileMapper) {
         this.profileService = profileService;
         this.profileMapper = profileMapper;
-        this.locationMapper = locationMapper;
-        this.statusMapper = statusMapper;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ProfileDTO>> getAll() {
         List<Profile> profiles = profileService.getAllProfiles();
         List<ProfileDTO> profileDTOS = profileMapper.toDto(profiles);
@@ -53,15 +47,7 @@ public class ProfileController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-
         Profile profile = optionalProfile.get();
-
-        System.out.println(profile.getStatus());
-        System.out.println(profile.getLocation());
-
-        StatusDTO statusDTO = statusMapper.toDto(profile.getStatus());
-        LocationDTO locationDTO = locationMapper.toDto(profile.getLocation());
-
         ProfileDTO profileDTO = profileMapper.toDto(profile);
         return ResponseEntity.ok(profileDTO);
     }
@@ -91,17 +77,13 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    //todo @RequestPart("profile") ProfileCreateDTO profileCreateDTO,
-    //                                     @RequestPart("photo") MultipartFile photo,
-    //                                     @RequestPart("passport") MultipartFile passport,
-    //
-    //                                     @RequestPart("files") List<MultipartFile> files
-
-    @PostMapping("/update")
-    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile) {
-        Profile updatedProfile = profileService.update(profile);
-        ProfileDTO profileDTO = profileMapper.toDto(updatedProfile);
-        return ResponseEntity.ok(profileDTO);
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateProfile(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
+                                                    @RequestPart("photo") MultipartFile photo,
+                                                    @RequestPart("passport") MultipartFile passport,
+                                                    @RequestPart("files") List<MultipartFile> files) {
+        profileService.update(profileCreateDTO, photo, passport, files);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete/{id}")
