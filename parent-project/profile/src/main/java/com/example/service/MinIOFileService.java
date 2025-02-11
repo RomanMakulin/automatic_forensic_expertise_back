@@ -276,7 +276,7 @@ public class MinIOFileService {
     }
 
     @SneakyThrows
-    public FileDTO savePassport(UUID profileId, MultipartFile pasport) {
+    public String savePassport(UUID profileId, MultipartFile pasport) {
 
         // Добавляем поддержку multipart/form-data
         restTemplate.setMessageConverters(List.of(
@@ -299,7 +299,7 @@ public class MinIOFileService {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<FileDTO> response = restTemplate.exchange(
+        ResponseEntity<String> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 requestEntity,

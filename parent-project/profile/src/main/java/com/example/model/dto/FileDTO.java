@@ -28,7 +28,7 @@ public class FileDTO {
     /**
      * Дата создания файла
      */
-    @JsonProperty("upload_date")
-    private LocalDateTime uploadDate;
+    @JsonProperty("created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

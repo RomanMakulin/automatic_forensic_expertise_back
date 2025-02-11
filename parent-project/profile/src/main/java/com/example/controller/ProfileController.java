@@ -71,7 +71,6 @@ public class ProfileController {
                     .body("А где сканы документов? Иди делай, потом вернешься");
         }
 
-        //todo долелать сохранения пасспорта и диплома
         profileService.createProfile(profileCreateDTO, photo, passport, diplom, files);
 
         return ResponseEntity.ok().build();

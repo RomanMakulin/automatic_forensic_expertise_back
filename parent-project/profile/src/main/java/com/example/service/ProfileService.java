@@ -71,29 +71,39 @@ public class ProfileService {
         return profileRepository.saveAndFlush(profile);
     }
 
-    //todo доработать логику сохранения
     public void update(ProfileCreateDTO profileCreateDTO,
                              MultipartFile photo,
                              MultipartFile passport,
-                             List<MultipartFile> files) {
-
+                             List<MultipartFile> files
+    ) {
         AppUser appUser = getAuthenticatedUser();
 
         Profile profile = profileRepository.findByAppUser_Id(appUser.getId())
                 .orElseThrow(() ->
                 new EntityNotFoundException("Profile not found"));
 
+        Set<Direction> directions = directionMapper.toEntity(profileCreateDTO.getDirectionDTOList());
+        Location location = locationMapper.toEntity(profileCreateDTO.getLocationDTO());
+
+        profile.getDirections().addAll(directions);
+        profile.setLocation(location);
+        profile.setPhone(profileCreateDTO.getPhone());
+
         if (photo != null && !photo.isEmpty()) {
-            String photoPath = minIOFileService.savePhoto(profile.getId(), photo);
+            minIOFileService.savePhoto(profile.getId(), photo);
         }
 
         if (passport != null && !passport.isEmpty()) {
-            String passportPath = minIOFileService.savePassport(profile.getId(), passport);
+            minIOFileService.savePassport(profile.getId(), passport);
         }
 
         if (!files.isEmpty()) {
-            String Path = minIOFileService.saveFiles(profile.getId(), files);
+            List<FileDTO> filesDtos = minIOFileService.saveFiles(profile.getId(), files);
+            List<File> fileList = fileMapper.toEntity(filesDtos);
+            profile.getFiles().addAll(fileList);
         }
+
+        profile.getStatus().setVerificationResult(Status.VerificationResult.NEED_VERIFY);
 
         profileRepository.save(profile);
     }
