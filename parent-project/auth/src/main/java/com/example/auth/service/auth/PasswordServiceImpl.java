@@ -1,8 +1,8 @@
 package com.example.auth.service.auth;
 
-import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.api.dto.MailRequest;
 import com.example.auth.api.dto.ResetPassword;
+import com.example.auth.config.AppConfig;
 import com.example.auth.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.integrations.mail.MailService;
 import org.springframework.stereotype.Service;
@@ -25,20 +25,17 @@ public class PasswordServiceImpl implements PasswordService {
      */
     private final KeycloakAdminService keycloakAdminService;
 
-    /**
-     * Конфигурация путей API
-     */
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
 
     public PasswordServiceImpl(MailService mailService,
                                PasswordTokenService passwordTokenService,
                                KeycloakAdminService keycloakAdminService,
-                               ApiPathsConfig apiPathsConfig) {
+                               AppConfig appConfig) {
         this.mailService = mailService;
         this.passwordTokenService = passwordTokenService;
         this.keycloakAdminService = keycloakAdminService;
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -51,7 +48,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         String token = passwordTokenService.createPasswordResetToken(email);
 
-        String apiPath = apiPathsConfig.getFrontend().get("recovery-request");
+        String apiPath = appConfig.getPaths().getFrontend().get("recovery-request");
 
         // Формируем ссылку для восстановления пароля
         String resetLink = apiPath + "?token=" + token;

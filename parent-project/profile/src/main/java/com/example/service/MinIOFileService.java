@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.config.ApiPathsConfig;
 import com.example.integration.IntegrationHelper;
 import com.example.model.dto.FileDTO;
 import lombok.SneakyThrows;
@@ -27,13 +26,10 @@ public class MinIOFileService {
 
     private final RestTemplate restTemplate;
 
-    private final ApiPathsConfig apiPathsConfig;
-
     private final IntegrationHelper integrationHelper;
 
-    public MinIOFileService(RestTemplate restTemplate, ApiPathsConfig apiPathsConfig, IntegrationHelper integrationHelper) {
+    public MinIOFileService(RestTemplate restTemplate, IntegrationHelper integrationHelper) {
         this.restTemplate = restTemplate;
-        this.apiPathsConfig = apiPathsConfig;
         this.integrationHelper = integrationHelper;
     }
 

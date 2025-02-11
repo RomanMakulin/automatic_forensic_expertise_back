@@ -2,7 +2,7 @@ package com.example.adminservice.service;
 
 import com.example.adminservice.api.dto.profile.ProfileDto;
 import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
-import com.example.adminservice.config.ApiPathsConfig;
+import com.example.adminservice.config.AppConfig;
 import com.example.adminservice.exceptions.ProfileServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +35,11 @@ public class ProfileManageServiceImpl implements ProfileManageService {
     /**
      * Пути API
      */
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
-    public ProfileManageServiceImpl(RestTemplate restTemplate,
-                                    ApiPathsConfig apiPathsConfig) {
+    public ProfileManageServiceImpl(RestTemplate restTemplate, AppConfig appConfig) {
         this.restTemplate = restTemplate;
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -86,7 +85,7 @@ public class ProfileManageServiceImpl implements ProfileManageService {
      * @return - список профилей
      */
     private List<ProfileDto> getProfilesProcess(String passKey) {
-        String pathApi = apiPathsConfig.getProfile().get(passKey);
+        String pathApi = appConfig.getPaths().getProfile().get(passKey);
         HttpHeaders headers = createAuthHeaders();
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
@@ -117,7 +116,7 @@ public class ProfileManageServiceImpl implements ProfileManageService {
      */
     @Override
     public void verifyProfile(String profileId) {
-        String pathApi = apiPathsConfig.getProfile().get("verify-profile");
+        String pathApi = appConfig.getPaths().getProfile().get("verify-profile");
         String urlWithId = String.format("%s/%s", pathApi, profileId);
         HttpHeaders headers = createAuthHeaders();
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
@@ -141,7 +140,7 @@ public class ProfileManageServiceImpl implements ProfileManageService {
      */
     @Override
     public void cancelProfile(ProfileCancel profileDto) {
-        String pathApi = apiPathsConfig.getProfile().get("cancel-validation");
+        String pathApi = appConfig.getPaths().getProfile().get("cancel-validation");
         HttpHeaders headers = createAuthHeaders();
         HttpEntity<ProfileCancel> requestEntity = new HttpEntity<>(profileDto, headers);
 

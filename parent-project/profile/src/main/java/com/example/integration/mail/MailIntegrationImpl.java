@@ -1,6 +1,6 @@
 package com.example.integration.mail;
 
-import com.example.config.ApiPathsConfig;
+import com.example.config.AppConfig;
 import com.example.integration.IntegrationHelper;
 import com.example.integration.mail.dto.MailRequest;
 import org.slf4j.Logger;
@@ -19,22 +19,19 @@ public class MailIntegrationImpl implements MailIntegration{
 
     private final RestTemplate restTemplate;
 
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
     private final IntegrationHelper integrationHelper;
 
     /**
      * Конструктор класса MailIntegration.
      *
-     * @param restTemplate       клиент для выполнения HTTP-запросов
-     * @param apiPathsConfig     конфигурация путей API
-     * @param integrationHelper  хелпер для работы с интеграцией
      */
     public MailIntegrationImpl(RestTemplate restTemplate,
-                               ApiPathsConfig apiPathsConfig,
+                               AppConfig appConfig,
                                IntegrationHelper integrationHelper) {
         this.restTemplate = restTemplate;
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
         this.integrationHelper = integrationHelper;
     }
 
@@ -46,7 +43,7 @@ public class MailIntegrationImpl implements MailIntegration{
     @Override
     public void sendMail(MailRequest mailRequest) {
         try {
-            String mailApi = apiPathsConfig.getNotification().get("send-mail");
+            String mailApi = appConfig.getPaths().getNotification().get("send-mail");
 
             // Получаем заголовки с токеном авторизации
             HttpHeaders headers = integrationHelper.createAuthHeaders();
