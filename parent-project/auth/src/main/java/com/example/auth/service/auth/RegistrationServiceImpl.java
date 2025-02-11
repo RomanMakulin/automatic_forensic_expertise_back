@@ -1,6 +1,6 @@
 package com.example.auth.service.auth;
 
-import com.example.auth.config.ApiPathsConfig;
+import com.example.auth.config.AppConfig;
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
 import com.example.auth.api.dto.MailRequest;
@@ -29,10 +29,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Value("${keycloak.realm}")
     String realmName;
 
-    /**
-     * Конфигурация путей API
-     */
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -40,13 +37,13 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final EntityManager entityManager;
     private final MailService mailService;
 
-    public RegistrationServiceImpl(ApiPathsConfig apiPathsConfig,
+    public RegistrationServiceImpl(AppConfig appConfig,
                                    UserRepository userRepository,
                                    RoleRepository roleRepository,
                                    KeycloakAdminService keycloakAdminService,
                                    EntityManager entityManager,
                                    MailService mailService) {
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.keycloakAdminService = keycloakAdminService;
@@ -82,7 +79,7 @@ public class RegistrationServiceImpl implements RegistrationService {
      */
     private void sendVerificationEmail(User user) {
         try {
-            String apiPath = apiPathsConfig.getAuth().get("verification-request");
+            String apiPath = appConfig.getPaths().getAuth().get("verification-request");
 
 
             String endPointUrl = apiPath + "/" + user.getId();

@@ -1,8 +1,8 @@
 package com.example.auth.api.rest;
 
-import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.api.dto.LoginRequest;
 import com.example.auth.api.dto.RegistrationRequest;
+import com.example.auth.config.AppConfig;
 import com.example.auth.service.auth.AuthService;
 import exceptions.UserAlreadyExistsException;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ public class AuthController {
      */
     private final AuthService authService;
 
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
     /**
      * Конструктор класса RegistrationController.
@@ -33,9 +33,9 @@ public class AuthController {
      * @param authService сервис для аутентификации пользователей
      */
     public AuthController(AuthService authService,
-                          ApiPathsConfig apiPathsConfig) {
+                          AppConfig appConfig) {
         this.authService = authService;
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -74,7 +74,7 @@ public class AuthController {
     @GetMapping("/verify-email/{userId}")
     public RedirectView verifyEmail(@PathVariable UUID userId) {
         authService.verifyRegistration(userId);
-        String redirectUrl = apiPathsConfig.getFrontend().get("login");
+        String redirectUrl = appConfig.getPaths().getFrontend().get("login");
         return new RedirectView(redirectUrl);
     }
 

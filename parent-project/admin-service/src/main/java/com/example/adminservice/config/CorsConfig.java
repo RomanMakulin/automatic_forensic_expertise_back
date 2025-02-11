@@ -14,13 +14,10 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    /**
-     * Настройки конфигурации CORS.
-     */
-    private final CorsConfigProperties corsConfigProperties;
+    private final AppConfig appConfig;
 
-    public CorsConfig(CorsConfigProperties corsConfigProperties) {
-        this.corsConfigProperties = corsConfigProperties;
+    public CorsConfig(AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
 
     /**
@@ -31,7 +28,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(corsConfigProperties.getAllowedOrigins()); // Разрешенные домены
+        configuration.setAllowedOrigins(appConfig.getCors().getAllowedOrigins()); // Разрешенные домены
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Разрешенные HTTP-методы
         configuration.setAllowedHeaders(List.of("*")); // Разрешенные заголовки
         configuration.setAllowCredentials(true); // Разрешить отправку cookie

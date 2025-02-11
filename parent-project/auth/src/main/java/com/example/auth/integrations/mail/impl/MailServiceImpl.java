@@ -1,7 +1,7 @@
 package com.example.auth.integrations.mail.impl;
 
-import com.example.auth.config.ApiPathsConfig;
 import com.example.auth.api.dto.MailRequest;
+import com.example.auth.config.AppConfig;
 import com.example.auth.integrations.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +20,12 @@ public class MailServiceImpl implements MailService {
 
     private final RestTemplate restTemplate;
 
-    private final ApiPathsConfig apiPathsConfig;
+    private final AppConfig appConfig;
 
     public MailServiceImpl(RestTemplate restTemplate,
-                           ApiPathsConfig apiPathsConfig) {
+                           AppConfig appConfig) {
         this.restTemplate = restTemplate;
-        this.apiPathsConfig = apiPathsConfig;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -36,7 +36,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendMail(MailRequest mailRequest) {
         try {
-            String mailApi = apiPathsConfig.getNotification().get("send-mail");
+            String mailApi = appConfig.getPaths().getNotification().get("send-mail");
             restTemplate.postForEntity(mailApi, mailRequest, Void.class);
         } catch (Exception e) {
             log.error("Failed to send email to notification service: {}", mailRequest, e);
@@ -52,7 +52,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void publicSendMail(MailRequest mailRequest) {
         try {
-            String mailApi = apiPathsConfig.getNotification().get("public-send-mail");
+            String mailApi = appConfig.getPaths().getNotification().get("public-send-mail");
             ResponseEntity<Void> response = restTemplate.postForEntity(mailApi, mailRequest, Void.class);
             checkResponseAnswer(response);
             log.debug("Email request successfully sent to notification service: {}", mailRequest);
