@@ -96,8 +96,8 @@ public class ProfileController {
      * @return список профилей
      */
     @GetMapping("/unverified")
-    public ResponseEntity<List<ProfileDTO>> getUnverifiedProfiles() {
-        List<ProfileDTO> profiles = profileService.getUnverifiedProfiles();
+    public ResponseEntity<List<Profile>> getUnverifiedProfiles() {
+        List<Profile> profiles = profileService.getUnverifiedProfilesWithOutDTO();
         return ResponseEntity.ok(profiles);
     }
 

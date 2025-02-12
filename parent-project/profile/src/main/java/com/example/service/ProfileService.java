@@ -124,6 +124,12 @@ public class ProfileService {
         return profileDTOS;
     }
 
+    //для админки
+    public List<Profile> getUnverifiedProfilesWithOutDTO() {
+        List<Profile> profiles = profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+        return profiles;
+    }
+
 
     public void createProfile(ProfileCreateDTO profileCreateDTO,
                               MultipartFile photo,
