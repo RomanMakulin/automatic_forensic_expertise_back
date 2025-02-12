@@ -79,8 +79,9 @@ public class ProfileController {
     public ResponseEntity<Void> updateProfile(@RequestPart("profile") ProfileCreateDTO profileCreateDTO,
                                                     @RequestPart("photo") MultipartFile photo,
                                                     @RequestPart("passport") MultipartFile passport,
+                                                    @RequestPart("diplom") MultipartFile diplom,
                                                     @RequestPart("files") List<MultipartFile> files) {
-        profileService.update(profileCreateDTO, photo, passport, files);
+        profileService.update(profileCreateDTO, photo, passport, diplom, files);
         return ResponseEntity.ok().build();
     }
 
