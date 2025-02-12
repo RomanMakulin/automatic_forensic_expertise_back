@@ -32,5 +32,18 @@ public class ProfilePlanController {
         return ResponseEntity.ok(plans);
     }
 
+    /**
+     * Установить тарифный план для пользователя.
+     *
+     * @param userId ID пользователя
+     * @param planId ID тарифа
+     * @return ResponseEntity с кодом 200 при успешном обновлении
+     */
+    @PutMapping("/{userId}/select-plan/{planId}")
+    public ResponseEntity<Void> selectPlan(@PathVariable UUID userId, @PathVariable UUID planId) {
+        profilePlanService.selectPlan(userId, planId);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
