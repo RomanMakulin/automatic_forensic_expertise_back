@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.UUID;
-
 /**
  * DTO: информация статуса профиля эксперта
  */
@@ -14,7 +12,7 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileStatusDto {
+public class StatusDto {
 
     /**
      * Результат проверки профиля администратором
