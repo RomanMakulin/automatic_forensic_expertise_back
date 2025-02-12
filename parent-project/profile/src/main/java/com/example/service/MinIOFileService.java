@@ -54,7 +54,40 @@ public class MinIOFileService {
         } else {
             throw new RuntimeException("Ошибка получения фото: " + response.getStatusCode());
         }
+    }
 
+    public String getPassportUrl(UUID profileId) {
+        String url = "http://localhost:8030/api/files/get-passport" + "?profileId=" + profileId;
+
+        // Создаем заголовки с токеном авторизации
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Отправляем GET-запрос с заголовками
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Ошибка получения пасспорта: " + response.getStatusCode());
+        }
+    }
+
+    public String getDiplomUrl(UUID profileId) {
+        String url = "http://localhost:8030/api/files/get-diplom" + "?profileId=" + profileId;
+
+        // Создаем заголовки с токеном авторизации
+        HttpHeaders headers = integrationHelper.createAuthHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        // Отправляем GET-запрос с заголовками
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Ошибка получения диплома: " + response.getStatusCode());
+        }
     }
 
     /**

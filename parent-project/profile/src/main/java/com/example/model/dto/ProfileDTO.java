@@ -23,6 +23,12 @@ public class ProfileDTO {
 
     private String phone;
 
+    private String photo;
+
+    private String passport;
+
+    private String diplom;
+
     private LocationDTO locationDTO = new LocationDTO();
 
     private StatusDTO statusDTO  = new StatusDTO();

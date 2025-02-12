@@ -1,14 +1,9 @@
 package com.example.controller;
 
-import com.example.mapper.LocationMapper;
-import com.example.mapper.ProfileMapper;
-import com.example.mapper.StatusMapper;
+import com.example.mapper.*;
 import com.example.model.*;
 
-import com.example.model.dto.LocationDTO;
-import com.example.model.dto.ProfileCreateDTO;
-import com.example.model.dto.ProfileDTO;
-import com.example.model.dto.StatusDTO;
+import com.example.model.dto.*;
 import com.example.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +21,14 @@ public class ProfileController {
 
 
     private final ProfileMapper profileMapper;
+    private final DirectionMapper directionMapper;
+    private final FileMapper fileMapper;
 
-    public ProfileController(ProfileService profileService, ProfileMapper profileMapper) {
+    public ProfileController(ProfileService profileService, ProfileMapper profileMapper, DirectionMapper directionMapper, FileMapper fileMapper) {
         this.profileService = profileService;
         this.profileMapper = profileMapper;
+        this.directionMapper = directionMapper;
+        this.fileMapper = fileMapper;
     }
 
     @GetMapping("/all")
@@ -128,7 +127,7 @@ public class ProfileController {
      */
     @PostMapping("/cancel-validation")
     public ResponseEntity<Void> cancelValidationProfile(@RequestBody ProfileCancel profileCancel) {
-        Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileCancel.getProfileId()));
+        Optional<Profile> optionalProfile = profileService.getProfileById(profileCancel.getProfileId());
 
         if (optionalProfile.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -137,14 +136,16 @@ public class ProfileController {
         Profile profile = optionalProfile.get();
 
         if (!profileCancel.getDirections().isEmpty()) {
-            for (String directionId : profileCancel.getDirections()) {
-                profile.getDirections().remove(UUID.fromString(directionId));
+            Set<Direction> directions = directionMapper.toEntity((Set<DirectionDTO>) profileCancel.getDirections());
+            for (Direction direction : directions) {
+                profile.getDirections().remove(direction);
             }
         }
 
         if (!profileCancel.getFiles().isEmpty()) {
-            for (String fileId : profileCancel.getFiles()) {
-                profile.getFiles().remove(UUID.fromString(fileId));
+            Set<File> files = (Set<File>) fileMapper.toEntity(profileCancel.getFiles());
+            for (File file : files) {
+                profile.getFiles().remove(file);
             }
         }
 
@@ -154,3 +155,5 @@ public class ProfileController {
     }
 
 }
+
+
