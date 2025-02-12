@@ -1,7 +1,6 @@
 package com.example.tariff_plans.model;
 
 import lombok.Data;
-
 import java.math.BigDecimal;
 
 @Data
