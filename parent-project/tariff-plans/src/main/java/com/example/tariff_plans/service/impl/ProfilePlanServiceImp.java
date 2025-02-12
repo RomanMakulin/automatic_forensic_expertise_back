@@ -1,6 +1,7 @@
 package com.example.tariff_plans.service.impl;
 
 import com.example.tariff_plans.config.AppConfig;
+import com.example.tariff_plans.integration.ProfilePlanIntegration;
 import com.example.tariff_plans.mapper.PlanMapper;
 import com.example.tariff_plans.model.Plan;
 import com.example.tariff_plans.model.PlanDto;
@@ -19,8 +20,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+
 
 
 @Service
@@ -29,14 +29,11 @@ public class ProfilePlanServiceImp implements ProfilePlanService {
     private static final Logger log = LoggerFactory.getLogger(ProfilePlanServiceImp.class);
 
     private final PlanRepository planRepository;
-    private final RestTemplate restTemplate;
+    private final ProfilePlanIntegration profilePlanIntegration;
 
-
-    public ProfilePlanServiceImp(PlanRepository planRepository, RestTemplate restTemplate) {
+    public ProfilePlanServiceImp(PlanRepository planRepository, ProfilePlanIntegration profilePlanIntegration) {
         this.planRepository = planRepository;
-        this.restTemplate = restTemplate;
-
-
+        this.profilePlanIntegration = profilePlanIntegration;
     }
 
 
@@ -50,44 +47,46 @@ public class ProfilePlanServiceImp implements ProfilePlanService {
 
     @Override
     public void selectPlan(UUID userId, UUID planId) {
-        log.info("Обновление тарифа {} для пользователя {}", planId, userId);
+        log.info("Начинаем выбор тарифа для пользователя с ID: {}", userId);
 
-        // Создаем заголовки для авторизации
-        HttpHeaders headers = createAuthHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // URL сервиса профиля
-        String profileServiceUrl = "http://localhost:8090/api/profile";
-
-        // Получаем текущий профиль пользователя через REST
-        String url = String.format("%s/%s", profileServiceUrl, userId);
-        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-        try {
-            // Получаем профиль пользователя
-            ResponseEntity<ProfileDto> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, ProfileDto.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                ProfileDto profile = response.getBody();
-
-                // Обновляем только planId
-                profile.setPlanId(planId);
-
-                // Отправляем обновление профиля в профильный сервис
-                String updateUrl = String.format("%s/update", profileServiceUrl);
-                HttpEntity<ProfileDto> updateEntity = new HttpEntity<>(profile, headers);
-                restTemplate.exchange(updateUrl, HttpMethod.PUT, updateEntity, Void.class);
-
-                log.info("Тарифный план {} успешно обновлен для пользователя {}", planId, userId);
-            } else {
-                log.warn("Не удалось найти профиль для пользователя {}", userId);
-            }
-        } catch (RestClientException e) {
-            log.error("Ошибка при вызове API профиля для обновления тарифа: {}", e.getMessage());
-            throw new RuntimeException("Не удалось обновить тариф", e);
+        // 1. Получаем профиль пользователя
+        ProfileDto profile = profilePlanIntegration.getProfile(userId);
+        if (profile == null) {
+            log.error("Профиль пользователя с ID {} не найден", userId);
+            throw new RuntimeException("Профиль пользователя не найден");
         }
-    }
+        log.info("Профиль пользователя с ID {} успешно получен", userId);
 
+        // 2. Получаем тариф по ID
+        log.info("Получаем тариф с ID {}", planId);
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> {
+                    log.error("Тариф с ID {} не найден", planId);
+                    return new RuntimeException("Тариф с ID " + planId + " не найден");
+                });
+        log.info("Тариф с ID {} успешно получен", planId);
+
+        // 3. Проверяем, активен ли тариф
+        if (!plan.getActive()) {
+            log.warn("Тариф с ID {} не активен", planId);
+            throw new RuntimeException("Этот тариф не активен");
+        }
+        log.info("Тариф с ID {} активен", planId);
+
+        // 4. Проверяем, если у пользователя уже есть активный тариф
+        if (profile.getPlanId() != null) {
+            log.warn("У пользователя с ID {} уже есть выбранный тариф с ID {}", userId, profile.getPlanId());
+            throw new RuntimeException("У пользователя уже есть выбранный тариф");
+        }
+        log.info("У пользователя с ID {} нет активного тарифа, можно выбрать новый", userId);
+
+        // 5. Обновляем профиль пользователя, выбираем новый тариф
+        log.info("Обновляем профиль пользователя с ID {} и выбираем тариф с ID {}", userId, plan.getId());
+        profile.setPlanId(plan.getId());
+        profilePlanIntegration.updateProfile(profile);
+
+        log.info("Профиль пользователя с ID {} успешно обновлен с новым тарифом с ID {}", userId, plan.getId());
+    }
 
     @Override
     public PlanDto getCurrentPlan(UUID userId) {
