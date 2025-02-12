@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -66,18 +66,18 @@ public class ProfileDto {
      */
     @JsonProperty("profile_status")
     @NotNull(message = "статус пользователя не может быть пустым")
-    private ProfileStatusDto profileStatus;
+    private StatusDto profileStatus;
 
     /**
      * Направления работы профиля
      */
     @NotEmpty(message = "направления работы не может быть пустым")
-    private List<DirectionDto> directions;
+    private Set<DirectionDto> directions;
 
     /**
      * Файлы профиля
      */
     @NotEmpty(message = "файлы не может быть пустым")
-    private List<FilesDto> files;
+    private Set<FilesDto> files;
 
 }

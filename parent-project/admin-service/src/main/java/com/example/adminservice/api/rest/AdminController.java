@@ -2,7 +2,7 @@ package com.example.adminservice.api.rest;
 
 import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
 import com.example.adminservice.exceptions.ProfileServiceException;
-import com.example.adminservice.service.ProfileManageService;
+import com.example.adminservice.service.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/administration")
 public class AdminController {
 
-    /**
-     * Интерфейс сервиса управления профайлами
-     */
-    private final ProfileManageService profileManageService;
+    private final AdminService adminService;
 
-    public AdminController(ProfileManageService profileManageService) {
-        this.profileManageService = profileManageService;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
     }
 
     /**
@@ -32,7 +29,7 @@ public class AdminController {
     @GetMapping("/get-all-profiles")
     public ResponseEntity<?> getAllProfiles() {
         try {
-            return ResponseEntity.ok(profileManageService.getAllProfiles());
+            return ResponseEntity.ok(adminService.getAllProfiles());
         } catch (ProfileServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error while getting unverified profiles: " + e.getMessage());
@@ -47,7 +44,7 @@ public class AdminController {
     @GetMapping("/get-unverified-profiles")
     public ResponseEntity<?> getUnverifiedProfiles() {
         try {
-            return ResponseEntity.ok(profileManageService.getNotVerifiedProfiles());
+            return ResponseEntity.ok(adminService.getUnverifiedProfiles());
         } catch (ProfileServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error while getting unverified profiles: " + e.getMessage());
@@ -62,7 +59,7 @@ public class AdminController {
     @GetMapping("/validate-profile/{profileId}")
     public ResponseEntity<?> validateProfile(@PathVariable("profileId") String profileId) {
         try {
-            profileManageService.verifyProfile(profileId);
+            adminService.verifyProfile(profileId);
             return ResponseEntity.ok().build();
         } catch (ProfileServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -78,7 +75,7 @@ public class AdminController {
     @PostMapping("/cancel-validation")
     public ResponseEntity<?> cancelValidationProfile(@Valid @RequestBody ProfileCancel profileCancel) {
         try {
-            profileManageService.cancelProfile(profileCancel);
+            adminService.cancelValidationProfile(profileCancel);
             return ResponseEntity.ok().build();
         } catch (ProfileServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
