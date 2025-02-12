@@ -116,7 +116,18 @@ public class ProfileService {
         List<Profile> profiles = profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
 
         List<ProfileDTO> profileDTOS = profileMapper.toDto(profiles);
+
+        for (ProfileDTO dto : profileDTOS) {
+            fillFilesPath(dto, UUID.fromString(dto.getId()));
+        }
+
         return profileDTOS;
+    }
+
+    //для админки
+    public List<Profile> getUnverifiedProfilesWithOutDTO() {
+        List<Profile> profiles = profileRepository.findAllByStatus_VerificationResult(Status.VerificationResult.NEED_VERIFY);
+        return profiles;
     }
 
 
@@ -164,6 +175,17 @@ public class ProfileService {
         return appUserService.getAppUserByEmail(email)
                 .orElseThrow(() ->
                         new RuntimeException("Authenticated user not found"));
+    }
+
+    private ProfileDTO fillFilesPath(ProfileDTO profileDTO, UUID id) {
+        String photo = minIOFileService.getPhotoUrl(id);
+        String passport = minIOFileService.getPassportUrl(id);
+        String diplom = minIOFileService.getDiplomUrl(id);
+
+        profileDTO.setPhoto(photo);
+        profileDTO.setPassport(passport);
+        profileDTO.setDiplom(diplom);
+        return profileDTO;
     }
 
 }
