@@ -23,7 +23,7 @@ keycloak:
   realm: demo
   resource: spring-app
   credentials:
-    secret: dx8DwxP3ukYrEKKj5WpNYJg0wJEETAwC
+    secret: 5MBq5j4wVYsPsXlR3outUBVd3lb04PQO
   bearer-only: true
   use-resource-role-mappings: true
   main:
@@ -36,29 +36,72 @@ keycloak:
 server:
   port: 8095
 
-cors:
-  allowed-origins:
-    - http://localhost:8010
-    - http://localhost:8090
+app:
+  # Определение базовых URL сервисов
+  services:
+    notification: http://localhost:8087   # Сервис уведомлений
+    auth: http://localhost:8095          # Сервис аутентификации
+    frontend: http://localhost:8010      # Фронтенд
+    profile: http://localhost:8090       # Сервис профилей
+    admin: http://localhost:8020         # Админ-сервис
+    minio: http://localhost:8030         # MinIO для хранения файлов
+    cloud: http://localhost:8888         # Дополнительный облачный сервис для конфигурации
+    tariff: http://localhost:8085        # Сервис тарифов
 
-services:
-  notification: http://localhost:8087
-  auth: http://localhost:8095
-  frontend: http://localhost:8010
-  profile: http://localhost:8090
+  # Конфигурация CORS: разрешённые источники берутся из свойств services
+  cors:
+    allowed-origins:
+      - ${app.services.notification}
+      - ${app.services.auth}
+      - ${app.services.frontend}
+      - ${app.services.profile}
+      - ${app.services.admin}
+      - ${app.services.minio}
+      - ${app.services.cloud}
+      - ${app.services.tariff}
 
-paths:
-  notification:
-    send-mail: ${services.notification}/api/notification/send
-    public-send-mail: ${services.notification}/api/public-notification/send
-  auth:
-    reset-request: ${services.auth}/api/auth/password_recovery
-    verification-request: ${services.auth}/api/auth/verify-email
-  frontend:
-    recovery-request: ${services.frontend}/password_recovery
-    login: ${services.frontend}/login
-  profile:
-    get-all-profiles: ${services.profile}/api/profile
-    get-unverified-profiles: ${services.profile}/api/profile/unverified
-    verify-profile: ${services.profile}/api/profile/verify
-    cancel-validation: ${services.profile}/api/profile/cancel-validation
+  # Определение URL эндпоинтов для различных операций
+  paths:
+    notification:
+      send-mail: ${app.services.notification}/api/notification/send
+      public-send-mail: ${app.services.notification}/api/public-notification/send
+
+    auth:
+      reset-request: ${services.auth}/api/auth/reset-password         # Сброс пароля
+      verification-request: ${services.auth}/api/auth/verify-email    # Подтверждение email
+      register: ${app.services.auth}/api/auth/register
+      login: ${app.services.auth}/api/auth/login
+      reset-password: ${app.services.auth}/api/auth/reset-password
+
+    frontend:
+      recovery-request: ${app.services.frontend}/password_recovery
+      login: ${app.services.frontend}/login
+
+    profile:
+      get-all-profiles: ${app.services.profile}/api/profile
+      get-unverified-profiles: ${app.services.profile}/api/profile/unverified
+      verify-profile: ${app.services.profile}/api/profile/verify
+      cancel-validation: ${app.services.profile}/api/profile/cancel-validation
+
+    minio:
+      upload-all: ${app.services.minio}/api/files/upload-all
+      upload-photo: ${app.services.minio}/api/files/upload-photo
+      upload-passport: ${app.services.minio}/api/files/upload-passport
+      upload-diplom: ${app.services.minio}/api/files/upload-diplom
+      upload-template: ${app.services.minio}/api/files/upload-template
+      upload-file: ${app.services.minio}/api/files/upload-file
+      upload-files: ${app.services.minio}/api/files/upload-files
+
+      get-photo: ${app.services.minio}/api/files/get-photo
+      get-passport: ${app.services.minio}/api/files/get-passport
+      get-diplom: ${app.services.minio}/api/files/get-diplom
+      get-template: ${app.services.minio}/api/files/get-template
+      get-file: ${app.services.minio}/api/files/get-file
+      get-files: ${app.services.minio}/api/files/get-files
+
+      delete-photo: ${app.services.minio}/api/files/delete-photo
+      delete-passport: ${app.services.minio}/api/files/delete-passport
+      delete-diplom: ${app.services.minio}/api/files/delete-diplom
+      delete-template: ${app.services.minio}/api/files/delete-template
+      delete-file: ${app.services.minio}/api/files/delete-file
+      delete-file-list: ${app.services.minio}/api/files/delete-file-list
