@@ -31,13 +31,13 @@ public class ProfileCancel {
      * Содержит ID
      */
     @NotNull(message = "directions is required")
-    private List<DirectionDTO> directions;
+    private List<String> directions;
 
     /**
      * Файлы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
      * Содержит ID
      */
     @NotNull(message = "files is required")
-    private List<FileDTO> files;
+    private List<String> files;
 
 }
