@@ -7,6 +7,8 @@ import com.example.adminservice.api.dto.profileCancel.ProfileCancelFromFront;
 import com.example.adminservice.integration.minio.MinioIntegration;
 import com.example.adminservice.integration.profile.ProfileIntegration;
 import com.example.adminservice.mapper.ProfileMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @Service
 public class AdminServiceImpl implements AdminService {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
     private final ProfileIntegration profileIntegration;
     private final ProfileMapper profileMapper;
     private final MinioIntegration minioIntegration;

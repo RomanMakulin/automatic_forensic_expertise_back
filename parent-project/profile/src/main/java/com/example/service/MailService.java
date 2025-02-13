@@ -48,14 +48,14 @@ public class MailService {
                         mailIntegration.sendMail(mailRequest);
                         log.info("Отправлено письмо администратору: {}", appUser.getEmail());
                     } catch (Exception e) {
-                        log.error("Ошибка отправки письма админу {}: {}", appUser.getEmail(), e.getMessage(), e);
+                        log.info("Ошибка отправки письма админу {}: {}", appUser.getEmail(), e.getMessage(), e);
                     }
                 });
             } else {
-                log.error("Ошибка рассылки: нет администраторов в системе");
+                log.info("Ошибка рассылки: нет администраторов в системе");
             }
         } catch (Exception e) {
-            log.error("Ошибка при отправке писем администраторам: {}", e.getMessage(), e);
+            log.info("Ошибка при отправке писем администраторам: {}", e.getMessage(), e);
         }
     }
 

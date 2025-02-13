@@ -151,7 +151,11 @@ public class ProfileMapper {
      * @return URL фотографии профиля
      */
     private String getPhotoUrl(UUID profileId) {
-        return minioIntegration.getFile("get-photo", Map.of("profileId", profileId.toString()));
+        try {
+            return minioIntegration.getFile("get-photo", Map.of("profileId", profileId.toString()));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -161,7 +165,11 @@ public class ProfileMapper {
      * @return URL диплома профиля
      */
     private String getDiplomUrl(UUID profileId) {
-        return minioIntegration.getFile("get-diplom", Map.of("profileId", profileId.toString()));
+        try {
+            return minioIntegration.getFile("get-diplom", Map.of("profileId", profileId.toString()));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -171,7 +179,11 @@ public class ProfileMapper {
      * @return URL паспорта профиля
      */
     private String getPassportUrl(UUID profileId) {
-        return minioIntegration.getFile("get-passport", Map.of("profileId", profileId.toString()));
+        try {
+            return minioIntegration.getFile("get-passport", Map.of("profileId", profileId.toString()));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -181,6 +193,10 @@ public class ProfileMapper {
      * @return URL файла
      */
     private String getFileUrl(String path) {
-        return minioIntegration.getFile("get-file", Map.of("path", path));
+        try {
+            return minioIntegration.getFile("get-file", Map.of("path", path));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

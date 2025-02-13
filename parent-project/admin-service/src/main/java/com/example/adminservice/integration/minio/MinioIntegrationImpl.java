@@ -2,6 +2,8 @@ package com.example.adminservice.integration.minio;
 
 import com.example.adminservice.config.AppConfig;
 import com.example.adminservice.integration.IntegrationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,6 +20,7 @@ import java.util.Map;
 @Service
 public class MinioIntegrationImpl implements MinioIntegration {
 
+    private static final Logger log = LoggerFactory.getLogger(MinioIntegrationImpl.class);
     private final IntegrationHelper integrationHelper;
     private final AppConfig appConfig;
 

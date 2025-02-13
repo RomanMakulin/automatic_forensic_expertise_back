@@ -1,6 +1,7 @@
 package com.example.minioservice.service.util;
 
 import io.minio.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import org.slf4j.Logger;
@@ -101,19 +102,35 @@ public class MinioHelper {
      */
     public String getObjectUrl(String bucket, String objectName) {
         try {
+            // Проверяем, существует ли объект в MinIO
+            minioClient.statObject(
+                    StatObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(objectName)
+                            .build()
+            );
+
+            // Если объект есть, генерируем ссылку
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)  // Метод GET для скачивания
+                            .method(Method.GET)
                             .bucket(bucket)
                             .object(objectName)
                             .expiry(1, TimeUnit.HOURS) // Срок действия ссылки 1 час
                             .build()
             );
+        } catch (ErrorResponseException e) {
+            if (e.errorResponse().code().equals("NoSuchKey")) {
+                log.error("Файл не найден в MinIO: bucket={}, objectName={}", bucket, objectName);
+                throw new RuntimeException("Файл не найден в хранилище MinIO: " + objectName);
+            }
+            throw new RuntimeException("Ошибка при проверке файла в MinIO", e);
         } catch (Exception e) {
             log.error("Ошибка генерации presigned URL: bucket={}, objectName={}", bucket, objectName, e);
             throw new RuntimeException("Ошибка генерации presigned URL", e);
         }
     }
+
 
 
     /**
