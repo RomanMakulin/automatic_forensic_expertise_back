@@ -1,8 +1,8 @@
 package com.example.adminservice.integration.profile;
 
-import com.example.adminservice.api.dto.profile.ProfileDto;
 import com.example.adminservice.api.dto.profile.original.OriginalProfileDto;
-import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelForProfile;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelFromFront;
 
 import java.util.List;
 
@@ -37,6 +37,6 @@ public interface ProfileIntegration {
      *
      * @param profileDto объект с некорректными данными профиля
      */
-    void requestForCancelVerifyProfile(ProfileCancel profileDto);
+    void requestForCancelVerifyProfile(ProfileCancelForProfile profileDto);
 
 }

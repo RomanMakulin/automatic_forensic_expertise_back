@@ -1,69 +1,46 @@
 package com.example.tariff_plans.service;
 
+import com.example.tariff_plans.model.PlanDto;
 
-
-import com.example.tariff_plans.model.Plan;
-
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Сервис управления тарифными планами пользователей.
  */
 public interface ProfilePlanService {
-
     /**
-     * Получить список всех доступных тарифных планов.
-     *
-     * @return Список активных тарифов.
+     * Получить список всех доступных тарифов
      */
-    List<Plan> getAvailablePlans();
+    List<PlanDto> getAllPlans();
 
     /**
-     * Получить текущий тарифный план пользователя.
-     *
-     * @param userId ID пользователя.
-     * @return Текущий тарифный план, если он есть.
+     * Выбрать тариф для пользователя
      */
-    Optional<Plan> getCurrentPlan(UUID userId);
+    void selectPlan(UUID userId, UUID planId);
 
-    /**
-     * Выбрать новый тарифный план для пользователя.
-     *
-     * @param userId          ID пользователя.
-     * @param planId          ID выбранного тарифа.
-     * @param durationInMonths Количество месяцев подписки.
+    /*
+      Оплатить выбранный тариф
      */
-    void selectPlan(UUID userId, UUID planId, int durationInMonths);
-
-
+    //void payForPlan(UUID userId, PaymentDetails paymentDetails);
 
     /**
-     * Продлить текущий тарифный план пользователя.
-     *
-     * @param userId          ID пользователя.
-     * @param additionalMonths Количество дополнительных месяцев.
+     * Получить информацию о текущем тарифе пользователя
      */
-    void renewPlan(UUID userId, int additionalMonths);
+    PlanDto getCurrentPlan(UUID userId);
 
     /**
-     * Отменить текущий тарифный план пользователя.
-     *
-     * @param userId ID пользователя.
+     * Продлить подписку на тариф
+     */
+    void renewPlan(UUID userId);
+
+    /**
+     * Отменить подписку на тариф
      */
     void cancelPlan(UUID userId);
 
-
     /**
-     * Расчет стоимости тарифа перед оплатой (учитывая скидки, налоги и т. д.).
-     *
-     * @param planId          ID тарифного плана.
-     * @param durationInMonths Количество месяцев подписки.
-     * @param userId          ID пользователя.
-     * @return Итоговая сумма для оплаты.
+     * Уведомить пользователя о статусе его тарифного плана
      */
-    BigDecimal calculatePlanPrice(UUID planId, int durationInMonths, UUID userId);
-
+    void notifyUserAboutPlan(UUID userId);
 }

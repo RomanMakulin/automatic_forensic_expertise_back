@@ -26,4 +26,18 @@ public interface MinioIntegration {
      */
     List<String> getFiles(String profileId);
 
+    /**
+     * Удаление файла
+     *
+     * @param endpoint  путь к файлу
+     */
+    void deleteFile(String endpoint, Map<String, String> params);
+
+    /**
+     * Удаление файлов
+     *
+     * @param endpoint  путь к файлу
+     */
+    void deleteFiles(String endpoint, List<String> pathList);
+
 }

@@ -1,7 +1,7 @@
 package com.example.adminservice.service;
 
 import com.example.adminservice.api.dto.profile.ProfileDto;
-import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelFromFront;
 
 import java.util.List;
 
@@ -36,6 +36,6 @@ public interface AdminService {
      *
      * @param profileDto объект с некорректными данными профиля
      */
-    void cancelValidationProfile(ProfileCancel profileDto);
+    void cancelValidationProfile(ProfileCancelFromFront profileDto);
 
 }

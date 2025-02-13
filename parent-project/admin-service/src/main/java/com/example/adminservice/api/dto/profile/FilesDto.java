@@ -33,4 +33,10 @@ public class FilesDto {
     @JsonProperty("uploadDate")
     private String createdAt;
 
+    /**
+     * Имя файла
+     */
+    @NotNull(message = "Имя файла не может быть пустым")
+    private String name;
+
 }

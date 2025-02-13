@@ -1,10 +1,12 @@
 package com.example.adminservice.integration.profile;
 
 import com.example.adminservice.api.dto.profile.original.OriginalProfileDto;
-import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelForProfile;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelFromFront;
 import com.example.adminservice.config.AppConfig;
 import com.example.adminservice.integration.IntegrationHelper;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,10 +54,11 @@ public class ProfileIntegrationImpl implements ProfileIntegration {
      */
     private List<OriginalProfileDto> getProfilesProcess(String passKey) {
         String pathApi = appConfig.getPaths().getProfile().get(passKey);
-        return integrationHelper.simpleGetRequest(
+        return integrationHelper.sendRequest(
                 pathApi,
-                new ParameterizedTypeReference<List<OriginalProfileDto>>() {
-                }
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<OriginalProfileDto>>() {}
         );
     }
 
@@ -69,7 +72,11 @@ public class ProfileIntegrationImpl implements ProfileIntegration {
         String pathApi = appConfig.getPaths().getProfile().get("verify-profile");
         String urlWithId = String.format("%s/%s", pathApi, profileId);
 
-        integrationHelper.simpleGetRequest(urlWithId, Void.class);
+        integrationHelper.sendRequest(
+                urlWithId,
+                HttpMethod.GET,
+                null,
+                Void.class);
     }
 
     /**
@@ -78,10 +85,14 @@ public class ProfileIntegrationImpl implements ProfileIntegration {
      * @param profileDto - некорректные данные профиля
      */
     @Override
-    public void requestForCancelVerifyProfile(ProfileCancel profileDto) {
+    public void requestForCancelVerifyProfile(ProfileCancelForProfile profileDto) {
         String pathApi = appConfig.getPaths().getProfile().get("cancel-validation");
 
-        integrationHelper.simplePostRequest(pathApi, profileDto, Void.class);
+        integrationHelper.sendRequest(
+                pathApi,
+                HttpMethod.POST,
+                profileDto,
+                Void.class);
     }
 
 }

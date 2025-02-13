@@ -47,7 +47,7 @@ public class OriginalProfileDto {
     /**
      * Список файлов
      */
-    private Set<FilesDto> files;
+    private Set<OriginalFilesDto> files;
 
     /**
      * Список направлений
