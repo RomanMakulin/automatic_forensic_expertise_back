@@ -137,16 +137,16 @@ public class ProfileController {
         Profile profile = optionalProfile.get();
 
         if (!profileCancel.getDirections().isEmpty()) {
-            Set<Direction> directions = directionMapper.toEntity((Set<DirectionDTO>) profileCancel.getDirections());
-            for (Direction direction : directions) {
-                profile.getDirections().remove(direction);
+            List<String> directions = profileCancel.getDirections();
+            for (String direction : directions) {
+                profile.getDirections().removeIf(direction::equals);
             }
         }
 
         if (!profileCancel.getFiles().isEmpty()) {
-            Set<File> files = (Set<File>) fileMapper.toEntity(profileCancel.getFiles());
-            for (File file : files) {
-                profile.getFiles().remove(file);
+            List<String> filesIds = profileCancel.getFiles();
+            for (String fileId : filesIds) {
+                profile.getFiles().removeIf(file -> file.getId().equals(fileId));
             }
         }
 
