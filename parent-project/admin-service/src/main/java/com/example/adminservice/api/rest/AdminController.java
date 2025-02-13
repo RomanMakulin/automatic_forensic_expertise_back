@@ -1,6 +1,6 @@
 package com.example.adminservice.api.rest;
 
-import com.example.adminservice.api.dto.profileCancel.ProfileCancel;
+import com.example.adminservice.api.dto.profileCancel.ProfileCancelFromFront;
 import com.example.adminservice.exceptions.ProfileServiceException;
 import com.example.adminservice.service.AdminService;
 import jakarta.validation.Valid;
@@ -70,12 +70,12 @@ public class AdminController {
     /**
      * Отменяет подтверждение профиля пользователя
      *
-     * @param profileCancel dto с неподходящими данными
+     * @param profileCancelFromFront dto с неподходящими данными
      */
     @PostMapping("/cancel-validation")
-    public ResponseEntity<?> cancelValidationProfile(@Valid @RequestBody ProfileCancel profileCancel) {
+    public ResponseEntity<?> cancelValidationProfile(@Valid @RequestBody ProfileCancelFromFront profileCancelFromFront) {
         try {
-            adminService.cancelValidationProfile(profileCancel);
+            adminService.cancelValidationProfile(profileCancelFromFront);
             return ResponseEntity.ok().build();
         } catch (ProfileServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

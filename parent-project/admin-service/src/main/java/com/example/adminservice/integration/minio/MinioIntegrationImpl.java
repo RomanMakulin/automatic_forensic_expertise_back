@@ -20,19 +20,16 @@ public class MinioIntegrationImpl implements MinioIntegration {
 
     private final IntegrationHelper integrationHelper;
     private final AppConfig appConfig;
-    private final RestTemplate restTemplate;
 
-    public MinioIntegrationImpl(IntegrationHelper integrationHelper,
-                                AppConfig appConfig, RestTemplate restTemplate) {
+    public MinioIntegrationImpl(IntegrationHelper integrationHelper, AppConfig appConfig) {
         this.integrationHelper = integrationHelper;
         this.appConfig = appConfig;
-        this.restTemplate = restTemplate;
     }
 
     /**
      * Запрос на получение файла из minIO
      *
-     * @param endpoint  путь к файлу
+     * @param endpoint путь к файлу
      * @return ссылка на файл
      */
     @Override
@@ -40,7 +37,11 @@ public class MinioIntegrationImpl implements MinioIntegration {
         String baseUrl = appConfig.getPaths().getMinio().get(endpoint);
         String requestUrl = integrationHelper.urlBuilder(baseUrl, params);
 
-        return integrationHelper.simpleGetRequest(requestUrl, String.class);
+        return integrationHelper.sendRequest(
+                requestUrl,
+                HttpMethod.GET,
+                null,
+                String.class);
     }
 
     /**
@@ -54,19 +55,40 @@ public class MinioIntegrationImpl implements MinioIntegration {
         String baseUrl = appConfig.getPaths().getMinio().get("get-files");
         String requestUrl = integrationHelper.urlBuilder(baseUrl, Map.of("profileId", profileId));
 
-        ResponseEntity<List<String>> response = restTemplate.exchange(
+        return integrationHelper.sendRequest(
                 requestUrl,
                 HttpMethod.GET,
-                new HttpEntity<>(integrationHelper.createAuthHeaders()),
-                new ParameterizedTypeReference<>() {
-                }
-        );
+                null,
+                new ParameterizedTypeReference<List<String>>() {
+                });
+    }
 
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Ошибка получения списка файлов: " + response.getStatusCode());
-        }
+    /**
+     * Запрос на удаление файла из minIO
+     *
+     * @param endpoint путь к файлу
+     */
+    @Override
+    public void deleteFile(String endpoint, Map<String, String> params) {
+        String baseUrl = appConfig.getPaths().getMinio().get(endpoint);
+        String requestUrl = integrationHelper.urlBuilder(baseUrl, params);
+
+        integrationHelper.sendRequest(
+                requestUrl,
+                HttpMethod.POST,
+                null,
+                Void.class);
+    }
+
+    @Override
+    public void deleteFiles(String endpoint, List<String> pathList) {
+        String baseUrl = appConfig.getPaths().getMinio().get(endpoint);
+
+        integrationHelper.sendRequest(
+                baseUrl,
+                HttpMethod.POST,
+                pathList,
+                Void.class);
     }
 
 }

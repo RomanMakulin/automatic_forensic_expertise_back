@@ -57,45 +57,52 @@ public class IntegrationHelper {
     }
 
     /**
-     * Универсальный GET запрос на получение данных из другого сервиса
+     * Универсальный метод для отправки HTTP-запросов (GET, POST, PUT, DELETE и т. д.)
      *
-     * @param requestUrl   url запроса
-     * @param responseType тип возвращаемого объекта
-     * @return объект данных
+     * @param requestUrl   URL запроса
+     * @param method       HTTP-метод (GET, POST, PUT, DELETE и т. д.)
+     * @param requestBody  Тело запроса (может быть null для GET/DELETE)
+     * @param responseType Класс ожидаемого ответа
+     * @return Объект ответа
      */
-    public <T> T simpleGetRequest(String requestUrl, Class<T> responseType) {
-        return executeGetRequest(requestUrl, responseType, null);
+    public <T, R> R sendRequest(String requestUrl, HttpMethod method, T requestBody, Class<R> responseType) {
+        return executeRequest(requestUrl, method, requestBody, responseType, null);
     }
 
     /**
-     * Универсальный GET запрос на получение данных из другого сервиса
+     * Универсальный метод для отправки HTTP-запросов (GET, POST, PUT, DELETE и т. д.) с сложными типами ответа
      *
-     * @param requestUrl   url запроса
-     * @param responseType тип возвращаемого объекта
-     * @param <T>          тип возвращаемого объекта
-     * @return объект данных
+     * @param requestUrl   URL запроса
+     * @param method       HTTP-метод (GET, POST, PUT, DELETE и т. д.)
+     * @param requestBody  Тело запроса (может быть null для GET/DELETE)
+     * @param responseType Тип ожидаемого ответа (используется `ParameterizedTypeReference`)
+     * @return Объект ответа
      */
-    public <T> T simpleGetRequest(String requestUrl, ParameterizedTypeReference<T> responseType) {
-        return executeGetRequest(requestUrl, null, responseType);
+    public <T, R> R sendRequest(String requestUrl, HttpMethod method, T requestBody, ParameterizedTypeReference<R> responseType) {
+        return executeRequest(requestUrl, method, requestBody, null, responseType);
     }
 
     /**
-     * Универсальный GET запрос на получение данных из другого сервиса
+     * Выполнение HTTP-запроса
      *
-     * @param requestUrl   url запроса
-     * @param responseType тип возвращаемого объекта
-     * @return объект данных
+     * @param requestUrl   URL запроса
+     * @param method       HTTP-метод (GET, POST, PUT, DELETE и т. д.)
+     * @param requestBody  Тело запроса (может быть null для GET/DELETE)
+     * @param responseType Класс ожидаемого ответа (используется, если ответ — это простой объект)
+     * @param typeReference Тип ожидаемого ответа (используется, если ответ — это сложный объект, например, `List<T>`)
+     * @return Объект ответа
      */
-    private <T> T executeGetRequest(String requestUrl, Class<T> responseType, ParameterizedTypeReference<T> typeReference) {
+    private <T, R> R executeRequest(String requestUrl, HttpMethod method, T requestBody,
+                                    Class<R> responseType, ParameterizedTypeReference<R> typeReference) {
         HttpHeaders headers = createAuthHeaders();
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        HttpEntity<T> entity = new HttpEntity<>(requestBody, headers); // теперь поддерживает body
 
         try {
-            ResponseEntity<T> response;
+            ResponseEntity<R> response;
             if (responseType != null) {
-                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, responseType);
+                response = restTemplate.exchange(requestUrl, method, entity, responseType);
             } else if (typeReference != null) {
-                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, typeReference);
+                response = restTemplate.exchange(requestUrl, method, entity, typeReference);
             } else {
                 throw new IllegalArgumentException("Не указан тип ответа");
             }
@@ -103,41 +110,15 @@ public class IntegrationHelper {
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
-                log.error("Ошибка запроса к {}: статус {}, тело ответа {}", requestUrl, response.getStatusCode(), response.getBody());
-                throw new RuntimeException("Ошибка получения данных: " + response.getStatusCode());
+                log.error("Ошибка запроса {} {}: статус {}, тело ответа {}", method, requestUrl, response.getStatusCode(), response.getBody());
+                throw new RuntimeException("Ошибка выполнения запроса: " + response.getStatusCode());
             }
         } catch (RestClientException e) {
-            log.error("Ошибка при вызове {}: {}", requestUrl, e.getMessage());
+            log.error("Ошибка при вызове {} {}: {}", method, requestUrl, e.getMessage());
             throw new RuntimeException("Ошибка соединения с сервисом", e);
         }
     }
 
-    /**
-     * Универсальный POST запрос на отправку данных в другой сервис
-     *
-     * @param requestUrl   url запроса
-     * @param requestBody  тело запроса
-     * @param responseType тип возвращаемого объекта
-     * @return объект данных
-     */
-    public <T, R> R simplePostRequest(String requestUrl, T requestBody, Class<R> responseType) {
-        HttpHeaders headers = createAuthHeaders();
-        HttpEntity<T> entity = new HttpEntity<>(requestBody, headers);
-
-        try {
-            ResponseEntity<R> response = restTemplate.exchange(requestUrl, HttpMethod.POST, entity, responseType);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return response.getBody();
-            } else {
-                log.error("Ошибка POST запроса к {}: статус {}, тело ответа {}", requestUrl, response.getStatusCode(), response.getBody());
-                throw new RuntimeException("Ошибка получения данных: " + response.getStatusCode());
-            }
-        } catch (RestClientException e) {
-            log.error("Ошибка при вызове {}: {}", requestUrl, e.getMessage());
-            throw new RuntimeException("Ошибка соединения с сервисом", e);
-        }
-    }
 
 
 }

@@ -1,9 +1,6 @@
 package com.example.adminservice.api.dto.profileCancel;
 
-import com.example.adminservice.api.dto.profile.DirectionDto;
-import com.example.adminservice.api.dto.profile.FilesDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -17,7 +14,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileCancel {
+public class ProfileCancelFromFront {
 
     /**
      * id профиля
@@ -42,14 +39,12 @@ public class ProfileCancel {
      * Направления работы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
      * Содержит ID
      */
-    @NotNull(message = "directions is required")
     private List<String> directions;
 
     /**
      * Файлы. Приходит с фронта (если хотя бы один элемент есть - его нужно удалить из БД)
      * Содержит ID
      */
-    @NotNull(message = "files is required")
     private List<String> files;
 
 }

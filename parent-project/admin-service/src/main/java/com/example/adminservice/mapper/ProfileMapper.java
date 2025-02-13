@@ -140,7 +140,7 @@ public class ProfileMapper {
         if (originalProfile.getFiles() == null) return new HashSet<>();
 
         return originalProfile.getFiles().stream()
-                .map(file -> new FilesDto(file.getId(), getFileUrl(file.getDownloadUrl()), file.getCreatedAt()))
+                .map(file -> new FilesDto(file.getId(), getFileUrl(file.getDownloadUrl()), file.getCreatedAt(), file.getDownloadUrl()))
                 .collect(Collectors.toSet());
     }
 

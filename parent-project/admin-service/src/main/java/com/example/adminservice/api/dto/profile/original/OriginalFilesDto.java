@@ -1,4 +1,4 @@
-package com.example.adminservice.api.dto.profile;
+package com.example.adminservice.api.dto.profile.original;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class FilesDto {
+public class OriginalFilesDto {
 
     /**
      * ID файла
@@ -32,11 +32,5 @@ public class FilesDto {
     @NotNull(message = "Дата создания файла не может быть пустой")
     @JsonProperty("uploadDate")
     private String createdAt;
-
-    /**
-     * Имя файла
-     */
-    @NotNull(message = "Имя файла не может быть пустым")
-    private String name;
 
 }
