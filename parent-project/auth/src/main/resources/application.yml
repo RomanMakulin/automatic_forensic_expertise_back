@@ -67,8 +67,8 @@ app:
       public-send-mail: ${app.services.notification}/api/public-notification/send
 
     auth:
-      reset-request: ${services.auth}/api/auth/reset-password         # Сброс пароля
-      verification-request: ${services.auth}/api/auth/verify-email    # Подтверждение email
+      reset-request: ${app.services.auth}/api/auth/reset-password         # Сброс пароля
+      verification-request: ${app.services.auth}/api/auth/verify-email    # Подтверждение email
       register: ${app.services.auth}/api/auth/register
       login: ${app.services.auth}/api/auth/login
       reset-password: ${app.services.auth}/api/auth/reset-password

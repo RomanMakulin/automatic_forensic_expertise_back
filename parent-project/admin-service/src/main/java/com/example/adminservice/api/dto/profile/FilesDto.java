@@ -23,13 +23,14 @@ public class FilesDto {
      * Путь к файлу
      */
     @NotNull(message = "Путь к файлу не может быть пустым")
-    private String path;
+    @JsonProperty("path")
+    private String downloadUrl;
 
     /**
      * Дата создания файла
      */
-    @JsonProperty("created_at")
     @NotNull(message = "Дата создания файла не может быть пустой")
+    @JsonProperty("uploadDate")
     private String createdAt;
 
 }
