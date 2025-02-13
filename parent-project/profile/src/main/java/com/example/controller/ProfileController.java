@@ -5,6 +5,7 @@ import com.example.model.*;
 
 import com.example.model.dto.*;
 import com.example.service.*;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,6 +155,21 @@ public class ProfileController {
         profileService.save(profile);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/update-plan")
+    public ResponseEntity<Void> updatePlan(@RequestParam UUID profileId, @RequestBody UUID planId) {
+        Optional<Profile> optionalProfile = profileService.getProfileById(profileId);
+
+        if (optionalProfile.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Profile profile = optionalProfile.get();
+        profileService.updatePlan(profile, planId);
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }
 

@@ -8,7 +8,9 @@ import com.example.model.*;
 import com.example.model.dto.FileDTO;
 import com.example.model.dto.ProfileCreateDTO;
 import com.example.model.dto.ProfileDTO;
+import com.example.repository.PlanRepository;
 import com.example.repository.ProfileRepository;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,8 +44,10 @@ public class ProfileService {
 
     private final MailService mailService;
 
+    private final PlanRepository planRepository;
 
-    public ProfileService(LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper, MailService mailService) {
+
+    public ProfileService(LocationMapper locationMapper, DirectionMapper directionMapper, FileMapper fileMapper, AppUserService appUserService, MinIOFileService minIOFileService, FileService fileService, ProfileRepository profileRepository, ProfileMapper profileMapper, MailService mailService, PlanRepository planRepository) {
         this.locationMapper = locationMapper;
         this.directionMapper = directionMapper;
         this.fileMapper = fileMapper;
@@ -53,6 +57,7 @@ public class ProfileService {
         this.profileRepository = profileRepository;
         this.profileMapper = profileMapper;
         this.mailService = mailService;
+        this.planRepository = planRepository;
     }
 
     public List<Profile> getAllProfiles() {
@@ -195,4 +200,10 @@ public class ProfileService {
         return profileDTO;
     }
 
+    public void updatePlan(Profile profile, UUID planId) {
+        Optional<Plan> optionalPlan = planRepository.findById(planId);
+        Plan plan = optionalPlan.orElseThrow(() -> new EntityNotFoundException("Plan not found"));
+        profile.setPlan(plan);
+        profileRepository.save(profile);
+    }
 }
