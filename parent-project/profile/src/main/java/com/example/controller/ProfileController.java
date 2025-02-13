@@ -108,7 +108,7 @@ public class ProfileController {
      * @param profileId идентификатор профиля
      */
     @GetMapping("/verify")
-    public ResponseEntity<Void> validateProfile(@RequestParam("profileId") String profileId) {
+    public ResponseEntity<Void> validateProfile(@PathVariable("profileId") String profileId) {
         Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileId));
 
         if (optionalProfile.isEmpty()) {
@@ -140,13 +140,6 @@ public class ProfileController {
             Set<Direction> directions = directionMapper.toEntity((Set<DirectionDTO>) profileCancel.getDirections());
             for (Direction direction : directions) {
                 profile.getDirections().remove(direction);
-            }
-        }
-
-        if (!profileCancel.getFiles().isEmpty()) {
-            Set<File> files = (Set<File>) fileMapper.toEntity(profileCancel.getFiles());
-            for (File file : files) {
-                profile.getFiles().remove(file);
             }
         }
 
