@@ -63,22 +63,44 @@ public class IntegrationHelper {
      * @param responseType тип возвращаемого объекта
      * @return объект данных
      */
-    public <T> T simpleGetRequest(String requestUrl, Object responseType) {
+    public <T> T simpleGetRequest(String requestUrl, Class<T> responseType) {
+        return executeGetRequest(requestUrl, responseType, null);
+    }
+
+    /**
+     * Универсальный GET запрос на получение данных из другого сервиса
+     *
+     * @param requestUrl   url запроса
+     * @param responseType тип возвращаемого объекта
+     * @param <T>          тип возвращаемого объекта
+     * @return объект данных
+     */
+    public <T> T simpleGetRequest(String requestUrl, ParameterizedTypeReference<T> responseType) {
+        return executeGetRequest(requestUrl, null, responseType);
+    }
+
+    /**
+     * Универсальный GET запрос на получение данных из другого сервиса
+     *
+     * @param requestUrl   url запроса
+     * @param responseType тип возвращаемого объекта
+     * @return объект данных
+     */
+    private <T> T executeGetRequest(String requestUrl, Class<T> responseType, ParameterizedTypeReference<T> typeReference) {
         HttpHeaders headers = createAuthHeaders();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
             ResponseEntity<T> response;
-
-            if (responseType instanceof Class<?>) {
-                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, (Class<T>) responseType);
-            } else if (responseType instanceof ParameterizedTypeReference<?>) {
-                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, (ParameterizedTypeReference<T>) responseType);
+            if (responseType != null) {
+                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, responseType);
+            } else if (typeReference != null) {
+                response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, typeReference);
             } else {
-                throw new IllegalArgumentException("Тип ответа должен быть Class<T> или ParameterizedTypeReference<T>");
+                throw new IllegalArgumentException("Не указан тип ответа");
             }
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
                 log.error("Ошибка запроса к {}: статус {}, тело ответа {}", requestUrl, response.getStatusCode(), response.getBody());
