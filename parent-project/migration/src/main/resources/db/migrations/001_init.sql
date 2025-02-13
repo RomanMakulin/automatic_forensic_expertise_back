@@ -34,14 +34,38 @@ CREATE TABLE Location
 );
 
 -- Базовая сущность тарифного плана
-CREATE TABLE Plan
-(
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name          VARCHAR(100)   NOT NULL,
-    description   TEXT           NOT NULL,
-    price         DECIMAL(10, 2) NOT NULL,
-    storage_limit INT            NOT NULL
+CREATE TABLE Plan (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор тарифа
+    name VARCHAR(100) NOT NULL, -- Название тарифа (например, "Базовый", "Продвинутый", "Профессиональный")
+    description TEXT NOT NULL, -- Описание тарифного плана (полный список доступных возможностей)
+    price DECIMAL(10, 2) NOT NULL, -- Стоимость тарифа в месяц
+    storage_limit INT NOT NULL, -- Лимит объема хранилища (в ГБ)
+
+    max_users INT NOT NULL DEFAULT 1, -- Максимальное количество пользователей (экспертов) в тарифе
+    max_documents INT, -- Количество бесплатных выгрузок заключений
+    additional_document_price DECIMAL(10,2), -- Цена за каждую дополнительную выгрузку заключения после превышения лимита
+    has_document_constructor BOOLEAN NOT NULL DEFAULT FALSE, -- Есть ли конструктор судебных заключений?
+    has_legal_database_access BOOLEAN NOT NULL DEFAULT FALSE, -- Доступ к базовой нормативно-правовой базе?
+    has_advanced_legal_database BOOLEAN NOT NULL DEFAULT FALSE, -- Доступ к расширенной нормативно-правовой базе?
+    has_templates BOOLEAN NOT NULL DEFAULT FALSE, -- Доступны ли шаблоны для экспертов?
+    templates_count INT DEFAULT 0, -- Количество доступных шаблонов
+    has_expert_support BOOLEAN NOT NULL DEFAULT FALSE, -- Есть ли поддержка по судебным экспертизам?
+    has_review_functionality BOOLEAN NOT NULL DEFAULT FALSE, -- Доступна ли функция проверки и рецензирования заключений?
+    max_reviews INT, -- Количество рецензий (если рецензирование доступно)
+    unlimited_documents BOOLEAN NOT NULL DEFAULT FALSE, -- Можно ли выгружать неограниченное количество заключений?
+    active BOOLEAN NOT NULL DEFAULT TRUE, -- Активен ли тарифный план?
+    created_at TIMESTAMP DEFAULT NOW(), -- Дата создания тарифа
+    updated_at TIMESTAMP DEFAULT NOW() -- Дата последнего обновления тарифа
 );
+
+CREATE TABLE Plan_Features ( -- чтобы хранить дополнительные возможности, которые не подходят под фиксированные поля в Plan
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор записи о функциональной возможности
+    plan_id UUID NOT NULL, -- Ссылка на тарифный план, к которому относится возможность
+    feature TEXT NOT NULL, -- Название или описание функциональной возможности
+    FOREIGN KEY (plan_id) REFERENCES Plan (id) ON DELETE CASCADE -- Если тариф удаляется, связанные возможности тоже удаляются
+);
+
+
 
 CREATE TABLE Profile
 (
@@ -88,3 +112,4 @@ CREATE TABLE password_reset_token
     expiry_date TIMESTAMP    NOT NULL,
     FOREIGN KEY (user_id) REFERENCES app_user (id) ON DELETE CASCADE
 );
+
