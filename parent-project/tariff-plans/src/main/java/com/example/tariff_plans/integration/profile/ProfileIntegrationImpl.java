@@ -40,7 +40,7 @@ public class ProfileIntegrationImpl implements ProfileIntegration {
      */
     @Override
     public void chargeTariffRequest(UUID profileId, UUID tariffId) {
-        String baseUrl = appConfig.getPaths().getMinio().get("update-plan");
+        String baseUrl = appConfig.getPaths().getProfile().get("update-plan");
 
         String requestUrl = integrationHelper.urlBuilder(
                 baseUrl,
