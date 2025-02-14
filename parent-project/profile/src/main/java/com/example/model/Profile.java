@@ -25,6 +25,9 @@ public class Profile {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
 
+
+    private String surname;
+
     /**
      * Путь к фото в minIO
      */
