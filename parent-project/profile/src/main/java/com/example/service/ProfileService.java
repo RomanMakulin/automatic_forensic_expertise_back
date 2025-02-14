@@ -68,6 +68,11 @@ public class ProfileService {
         return profileRepository.findById(id);
     }
 
+
+    public Optional<Profile> getProfileByUserId(UUID id) {
+        return profileRepository.findByAppUser_Id(id);
+    }
+
     public Profile save(Profile profile) {
         return profileRepository.save(profile);
     }

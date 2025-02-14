@@ -39,9 +39,22 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTOS);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<ProfileDTO> getProfile(@RequestParam UUID id) {
+    @GetMapping("/get-by-profile-id")
+    public ResponseEntity<ProfileDTO> getProfileByProfileId(@RequestParam UUID id) {
         Optional<Profile> optionalProfile = profileService.getProfileById(id);
+
+        if (optionalProfile.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Profile profile = optionalProfile.get();
+        ProfileDTO profileDTO = profileMapper.toDto(profile);
+        return ResponseEntity.ok(profileDTO);
+    }
+
+    @GetMapping("/get-by-user-id")
+    public ResponseEntity<ProfileDTO> getProfileByUserId(@RequestParam UUID id) {
+        Optional<Profile> optionalProfile = profileService.getProfileByUserId(id);
 
         if (optionalProfile.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
