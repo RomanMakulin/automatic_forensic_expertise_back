@@ -1,5 +1,6 @@
 package com.example.auth.api.dto;
 
+import com.example.auth.api.dto.profile.ProfileDTO;
 import com.example.auth.model.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -25,5 +26,7 @@ public class AuthUserDetailsResponse {
      */
     @JsonProperty("access_token")
     private AccessTokenResponse accessToken;
+
+    private ProfileDTO profile;
 
 }

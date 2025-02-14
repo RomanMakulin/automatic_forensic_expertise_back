@@ -23,7 +23,7 @@ keycloak:
   realm: demo
   resource: spring-app
   credentials:
-    secret: dx8DwxP3ukYrEKKj5WpNYJg0wJEETAwC
+    secret: 5MBq5j4wVYsPsXlR3outUBVd3lb04PQO
   bearer-only: true
   use-resource-role-mappings: true
   main:
@@ -82,6 +82,8 @@ app:
       get-unverified-profiles: ${app.services.profile}/api/profile/unverified
       verify-profile: ${app.services.profile}/api/profile/verify
       cancel-validation: ${app.services.profile}/api/profile/cancel-validation
+      get-by-profile-id: ${app.services.profile}/api/profile/get-by-profile-id
+      get-by-user-id: ${app.services.profile}/api/profile/get-by-user-id
 
     minio:
       upload-all: ${app.services.minio}/api/files/upload-all
