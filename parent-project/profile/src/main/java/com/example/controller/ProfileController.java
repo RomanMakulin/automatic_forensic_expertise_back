@@ -169,8 +169,8 @@ public class ProfileController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/update-plan")
-    public ResponseEntity<Void> updatePlan(@RequestParam UUID profileId, @RequestBody UUID planId) {
+    @PostMapping("/update-plan")
+    public ResponseEntity<Void> updatePlan(@RequestParam UUID profileId, @RequestParam UUID planId) {
         Optional<Profile> optionalProfile = profileService.getProfileById(profileId);
 
         if (optionalProfile.isEmpty()) {
