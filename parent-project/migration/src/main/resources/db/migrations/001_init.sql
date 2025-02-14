@@ -7,7 +7,8 @@ CREATE TABLE Role
 CREATE TABLE App_User
 (
     id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    full_name          VARCHAR(100)                               NOT NULL,
+    name               VARCHAR(100)                               NOT NULL,
+    last_name          VARCHAR(100)                               NOT NULL,
     email              VARCHAR(100) UNIQUE                        NOT NULL,
     registration_date  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP NOT NULL,
     role_id            UUID                                       NOT NULL,
@@ -58,19 +59,12 @@ CREATE TABLE Plan (
     updated_at TIMESTAMP DEFAULT NOW() -- Дата последнего обновления тарифа
 );
 
-CREATE TABLE Plan_Features ( -- чтобы хранить дополнительные возможности, которые не подходят под фиксированные поля в Plan
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор записи о функциональной возможности
-    plan_id UUID NOT NULL, -- Ссылка на тарифный план, к которому относится возможность
-    feature TEXT NOT NULL, -- Название или описание функциональной возможности
-    FOREIGN KEY (plan_id) REFERENCES Plan (id) ON DELETE CASCADE -- Если тариф удаляется, связанные возможности тоже удаляются
-);
-
-
-
 CREATE TABLE Profile
 (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id             UUID UNIQUE NOT NULL,
+    surname             VARCHAR(255),
+    birthday            DATE,
     photo               VARCHAR(255),
     template            VARCHAR(255),
     passport            VARCHAR(255),
@@ -85,6 +79,15 @@ CREATE TABLE Profile
     CONSTRAINT fk_profile_location FOREIGN KEY (location_id) REFERENCES Location (id),
     CONSTRAINT fk_profile_status FOREIGN KEY (status_id) REFERENCES Status (id),
     CONSTRAINT fk_profile_plan FOREIGN KEY (plan_id) REFERENCES Plan (id)
+);
+
+
+
+CREATE TABLE Plan_Features ( -- чтобы хранить дополнительные возможности, которые не подходят под фиксированные поля в Plan
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор записи о функциональной возможности
+    plan_id UUID NOT NULL, -- Ссылка на тарифный план, к которому относится возможность
+    feature TEXT NOT NULL, -- Название или описание функциональной возможности
+    FOREIGN KEY (plan_id) REFERENCES Plan (id) ON DELETE CASCADE -- Если тариф удаляется, связанные возможности тоже удаляются
 );
 
 CREATE TABLE Direction
