@@ -112,7 +112,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             Role role = roleRepository.findByName("Expert")
                     .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
 
-            localUser.setFullName(request.getFirstName() + " " + request.getLastName());
+            localUser.setFullName(request.getFirstName() + " " + request.getLastName() + " " + request.getPatronymicName());
             localUser.setEmail(request.getEmail());
             localUser.setRegistrationDate(LocalDateTime.now());
             localUser.setRole(role);
