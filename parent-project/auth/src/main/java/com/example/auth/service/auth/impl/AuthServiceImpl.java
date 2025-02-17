@@ -1,4 +1,4 @@
-package com.example.auth.service.auth;
+package com.example.auth.service.auth.impl;
 
 import com.example.auth.api.dto.AuthUserDetailsResponse;
 import com.example.auth.model.User;
@@ -6,6 +6,9 @@ import com.example.auth.api.dto.LoginRequest;
 import com.example.auth.api.dto.RegistrationRequest;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.integrations.keycloak.KeycloakAdminService;
+import com.example.auth.service.auth.AuthService;
+import com.example.auth.service.auth.LoginService;
+import com.example.auth.service.auth.RegistrationService;
 import com.example.auth.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
