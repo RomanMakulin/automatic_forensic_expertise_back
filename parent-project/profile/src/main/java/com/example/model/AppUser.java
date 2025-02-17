@@ -20,11 +20,8 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(name = "name")
-    private String name = "name";
-
-    @Column(name = "last_name")
-    private String lastName = "lastName";
+    @Column(name = "full_name")
+    private String fullName;
 
     private String email = "email" + String.valueOf(new Random().nextInt(10000));
 
