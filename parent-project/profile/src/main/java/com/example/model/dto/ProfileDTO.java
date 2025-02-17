@@ -29,6 +29,8 @@ public class ProfileDTO {
 
     private String diplom;
 
+    private PlanDTO planDTO;
+
     private LocationDTO locationDTO = new LocationDTO();
 
     private StatusDTO statusDTO  = new StatusDTO();

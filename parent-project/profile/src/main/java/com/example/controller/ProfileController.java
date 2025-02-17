@@ -121,8 +121,8 @@ public class ProfileController {
      *
      * @param profileId идентификатор профиля
      */
-    @GetMapping("/verify/{profileId}")
-    public ResponseEntity<Void> validateProfile(@PathVariable("profileId") String profileId) {
+    @GetMapping("/verify")
+    public ResponseEntity<Void> validateProfile(@RequestParam String profileId) {
         Optional<Profile> optionalProfile = profileService.getProfileById(UUID.fromString(profileId));
 
         if (optionalProfile.isEmpty()) {
