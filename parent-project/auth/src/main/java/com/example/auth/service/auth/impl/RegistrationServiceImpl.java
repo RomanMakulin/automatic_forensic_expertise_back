@@ -1,4 +1,4 @@
-package com.example.auth.service.auth;
+package com.example.auth.service.auth.impl;
 
 import com.example.auth.config.AppConfig;
 import com.example.auth.model.Role;
@@ -9,6 +9,7 @@ import com.example.auth.repository.RoleRepository;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.integrations.mail.MailService;
+import com.example.auth.service.auth.RegistrationService;
 import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Сервис для регистрации пользователей.
@@ -112,7 +116,12 @@ public class RegistrationServiceImpl implements RegistrationService {
             Role role = roleRepository.findByName("Expert")
                     .orElseThrow(() -> new RuntimeException("Role not found")); // потом убрать
 
-            localUser.setFullName(request.getFirstName() + " " + request.getLastName() + " " + request.getPatronymicName());
+            String fullName = Stream.of(request.getFirstName(), request.getLastName(), request.getPatronymicName())
+                    .filter(Objects::nonNull) // Убираем null
+                    .filter(s -> !s.isBlank()) // Убираем пустые строки
+                    .collect(Collectors.joining(" ")); // Соединяем через пробел
+
+            localUser.setFullName(fullName);
             localUser.setEmail(request.getEmail());
             localUser.setRegistrationDate(LocalDateTime.now());
             localUser.setRole(role);

@@ -1,10 +1,12 @@
-package com.example.auth.service.auth;
+package com.example.auth.service.auth.impl;
 
 import com.example.auth.api.dto.MailRequest;
 import com.example.auth.api.dto.ResetPassword;
 import com.example.auth.config.AppConfig;
 import com.example.auth.integrations.keycloak.KeycloakAdminService;
 import com.example.auth.integrations.mail.MailService;
+import com.example.auth.service.auth.PasswordService;
+import com.example.auth.service.auth.PasswordTokenService;
 import org.springframework.stereotype.Service;
 
 @Service

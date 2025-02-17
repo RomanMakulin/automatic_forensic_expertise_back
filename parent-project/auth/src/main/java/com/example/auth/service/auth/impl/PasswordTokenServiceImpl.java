@@ -1,9 +1,10 @@
-package com.example.auth.service.auth;
+package com.example.auth.service.auth.impl;
 
 import com.example.auth.model.PasswordResetToken;
 import com.example.auth.model.User;
 import com.example.auth.repository.PasswordResetTokenRepository;
 import com.example.auth.integrations.keycloak.KeycloakAdminService;
+import com.example.auth.service.auth.PasswordTokenService;
 import com.example.auth.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

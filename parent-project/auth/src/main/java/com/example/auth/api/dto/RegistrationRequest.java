@@ -32,7 +32,6 @@ public class RegistrationRequest {
     @JsonProperty("last_name")
     private String lastName;
 
-    @NotBlank(message = "Отчество не может быть пустым")
     @JsonProperty("patronymic_name")
     private String patronymicName;
 
